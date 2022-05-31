@@ -1,0 +1,73 @@
+package com.sergey.zhuravlev.mobile.social.client;
+
+import com.sergey.zhuravlev.mobile.social.client.api.ChatEndpoints;
+import com.sergey.zhuravlev.mobile.social.client.api.LoginEndpoints;
+import com.sergey.zhuravlev.mobile.social.client.api.MessageEndpoints;
+
+import org.jetbrains.annotations.NotNull;
+
+import java.io.IOException;
+
+import okhttp3.Interceptor;
+import okhttp3.OkHttpClient;
+import okhttp3.Request;
+import okhttp3.Response;
+import retrofit2.Retrofit;
+import retrofit2.adapter.guava.GuavaCallAdapterFactory;
+import retrofit2.converter.jackson.JacksonConverterFactory;
+
+public class Client {
+
+    static class BearerTokenInterceptor implements Interceptor {
+        @NotNull
+        @Override
+        public Response intercept(Chain chain) throws IOException {
+            Request.Builder requestBuilder = chain
+                    .request()
+                    .newBuilder();
+            if (Client.barrierToken != null && !Client.barrierToken.isEmpty()) {
+                requestBuilder.addHeader("Authorization", "Bearer " + Client.barrierToken);
+            }
+            return chain.proceed(requestBuilder.build());
+        }
+    }
+
+    private static final String BASE_URL = "http://192.168.31.24:8080";
+    private static final OkHttpClient client = new OkHttpClient.Builder()
+            .addInterceptor(new BearerTokenInterceptor())
+            .followRedirects(false)
+            .build();
+    private static final Retrofit retrofit = new Retrofit.Builder()
+            .baseUrl(BASE_URL)
+            .addCallAdapterFactory(GuavaCallAdapterFactory.create())
+            .addConverterFactory(JacksonConverterFactory.create())
+            .client(client)
+            .build();
+
+    private static String barrierToken;
+
+    public static String getBarrierToken() {
+        return barrierToken;
+    }
+
+    public static void setBarrierToken(String barrierToken) {
+        Client.barrierToken = barrierToken;
+    }
+
+    public static String getBaseUrl() {
+        return BASE_URL;
+    }
+
+    public static LoginEndpoints getLoginEndpoints() {
+        return retrofit.create(LoginEndpoints.class);
+    }
+
+    public static ChatEndpoints getChatEndpoints() {
+        return retrofit.create(ChatEndpoints.class);
+    }
+
+    public static MessageEndpoints getMessageEndpoints() {
+        return retrofit.create(MessageEndpoints.class);
+    }
+
+}
