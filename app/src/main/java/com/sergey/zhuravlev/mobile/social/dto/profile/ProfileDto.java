@@ -51,4 +51,20 @@ public class ProfileDto {
         this.secondName = secondName;
     }
 
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        ProfileDto that = (ProfileDto) o;
+        return Objects.equals(username, that.username) &&
+                Objects.equals(firstName, that.firstName) &&
+                Objects.equals(middleName, that.middleName) &&
+                Objects.equals(secondName, that.secondName);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(username, firstName, middleName, secondName);
+    }
+
 }

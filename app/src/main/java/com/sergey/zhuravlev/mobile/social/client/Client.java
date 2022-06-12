@@ -3,6 +3,7 @@ package com.sergey.zhuravlev.mobile.social.client;
 import com.sergey.zhuravlev.mobile.social.client.api.ChatEndpoints;
 import com.sergey.zhuravlev.mobile.social.client.api.LoginEndpoints;
 import com.sergey.zhuravlev.mobile.social.client.api.MessageEndpoints;
+import com.sergey.zhuravlev.mobile.social.client.api.ProfileEndpoints;
 
 import org.jetbrains.annotations.NotNull;
 
@@ -68,6 +69,10 @@ public class Client {
 
     public static MessageEndpoints getMessageEndpoints() {
         return retrofit.create(MessageEndpoints.class);
+    }
+
+    public static ProfileEndpoints getProfileEndpoints() {
+        return retrofit.create(ProfileEndpoints.class);
     }
 
 }

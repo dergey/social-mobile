@@ -51,7 +51,6 @@ public class MessageActivity extends AppCompatActivity {
         } else {
             finish();
         }
-
     }
 
 }
