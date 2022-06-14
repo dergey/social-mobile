@@ -1,5 +1,7 @@
 package com.sergey.zhuravlev.mobile.social.dto.image;
 
+import java.time.LocalDateTime;
+
 public class ImageDto {
 
     private String mimeType;
@@ -9,6 +11,8 @@ public class ImageDto {
     private Integer width;
 
     private String dataSize;
+
+    private LocalDateTime createAt;
 
     public ImageDto() {
     }
@@ -45,4 +49,11 @@ public class ImageDto {
         this.dataSize = dataSize;
     }
 
+    public LocalDateTime getCreateAt() {
+        return createAt;
+    }
+
+    public void setCreateAt(LocalDateTime createAt) {
+        this.createAt = createAt;
+    }
 }
