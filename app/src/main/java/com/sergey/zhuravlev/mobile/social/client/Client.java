@@ -1,5 +1,7 @@
 package com.sergey.zhuravlev.mobile.social.client;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import com.sergey.zhuravlev.mobile.social.client.api.ChatEndpoints;
 import com.sergey.zhuravlev.mobile.social.client.api.LoginEndpoints;
 import com.sergey.zhuravlev.mobile.social.client.api.MessageEndpoints;
@@ -38,10 +40,14 @@ public class Client {
             .addInterceptor(new BearerTokenInterceptor())
             .followRedirects(false)
             .build();
+    private static final ObjectMapper objectMapper = new ObjectMapper();
+    static {
+        objectMapper.registerModule(new JavaTimeModule());
+    }
     private static final Retrofit retrofit = new Retrofit.Builder()
             .baseUrl(BASE_URL)
             .addCallAdapterFactory(GuavaCallAdapterFactory.create())
-            .addConverterFactory(JacksonConverterFactory.create())
+            .addConverterFactory(JacksonConverterFactory.create(objectMapper))
             .client(client)
             .build();
 
