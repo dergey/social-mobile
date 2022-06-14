@@ -5,6 +5,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
+import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.paging.PagingDataAdapter;
@@ -55,10 +56,12 @@ public class ProfilesHorizontalListAdapter extends PagingDataAdapter<ProfileDto,
     static class ProfileViewHolder extends RecyclerView.ViewHolder {
 
         private final ImageView avatarImage;
+        private final TextView fullNameText;
 
         public ProfileViewHolder(@NonNull @NotNull View itemView) {
             super(itemView);
             avatarImage = itemView.findViewById(R.id.avatar);
+            fullNameText = itemView.findViewById(R.id.full_name_text_view);
         }
 
         public static ProfilesHorizontalListAdapter.ProfileViewHolder getInstance(ViewGroup parent) {
@@ -68,6 +71,7 @@ public class ProfilesHorizontalListAdapter extends PagingDataAdapter<ProfileDto,
         }
 
         public ProfilesHorizontalListAdapter.ProfileViewHolder bind(ProfileDto item, Context context) {
+            fullNameText.setText(String.format("%s\n%s", item.getFirstName(), item.getSecondName()));
             String messageImageUrl = String.format("%s/api/profile/%s/avatar",
                     Client.getBaseUrl(),
                     item.getUsername());
@@ -75,7 +79,7 @@ public class ProfilesHorizontalListAdapter extends PagingDataAdapter<ProfileDto,
                     new LazyHeaders.Builder()
                             .addHeader("Authorization", "Bearer " + Client.getBarrierToken())
                             .build());
-            Glide.with(context).load(glideUrl).apply(RequestOptions.centerCropTransform()).into(avatarImage);
+            Glide.with(context).load(glideUrl).apply(RequestOptions.circleCropTransform()).into(avatarImage);
             return this;
         }
     }
