@@ -17,6 +17,7 @@ import androidx.recyclerview.widget.DiffUtil;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.bumptech.glide.Glide;
+import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.bumptech.glide.load.model.GlideUrl;
 import com.bumptech.glide.load.model.LazyHeaders;
 import com.bumptech.glide.request.RequestOptions;
@@ -121,7 +122,9 @@ public class ChatAdapter extends PagingDataAdapter<ChatPreviewDto, RecyclerView.
                     new LazyHeaders.Builder()
                             .addHeader("Authorization", "Bearer " + Client.getBarrierToken())
                             .build());
-            Glide.with(context).load(glideUrl).apply(RequestOptions.circleCropTransform()).into(chatProfileAvatar);
+            Glide.with(context).load(glideUrl)
+                    .diskCacheStrategy(DiskCacheStrategy.NONE).skipMemoryCache(true)
+                    .apply(RequestOptions.circleCropTransform()).into(chatProfileAvatar);
             if (lastMessage.isRead()) {
                 unreadMark.setImageResource(R.drawable.moon_new);
             } else {

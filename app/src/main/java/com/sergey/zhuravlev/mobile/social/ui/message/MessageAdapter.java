@@ -15,15 +15,18 @@ import androidx.recyclerview.widget.DiffUtil;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.bumptech.glide.Glide;
+import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.bumptech.glide.load.model.GlideUrl;
 import com.bumptech.glide.load.model.LazyHeaders;
 import com.bumptech.glide.request.RequestOptions;
+import com.bumptech.glide.signature.ObjectKey;
 import com.sergey.zhuravlev.mobile.social.R;
 import com.sergey.zhuravlev.mobile.social.client.Client;
 import com.sergey.zhuravlev.mobile.social.dto.enums.MessageSenderType;
 import com.sergey.zhuravlev.mobile.social.dto.message.ImageMessageDto;
 import com.sergey.zhuravlev.mobile.social.dto.message.MessageDto;
 import com.sergey.zhuravlev.mobile.social.dto.message.TextMessageDto;
+import com.sergey.zhuravlev.mobile.social.util.GlideUtils;
 
 import org.jetbrains.annotations.NotNull;
 
@@ -33,6 +36,7 @@ import java.time.format.DateTimeFormatter;
 import java.util.Date;
 import java.util.Locale;
 import java.util.Objects;
+import java.util.UUID;
 
 public class MessageAdapter extends PagingDataAdapter<MessageDto, RecyclerView.ViewHolder> {
 
@@ -181,7 +185,9 @@ public class MessageAdapter extends PagingDataAdapter<MessageDto, RecyclerView.V
                     new LazyHeaders.Builder()
                             .addHeader("Authorization", "Bearer " + Client.getBarrierToken())
                             .build());
-            Glide.with(context).load(glideUrl).apply(RequestOptions.centerCropTransform()).into(messageImage);
+            Glide.with(context).load(glideUrl)
+                    .diskCacheStrategy(DiskCacheStrategy.NONE).skipMemoryCache(true)
+                    .apply(RequestOptions.centerCropTransform()).into(messageImage);
             return this;
         }
     }
