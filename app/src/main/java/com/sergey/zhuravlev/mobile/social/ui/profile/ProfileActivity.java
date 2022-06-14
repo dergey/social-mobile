@@ -28,7 +28,7 @@ public class ProfileActivity extends AppCompatActivity {
         adapter = new ProfilesHorizontalListAdapter(this);
 
         recyclerView = binding.friendListRecyclerView;
-        recyclerView.setLayoutManager(new LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false));
+        recyclerView.setLayoutManager(new LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, false));
         recyclerView.setAdapter(adapter);
 
         if (getIntent().getExtras() != null) {
