@@ -1,19 +1,11 @@
 package com.sergey.zhuravlev.mobile.social.data;
 
-import android.util.Log;
-
-import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.google.common.reflect.TypeToken;
-import com.sergey.zhuravlev.mobile.social.dto.ErrorDto;
-import com.sergey.zhuravlev.mobile.social.dto.LoginResponseDto;
 
 import java.io.IOException;
-import java.lang.reflect.Type;
 
 import retrofit2.HttpException;
 
@@ -64,6 +56,9 @@ public abstract class Result<T, E> {
         }
 
         public E getErrorObject(Class<E> clazz) {
+            if (errorData == null) {
+                return null;
+            }
             try {
                 return objectMapper.readValue(errorData, clazz);
             } catch (JsonProcessingException e) {
