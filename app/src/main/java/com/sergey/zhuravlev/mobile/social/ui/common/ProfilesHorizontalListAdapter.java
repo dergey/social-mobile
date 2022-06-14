@@ -1,6 +1,7 @@
 package com.sergey.zhuravlev.mobile.social.ui.common;
 
 import android.content.Context;
+import android.content.Intent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -19,7 +20,9 @@ import com.bumptech.glide.load.model.LazyHeaders;
 import com.bumptech.glide.request.RequestOptions;
 import com.sergey.zhuravlev.mobile.social.R;
 import com.sergey.zhuravlev.mobile.social.client.Client;
+import com.sergey.zhuravlev.mobile.social.constrain.IntentConstrains;
 import com.sergey.zhuravlev.mobile.social.dto.profile.ProfileDto;
+import com.sergey.zhuravlev.mobile.social.ui.profile.ProfileActivity;
 
 import org.jetbrains.annotations.NotNull;
 
@@ -54,15 +57,19 @@ public class ProfilesHorizontalListAdapter extends PagingDataAdapter<ProfileDto,
         }
     }
 
-    static class ProfileViewHolder extends RecyclerView.ViewHolder {
+    static class ProfileViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
 
         private final ImageView avatarImage;
         private final TextView fullNameText;
+
+        private Context context;
+        private String username;
 
         public ProfileViewHolder(@NonNull @NotNull View itemView) {
             super(itemView);
             avatarImage = itemView.findViewById(R.id.avatar);
             fullNameText = itemView.findViewById(R.id.full_name_text_view);
+            itemView.setOnClickListener(this);
         }
 
         public static ProfilesHorizontalListAdapter.ProfileViewHolder getInstance(ViewGroup parent) {
@@ -72,6 +79,9 @@ public class ProfilesHorizontalListAdapter extends PagingDataAdapter<ProfileDto,
         }
 
         public ProfilesHorizontalListAdapter.ProfileViewHolder bind(ProfileDto item, Context context) {
+            this.context = context;
+            this.username = item.getUsername();
+
             fullNameText.setText(String.format("%s\n%s", item.getFirstName(), item.getSecondName()));
             String messageImageUrl = String.format("%s/api/profile/%s/avatar",
                     Client.getBaseUrl(),
@@ -84,6 +94,13 @@ public class ProfilesHorizontalListAdapter extends PagingDataAdapter<ProfileDto,
                     .diskCacheStrategy(DiskCacheStrategy.NONE).skipMemoryCache(true)
                     .apply(RequestOptions.circleCropTransform()).into(avatarImage);
             return this;
+        }
+
+        @Override
+        public void onClick(View v) {
+            Intent intent = new Intent(context, ProfileActivity.class);
+            intent.putExtra(IntentConstrains.EXTRA_PROFILE_USERNAME, username);
+            context.startActivity(intent);
         }
     }
 
