@@ -13,6 +13,9 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.Social"
         android:usesCleartextTraffic="true">
+        <activity
+            android:name=".ui.registration.RegistrationActivity"
+            android:exported="false" />
         <activity android:name=".ui.profile.ProfileActivity" />
         <activity android:name=".ui.message.MessageActivity" />
         <activity
