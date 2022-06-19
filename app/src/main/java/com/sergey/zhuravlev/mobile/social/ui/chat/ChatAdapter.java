@@ -104,6 +104,9 @@ public class ChatAdapter extends PagingDataAdapter<ChatPreviewDto, RecyclerView.
             chatTitle.setText(String.format("%s %s", item.getTargetProfile().getFirstName(), item.getTargetProfile().getSecondName()));
 
             MessageDto lastMessage = item.getLastMessage();
+            if (lastMessage == null) {
+                return this;
+            }
             switch (lastMessage.getType()) {
                 case TEXT:
                 case SERVICE:

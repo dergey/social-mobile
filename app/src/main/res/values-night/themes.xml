@@ -12,5 +12,11 @@
         <!-- Status bar color. -->
         <item name="android:statusBarColor" tools:targetApi="l">?attr/colorPrimaryVariant</item>
         <!-- Customize your theme here. -->
+        <item name="backgroundErrorLayoutColor">@color/error</item>
+    </style>
+
+    <style name="TextAppearanceDate" parent="@android:style/TextAppearance.Material.Small">
+        <item name="android:textSize">10sp</item>
+        <item name="android:textStyle">italic</item>
     </style>
 </resources>
