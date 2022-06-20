@@ -1,12 +1,11 @@
 package com.sergey.zhuravlev.mobile.social.client.api;
 
 import com.google.common.util.concurrent.ListenableFuture;
-import com.sergey.zhuravlev.mobile.social.dto.PageDto;
-import com.sergey.zhuravlev.mobile.social.dto.chat.ChatDto;
-import com.sergey.zhuravlev.mobile.social.dto.chat.ChatPreviewDto;
-import com.sergey.zhuravlev.mobile.social.dto.chat.CreateChatDto;
+import com.sergey.zhuravlev.mobile.social.client.dto.PageDto;
+import com.sergey.zhuravlev.mobile.social.client.dto.chat.ChatDto;
+import com.sergey.zhuravlev.mobile.social.client.dto.chat.ChatPreviewDto;
+import com.sergey.zhuravlev.mobile.social.client.dto.chat.CreateChatDto;
 
-import retrofit2.Call;
 import retrofit2.http.Body;
 import retrofit2.http.GET;
 import retrofit2.http.POST;

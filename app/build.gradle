@@ -31,6 +31,8 @@ android {
 }
 
 dependencies {
+    def room_version = "2.3.0"
+    def paging_version = "3.0.1"
 
     implementation 'androidx.appcompat:appcompat:1.2.0'
     implementation 'com.google.android.material:material:1.2.1'
@@ -46,8 +48,13 @@ dependencies {
     implementation 'com.squareup.retrofit2:converter-jackson:2.9.0'
     implementation 'com.fasterxml.jackson.datatype:jackson-datatype-jsr310:2.9.0'
     implementation 'com.squareup.retrofit2:adapter-guava:2.9.0'
-    implementation "androidx.paging:paging-runtime:3.0.1"
-    implementation "androidx.paging:paging-guava:3.0.1"
+    implementation "androidx.paging:paging-runtime:$paging_version"
+    implementation "androidx.paging:paging-guava:$paging_version"
+
+    implementation "androidx.room:room-runtime:$room_version"
+    annotationProcessor "androidx.room:room-compiler:$room_version"
+    implementation "androidx.room:room-guava:$room_version"
+
 
 
     testImplementation 'junit:junit:4.+'

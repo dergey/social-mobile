@@ -3,8 +3,8 @@ package com.sergey.zhuravlev.mobile.social.data;
 import com.google.common.util.concurrent.Futures;
 import com.google.common.util.concurrent.ListenableFuture;
 import com.sergey.zhuravlev.mobile.social.client.api.ProfileEndpoints;
-import com.sergey.zhuravlev.mobile.social.dto.ErrorDto;
-import com.sergey.zhuravlev.mobile.social.dto.profile.ProfileDetailDto;
+import com.sergey.zhuravlev.mobile.social.client.dto.ErrorDto;
+import com.sergey.zhuravlev.mobile.social.client.dto.profile.ProfileDetailDto;
 
 import java.io.IOException;
 import java.util.concurrent.Executor;

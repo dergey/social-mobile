@@ -12,9 +12,9 @@ import androidx.paging.PagingLiveData;
 import com.google.common.util.concurrent.FutureCallback;
 import com.sergey.zhuravlev.mobile.social.data.ProfileRepository;
 import com.sergey.zhuravlev.mobile.social.data.Result;
-import com.sergey.zhuravlev.mobile.social.dto.ErrorDto;
-import com.sergey.zhuravlev.mobile.social.dto.profile.ProfileDetailDto;
-import com.sergey.zhuravlev.mobile.social.dto.profile.ProfileDto;
+import com.sergey.zhuravlev.mobile.social.client.dto.ErrorDto;
+import com.sergey.zhuravlev.mobile.social.client.dto.profile.ProfileDetailDto;
+import com.sergey.zhuravlev.mobile.social.client.dto.profile.ProfileDto;
 import com.sergey.zhuravlev.mobile.social.ui.profile.result.GetCurrentProfileResult;
 
 import org.jetbrains.annotations.NotNull;

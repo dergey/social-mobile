@@ -3,6 +3,7 @@ package com.sergey.zhuravlev.mobile.social.ui.message;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.lifecycle.ViewModelProvider;
+import androidx.paging.ExperimentalPagingApi;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -23,6 +24,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
+@ExperimentalPagingApi
 public class MessageActivity extends AppCompatActivity {
 
     private ActivityMessageBinding binding;
@@ -33,7 +35,8 @@ public class MessageActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        viewModel = new ViewModelProvider(this).get(MessageViewModel.class);
+        viewModel = new ViewModelProvider(this, new MessageViewModelFactory(this))
+                .get(MessageViewModel.class);
         binding = ActivityMessageBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
 
@@ -45,7 +48,7 @@ public class MessageActivity extends AppCompatActivity {
 
         if (getIntent().getExtras() != null) {
             Long chatId = getIntent().getExtras().getLong(IntentConstrains.EXTRA_CHAT_ID);
-            viewModel.fetchChatMessageLiveData(chatId).observe(this, pagingData ->
+            viewModel.fetchChatMessageModelLiveData(chatId).observe(this, pagingData ->
                     adapter.submitData(getLifecycle(), pagingData)
             );
         } else {

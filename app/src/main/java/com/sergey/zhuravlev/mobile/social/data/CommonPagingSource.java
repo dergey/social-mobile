@@ -7,8 +7,7 @@ import androidx.paging.PagingState;
 
 import com.google.common.util.concurrent.Futures;
 import com.google.common.util.concurrent.ListenableFuture;
-import com.sergey.zhuravlev.mobile.social.dto.PageDto;
-import com.sergey.zhuravlev.mobile.social.dto.profile.ProfileDto;
+import com.sergey.zhuravlev.mobile.social.client.dto.PageDto;
 
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -20,7 +19,6 @@ import java.util.function.Function;
 
 import retrofit2.HttpException;
 
-@ExperimentalPagingApi
 @SuppressWarnings("UnstableApiUsage")
 public class CommonPagingSource<V> extends ListenableFuturePagingSource<Integer, V> {
 

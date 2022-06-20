@@ -1,7 +1,7 @@
 package com.sergey.zhuravlev.mobile.social.util;
 
 import com.bumptech.glide.signature.MediaStoreSignature;
-import com.sergey.zhuravlev.mobile.social.dto.image.ImageDto;
+import com.sergey.zhuravlev.mobile.social.client.dto.image.ImageDto;
 
 import java.time.ZoneId;
 

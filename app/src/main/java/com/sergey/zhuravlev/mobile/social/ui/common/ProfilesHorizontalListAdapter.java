@@ -21,7 +21,7 @@ import com.bumptech.glide.request.RequestOptions;
 import com.sergey.zhuravlev.mobile.social.R;
 import com.sergey.zhuravlev.mobile.social.client.Client;
 import com.sergey.zhuravlev.mobile.social.constrain.IntentConstrains;
-import com.sergey.zhuravlev.mobile.social.dto.profile.ProfileDto;
+import com.sergey.zhuravlev.mobile.social.client.dto.profile.ProfileDto;
 import com.sergey.zhuravlev.mobile.social.ui.profile.ProfileActivity;
 
 import org.jetbrains.annotations.NotNull;

@@ -2,10 +2,7 @@ package com.sergey.zhuravlev.mobile.social.ui.login;
 
 import androidx.annotation.Nullable;
 
-import com.sergey.zhuravlev.mobile.social.dto.ErrorDto;
-
-import java.util.HashMap;
-import java.util.Map;
+import com.sergey.zhuravlev.mobile.social.client.dto.ErrorDto;
 
 /**
  * Authentication result : success (user details) or error message.

@@ -5,8 +5,8 @@ import com.google.common.util.concurrent.Futures;
 import com.google.common.util.concurrent.ListenableFuture;
 import com.sergey.zhuravlev.mobile.social.client.Client;
 import com.sergey.zhuravlev.mobile.social.client.api.LoginEndpoints;
-import com.sergey.zhuravlev.mobile.social.dto.ErrorDto;
-import com.sergey.zhuravlev.mobile.social.dto.LoginResponseDto;
+import com.sergey.zhuravlev.mobile.social.client.dto.ErrorDto;
+import com.sergey.zhuravlev.mobile.social.client.dto.LoginResponseDto;
 
 import java.util.concurrent.Executor;
 import java.util.concurrent.Executors;

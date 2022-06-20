@@ -1,6 +1,7 @@
 package com.sergey.zhuravlev.mobile.social.data;
 
 import androidx.lifecycle.LiveData;
+import androidx.paging.ExperimentalPagingApi;
 import androidx.paging.Pager;
 import androidx.paging.PagingConfig;
 import androidx.paging.PagingData;
@@ -11,9 +12,9 @@ import com.google.common.util.concurrent.FutureCallback;
 import com.google.common.util.concurrent.Futures;
 import com.sergey.zhuravlev.mobile.social.client.Client;
 import com.sergey.zhuravlev.mobile.social.client.api.ProfileEndpoints;
-import com.sergey.zhuravlev.mobile.social.dto.ErrorDto;
-import com.sergey.zhuravlev.mobile.social.dto.profile.ProfileDetailDto;
-import com.sergey.zhuravlev.mobile.social.dto.profile.ProfileDto;
+import com.sergey.zhuravlev.mobile.social.client.dto.ErrorDto;
+import com.sergey.zhuravlev.mobile.social.client.dto.profile.ProfileDetailDto;
+import com.sergey.zhuravlev.mobile.social.client.dto.profile.ProfileDto;
 
 import java.util.Collections;
 import java.util.concurrent.Executor;

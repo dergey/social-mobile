@@ -2,8 +2,8 @@ package com.sergey.zhuravlev.mobile.social.ui.profile.result;
 
 import androidx.annotation.Nullable;
 
-import com.sergey.zhuravlev.mobile.social.dto.ErrorDto;
-import com.sergey.zhuravlev.mobile.social.dto.profile.ProfileDetailDto;
+import com.sergey.zhuravlev.mobile.social.client.dto.ErrorDto;
+import com.sergey.zhuravlev.mobile.social.client.dto.profile.ProfileDetailDto;
 
 public class GetCurrentProfileResult {
 

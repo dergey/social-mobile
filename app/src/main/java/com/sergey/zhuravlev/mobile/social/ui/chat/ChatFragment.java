@@ -12,12 +12,14 @@ import androidx.annotation.NonNull;
 import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProvider;
+import androidx.paging.ExperimentalPagingApi;
 import androidx.paging.LoadState;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.sergey.zhuravlev.mobile.social.databinding.FragmentChatsBinding;
 
+@ExperimentalPagingApi
 public class ChatFragment extends Fragment {
 
     private FragmentChatsBinding binding;
@@ -31,7 +33,8 @@ public class ChatFragment extends Fragment {
 
     public View onCreateView(@NonNull LayoutInflater inflater,
                              ViewGroup container, Bundle savedInstanceState) {
-        chatViewModel = new ViewModelProvider(this).get(ChatViewModel.class);
+        chatViewModel = new ViewModelProvider(this, new ChatViewModelFactory(this.getActivity()))
+                .get(ChatViewModel.class);
         binding = FragmentChatsBinding.inflate(inflater, container, false);
         View root = binding.getRoot();
 
@@ -75,7 +78,7 @@ public class ChatFragment extends Fragment {
         recyclerView.setLayoutManager(new LinearLayoutManager(getActivity(), LinearLayoutManager.VERTICAL, false));
         recyclerView.setAdapter(adapter);
 
-        chatViewModel.fetchChatPreviewsLiveData().observe(getActivity(), pagingData ->
+        chatViewModel.fetchChatPreviewModelLiveData().observe(getActivity(), pagingData ->
                 adapter.submitData(getLifecycle(), pagingData)
         );
 

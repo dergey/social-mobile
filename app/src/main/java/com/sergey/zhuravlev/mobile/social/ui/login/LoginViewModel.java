@@ -11,12 +11,11 @@ import com.google.common.util.concurrent.FutureCallback;
 import com.sergey.zhuravlev.mobile.social.data.LoginRepository;
 import com.sergey.zhuravlev.mobile.social.data.Result;
 import com.sergey.zhuravlev.mobile.social.R;
-import com.sergey.zhuravlev.mobile.social.dto.ErrorDto;
-import com.sergey.zhuravlev.mobile.social.dto.LoginResponseDto;
-import com.sergey.zhuravlev.mobile.social.dto.enums.ErrorCode;
+import com.sergey.zhuravlev.mobile.social.client.dto.ErrorDto;
+import com.sergey.zhuravlev.mobile.social.client.dto.LoginResponseDto;
+import com.sergey.zhuravlev.mobile.social.enums.ErrorCode;
 
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 
 public class LoginViewModel extends ViewModel {
 

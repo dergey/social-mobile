@@ -2,14 +2,12 @@ package com.sergey.zhuravlev.mobile.social.ui.chat;
 
 import android.content.Context;
 import android.content.Intent;
-import android.os.Parcelable;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.paging.PagingDataAdapter;
@@ -24,9 +22,11 @@ import com.bumptech.glide.request.RequestOptions;
 import com.sergey.zhuravlev.mobile.social.R;
 import com.sergey.zhuravlev.mobile.social.client.Client;
 import com.sergey.zhuravlev.mobile.social.constrain.IntentConstrains;
-import com.sergey.zhuravlev.mobile.social.dto.chat.ChatPreviewDto;
-import com.sergey.zhuravlev.mobile.social.dto.message.MessageDto;
-import com.sergey.zhuravlev.mobile.social.dto.message.TextMessageDto;
+import com.sergey.zhuravlev.mobile.social.client.dto.chat.ChatPreviewDto;
+import com.sergey.zhuravlev.mobile.social.client.dto.message.MessageDto;
+import com.sergey.zhuravlev.mobile.social.client.dto.message.TextMessageDto;
+import com.sergey.zhuravlev.mobile.social.database.model.ChatPreviewModel;
+import com.sergey.zhuravlev.mobile.social.database.model.MessageEmbeddable;
 import com.sergey.zhuravlev.mobile.social.ui.message.MessageActivity;
 
 import org.jetbrains.annotations.NotNull;
@@ -34,19 +34,14 @@ import org.jetbrains.annotations.NotNull;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
-import java.util.ArrayList;
 import java.util.Date;
 import java.util.Locale;
 import java.util.Objects;
 
-import retrofit2.Call;
-import retrofit2.Callback;
-import retrofit2.Response;
-
-public class ChatAdapter extends PagingDataAdapter<ChatPreviewDto, RecyclerView.ViewHolder> {
+public class ChatAdapter extends PagingDataAdapter<ChatPreviewModel, RecyclerView.ViewHolder> {
 
     private final Context context;
-    private final static DateTimeFormatter TIME_FORMATTER = DateTimeFormatter.ofPattern("HH:mm", Locale.getDefault());
+    private final static DateTimeFormatter TIME_FORMATTER = DateTimeFormatter.ofPattern("HH:mm", Locale.ENGLISH);
 
     public ChatAdapter(Context context) {
         super(new RepositoryComparator());
@@ -66,7 +61,7 @@ public class ChatAdapter extends PagingDataAdapter<ChatPreviewDto, RecyclerView.
 
     @Override
     public void onBindViewHolder(@NonNull @NotNull RecyclerView.ViewHolder holder, int position) {
-        ChatPreviewDto chatPreview = getItem(position);
+        ChatPreviewModel chatPreview = getItem(position);
         if (holder instanceof ChatViewHolder && chatPreview != null) {
             ((ChatViewHolder) holder).bind(chatPreview, context);
         }
@@ -74,7 +69,7 @@ public class ChatAdapter extends PagingDataAdapter<ChatPreviewDto, RecyclerView.
 
     static class ChatViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
 
-        private ChatPreviewDto item;
+        private ChatPreviewModel item;
 
         private final ImageView chatProfileAvatar;
         private final ImageView unreadMark;
@@ -99,40 +94,39 @@ public class ChatAdapter extends PagingDataAdapter<ChatPreviewDto, RecyclerView.
             return chatViewHolder;
         }
 
-        public ChatViewHolder bind(ChatPreviewDto item, Context context) {
+        public ChatViewHolder bind(ChatPreviewModel item, Context context) {
             this.item = item;
             chatTitle.setText(String.format("%s %s", item.getTargetProfile().getFirstName(), item.getTargetProfile().getSecondName()));
 
-            MessageDto lastMessage = item.getLastMessage();
-            if (lastMessage == null) {
-                return this;
+            MessageEmbeddable lastMessage = item.getLastMessage();
+            if (lastMessage != null) {
+                switch (lastMessage.getType()) {
+                    case TEXT:
+                    case SERVICE:
+                        chatLastMessageText.setText(lastMessage.getText());
+                        break;
+                    case IMAGE:
+                        chatLastMessageText.setText(R.string.holder_last_message_image);
+                        break;
+                    case STICKER:
+                        chatLastMessageText.setText(R.string.holder_last_message_sticker);
+                        break;
+                }
+                chatLastMessageDate.setText(lastMessage.getCreateAt().format(TIME_FORMATTER));
+                if (lastMessage.isRead()) {
+                    unreadMark.setImageResource(R.drawable.moon_new);
+                } else {
+                    unreadMark.setImageResource(R.drawable.moon_new_fill);
+                }
             }
-            switch (lastMessage.getType()) {
-                case TEXT:
-                case SERVICE:
-                    chatLastMessageText.setText(((TextMessageDto) lastMessage).getText());
-                    break;
-                case IMAGE:
-                    chatLastMessageText.setText(R.string.holder_last_message_image);
-                    break;
-                case STICKER:
-                    chatLastMessageText.setText(R.string.holder_last_message_sticker);
-                    break;
-            }
-            chatLastMessageDate.setText(convertToLocalDateTime(lastMessage.getCreateAt()).format(TIME_FORMATTER));
             String chatProfileAvatarUrl = String.format("%s/api/profile/%s/avatar", Client.getBaseUrl(), item.getTargetProfile().getUsername());
             GlideUrl glideUrl = new GlideUrl(chatProfileAvatarUrl,
                     new LazyHeaders.Builder()
                             .addHeader("Authorization", "Bearer " + Client.getBarrierToken())
                             .build());
+            //todo add an update when the Internet is connected
             Glide.with(context).load(glideUrl)
-                    .diskCacheStrategy(DiskCacheStrategy.NONE).skipMemoryCache(true)
                     .apply(RequestOptions.circleCropTransform()).into(chatProfileAvatar);
-            if (lastMessage.isRead()) {
-                unreadMark.setImageResource(R.drawable.moon_new);
-            } else {
-                unreadMark.setImageResource(R.drawable.moon_new_fill);
-            }
             return this;
         }
 
@@ -144,25 +138,17 @@ public class ChatAdapter extends PagingDataAdapter<ChatPreviewDto, RecyclerView.
         }
     }
 
-    static class RepositoryComparator extends DiffUtil.ItemCallback<ChatPreviewDto> {
+    static class RepositoryComparator extends DiffUtil.ItemCallback<ChatPreviewModel> {
 
         @Override
-        public boolean areItemsTheSame(@NonNull @NotNull ChatPreviewDto oldItem, @NonNull @NotNull ChatPreviewDto newItem) {
-            Log.i("REPO_COMPARATOR", String.format("%s compare with %s", oldItem.getId(), newItem.getId()));
+        public boolean areItemsTheSame(@NonNull @NotNull ChatPreviewModel oldItem, @NonNull @NotNull ChatPreviewModel newItem) {
             return Objects.equals(oldItem, newItem);
         }
 
         @Override
-        public boolean areContentsTheSame(@NonNull @NotNull ChatPreviewDto oldItem, @NonNull @NotNull ChatPreviewDto newItem) {
-            Log.i("REPO_COMPARATOR", String.format("%s compare with %s", oldItem.getId(), newItem.getId()));
+        public boolean areContentsTheSame(@NonNull @NotNull ChatPreviewModel oldItem, @NonNull @NotNull ChatPreviewModel newItem) {
             return Objects.equals(oldItem, newItem);
         }
-    }
-
-    private static LocalDateTime convertToLocalDateTime(Date dateToConvert) {
-        return dateToConvert.toInstant()
-                .atZone(ZoneId.of("GMT"))
-                .toLocalDateTime();
     }
 
 }

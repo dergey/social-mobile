@@ -1,8 +1,8 @@
 package com.sergey.zhuravlev.mobile.social.client.api;
 
 import com.google.common.util.concurrent.ListenableFuture;
-import com.sergey.zhuravlev.mobile.social.dto.PageDto;
-import com.sergey.zhuravlev.mobile.social.dto.message.MessageDto;
+import com.sergey.zhuravlev.mobile.social.client.dto.PageDto;
+import com.sergey.zhuravlev.mobile.social.client.dto.message.MessageDto;
 
 import retrofit2.http.GET;
 import retrofit2.http.Path;

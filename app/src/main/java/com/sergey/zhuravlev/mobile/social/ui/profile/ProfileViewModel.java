@@ -6,10 +6,8 @@ import androidx.lifecycle.ViewModelKt;
 import androidx.paging.PagingData;
 import androidx.paging.PagingLiveData;
 
-import com.sergey.zhuravlev.mobile.social.data.MessageRepository;
 import com.sergey.zhuravlev.mobile.social.data.ProfileRepository;
-import com.sergey.zhuravlev.mobile.social.dto.message.MessageDto;
-import com.sergey.zhuravlev.mobile.social.dto.profile.ProfileDto;
+import com.sergey.zhuravlev.mobile.social.client.dto.profile.ProfileDto;
 
 import kotlinx.coroutines.CoroutineScope;
 

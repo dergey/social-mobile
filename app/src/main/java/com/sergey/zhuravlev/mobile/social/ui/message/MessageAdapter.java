@@ -19,32 +19,28 @@ import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.bumptech.glide.load.model.GlideUrl;
 import com.bumptech.glide.load.model.LazyHeaders;
 import com.bumptech.glide.request.RequestOptions;
-import com.bumptech.glide.signature.ObjectKey;
 import com.sergey.zhuravlev.mobile.social.R;
 import com.sergey.zhuravlev.mobile.social.client.Client;
-import com.sergey.zhuravlev.mobile.social.dto.enums.MessageSenderType;
-import com.sergey.zhuravlev.mobile.social.dto.message.ImageMessageDto;
-import com.sergey.zhuravlev.mobile.social.dto.message.MessageDto;
-import com.sergey.zhuravlev.mobile.social.dto.message.TextMessageDto;
-import com.sergey.zhuravlev.mobile.social.util.GlideUtils;
+import com.sergey.zhuravlev.mobile.social.database.model.MessageModel;
+import com.sergey.zhuravlev.mobile.social.enums.MessageSenderType;
+import com.sergey.zhuravlev.mobile.social.client.dto.message.ImageMessageDto;
+import com.sergey.zhuravlev.mobile.social.client.dto.message.MessageDto;
+import com.sergey.zhuravlev.mobile.social.client.dto.message.TextMessageDto;
+import com.sergey.zhuravlev.mobile.social.enums.MessageType;
 
 import org.jetbrains.annotations.NotNull;
 
-import java.time.LocalDateTime;
-import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
-import java.util.Date;
 import java.util.Locale;
 import java.util.Objects;
-import java.util.UUID;
 
-public class MessageAdapter extends PagingDataAdapter<MessageDto, RecyclerView.ViewHolder> {
+public class MessageAdapter extends PagingDataAdapter<MessageModel, RecyclerView.ViewHolder> {
 
     private final static int VIEW_TYPE_TEXT = 0;
     private final static int VIEW_TYPE_IMAGE = 1;
 
     private final Context context;
-    private final static DateTimeFormatter TIME_FORMATTER = DateTimeFormatter.ofPattern("HH:mm", Locale.getDefault());
+    private final static DateTimeFormatter TIME_FORMATTER = DateTimeFormatter.ofPattern("HH:mm", Locale.ENGLISH);
 
     public MessageAdapter(Context context) {
         super(new RepositoryComparator());
@@ -57,11 +53,11 @@ public class MessageAdapter extends PagingDataAdapter<MessageDto, RecyclerView.V
 
     @Override
     public int getItemViewType(int position) {
-        MessageDto messageDto = getItem(position);
-        if (messageDto == null) {
+        MessageModel message = getItem(position);
+        if (message == null) {
             return 0;
         }
-        switch (messageDto.getType()) {
+        switch (message.getType()) {
             case TEXT:
                 return VIEW_TYPE_TEXT;
             case IMAGE:
@@ -87,11 +83,13 @@ public class MessageAdapter extends PagingDataAdapter<MessageDto, RecyclerView.V
 
     @Override
     public void onBindViewHolder(@NonNull @NotNull RecyclerView.ViewHolder holder, int position) {
-        MessageDto message = getItem(position);
-        if (holder instanceof MessageViewHolder && message != null) {
-            ((MessageViewHolder) holder).bind(message, context);
-        } else if (holder instanceof MessageImageViewHolder && message instanceof ImageMessageDto) {
-            ((MessageImageViewHolder) holder).bind((ImageMessageDto) message, context);
+        MessageModel message = getItem(position);
+        if (message != null) {
+            if (holder instanceof MessageViewHolder) {
+                ((MessageViewHolder) holder).bind(message, context);
+            } else if (holder instanceof MessageImageViewHolder) {
+                ((MessageImageViewHolder) holder).bind(message, context);
+            }
         }
     }
 
@@ -114,7 +112,7 @@ public class MessageAdapter extends PagingDataAdapter<MessageDto, RecyclerView.V
             return new MessageViewHolder(view);
         }
 
-        public MessageViewHolder bind(MessageDto item, Context context) {
+        public MessageViewHolder bind(MessageModel item, Context context) {
             ConstraintSet cs = new ConstraintSet();
             cs.clone(constraintLayout);
             if (item.getSender() == MessageSenderType.TARGET) {
@@ -126,7 +124,7 @@ public class MessageAdapter extends PagingDataAdapter<MessageDto, RecyclerView.V
             switch (item.getType()) {
                 case TEXT:
                 case SERVICE:
-                    messageText.setText(((TextMessageDto) item).getText());
+                    messageText.setText(item.getText());
                     break;
                 case IMAGE:
                     messageText.setText(R.string.holder_last_message_image);
@@ -135,13 +133,7 @@ public class MessageAdapter extends PagingDataAdapter<MessageDto, RecyclerView.V
                     messageText.setText(R.string.holder_last_message_sticker);
                     break;
             }
-            messageDate.setText(convertToLocalDateTime(item.getCreateAt()).format(TIME_FORMATTER));
-//            String chatProfileAvatarUrl = String.format("%s/api/profile/%s/avatar", Client.getBaseUrl(), item.getTargetProfile().getUsername());
-//            GlideUrl glideUrl = new GlideUrl(chatProfileAvatarUrl,
-//                    new LazyHeaders.Builder()
-//                            .addHeader("Authorization", "Bearer " + Client.getBarrierToken())
-//                            .build());
-            //Glide.with(context).load(glideUrl).apply(RequestOptions.circleCropTransform()).into(chatProfileAvatar);
+            messageDate.setText(item.getCreateAt().format(TIME_FORMATTER));
             return this;
         }
     }
@@ -165,7 +157,7 @@ public class MessageAdapter extends PagingDataAdapter<MessageDto, RecyclerView.V
             return new MessageImageViewHolder(view);
         }
 
-        public MessageImageViewHolder bind(ImageMessageDto item, Context context) {
+        public MessageImageViewHolder bind(MessageModel item, Context context) {
             ConstraintSet cs = new ConstraintSet();
             cs.clone(constraintLayout);
             if (item.getSender() == MessageSenderType.TARGET) {
@@ -175,7 +167,7 @@ public class MessageAdapter extends PagingDataAdapter<MessageDto, RecyclerView.V
             }
             cs.applyTo(constraintLayout);
 
-            messageDate.setText(convertToLocalDateTime(item.getCreateAt()).format(TIME_FORMATTER));
+            messageDate.setText(item.getCreateAt().format(TIME_FORMATTER));
 
             String messageImageUrl = String.format("%s/api/chat/%s/message/%s/image_preview",
                     Client.getBaseUrl(),
@@ -192,23 +184,17 @@ public class MessageAdapter extends PagingDataAdapter<MessageDto, RecyclerView.V
         }
     }
 
-    static class RepositoryComparator extends DiffUtil.ItemCallback<MessageDto> {
+    static class RepositoryComparator extends DiffUtil.ItemCallback<MessageModel> {
 
         @Override
-        public boolean areItemsTheSame(@NonNull @NotNull MessageDto oldItem, @NonNull @NotNull MessageDto newItem) {
+        public boolean areItemsTheSame(@NonNull @NotNull MessageModel oldItem, @NonNull @NotNull MessageModel newItem) {
             return Objects.equals(oldItem, newItem);
         }
 
         @Override
-        public boolean areContentsTheSame(@NonNull @NotNull MessageDto oldItem, @NonNull @NotNull MessageDto newItem) {
+        public boolean areContentsTheSame(@NonNull @NotNull MessageModel oldItem, @NonNull @NotNull MessageModel newItem) {
             return Objects.equals(oldItem, newItem);
         }
-    }
-
-    private static LocalDateTime convertToLocalDateTime(Date dateToConvert) {
-        return dateToConvert.toInstant()
-                .atZone(ZoneId.of("GMT"))
-                .toLocalDateTime();
     }
 
 }
