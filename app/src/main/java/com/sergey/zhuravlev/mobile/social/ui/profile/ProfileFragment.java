@@ -1,5 +1,6 @@
 package com.sergey.zhuravlev.mobile.social.ui.profile;
 
+import android.content.Context;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -16,24 +17,25 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.bumptech.glide.Glide;
-import com.bumptech.glide.load.Key;
 import com.bumptech.glide.load.model.GlideUrl;
 import com.bumptech.glide.load.model.LazyHeaders;
 import com.bumptech.glide.request.RequestOptions;
-import com.bumptech.glide.signature.MediaStoreSignature;
-import com.bumptech.glide.signature.ObjectKey;
 import com.sergey.zhuravlev.mobile.social.client.Client;
+import com.sergey.zhuravlev.mobile.social.constrain.ActivityCodes;
 import com.sergey.zhuravlev.mobile.social.databinding.FragmentProfileBinding;
+import com.sergey.zhuravlev.mobile.social.enums.ErrorCode;
 import com.sergey.zhuravlev.mobile.social.ui.common.ProfilesHorizontalListAdapter;
 import com.sergey.zhuravlev.mobile.social.ui.profile.result.GetCurrentProfileResult;
+import com.sergey.zhuravlev.mobile.social.util.FragmentCallable;
 import com.sergey.zhuravlev.mobile.social.util.GlideUtils;
 
-import java.time.ZoneId;
 import java.util.Objects;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 public class ProfileFragment extends Fragment {
+
+    private FragmentCallable activityCallback;
 
     private FragmentProfileBinding binding;
     private ProfileFragmentViewModel profileFragmentViewModel;
@@ -68,11 +70,11 @@ public class ProfileFragment extends Fragment {
                     return;
                 }
 
-//                if (currentProfileResult.getErrorMessage() != null) {
-//                    showFailed(loginResult.getErrorMessage());
-//                }
-
                 if (currentProfileResult.isHasErrors()) {
+                    if (currentProfileResult.getErrorDto() != null && Objects.equals(
+                            currentProfileResult.getErrorDto().getCode(), ErrorCode.UNAUTHORIZED)) {
+                            activityCallback.onFragmentEvent(ActivityCodes.TOKEN_EXPIRED_CODE);
+                    }
                     return;
                 }
 
@@ -99,6 +101,13 @@ public class ProfileFragment extends Fragment {
 
         return root;
     }
+
+    @Override
+    public void onAttach(@NonNull Context context) {
+        super.onAttach(context);
+        activityCallback = (FragmentCallable) context;
+    }
+
 
     @Override
     public void onDestroyView() {
