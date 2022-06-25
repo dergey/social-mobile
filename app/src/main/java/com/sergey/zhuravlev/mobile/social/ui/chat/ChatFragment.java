@@ -1,6 +1,8 @@
 package com.sergey.zhuravlev.mobile.social.ui.chat;
 
+import android.content.Context;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -14,13 +16,22 @@ import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.paging.ExperimentalPagingApi;
 import androidx.paging.LoadState;
+import androidx.paging.RemoteMediator;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.sergey.zhuravlev.mobile.social.client.Client;
+import com.sergey.zhuravlev.mobile.social.constrain.ActivityCodes;
 import com.sergey.zhuravlev.mobile.social.databinding.FragmentChatsBinding;
+import com.sergey.zhuravlev.mobile.social.enums.ErrorCode;
+import com.sergey.zhuravlev.mobile.social.util.FragmentCallable;
+
+import java.util.Objects;
 
 @ExperimentalPagingApi
 public class ChatFragment extends Fragment {
+
+    private FragmentCallable activityCallback;
 
     private FragmentChatsBinding binding;
     private ChatViewModel chatViewModel;
@@ -49,15 +60,20 @@ public class ChatFragment extends Fragment {
                     && adapter.getItemCount() == 0 ?
                     View.VISIBLE : View.GONE);
             if (combinedLoadStates.getRefresh() instanceof LoadState.Error) {
-                errorLayout.setVisibility(View.VISIBLE);
-                TranslateAnimation animate = new TranslateAnimation(
-                        0,
-                        0,
-                        0,
-                        errorLayout.getHeight());
-                animate.setDuration(200);
-                animate.setFillAfter(true);
-                errorLayout.startAnimation(animate);
+                ErrorCode errorCode = Client.exceptionHandling(((LoadState.Error) combinedLoadStates.getRefresh()).getError());
+                if (Objects.equals(errorCode, ErrorCode.UNAUTHORIZED)) {
+                    activityCallback.onFragmentEvent(ActivityCodes.TOKEN_EXPIRED_CODE);
+                } else {
+                    errorLayout.setVisibility(View.VISIBLE);
+                    TranslateAnimation animate = new TranslateAnimation(
+                            0,
+                            0,
+                            0,
+                            errorLayout.getHeight());
+                    animate.setDuration(200);
+                    animate.setFillAfter(true);
+                    errorLayout.startAnimation(animate);
+                }
             }
             return null;
         });
@@ -83,6 +99,12 @@ public class ChatFragment extends Fragment {
         );
 
         return root;
+    }
+
+    @Override
+    public void onAttach(@NonNull Context context) {
+        super.onAttach(context);
+        activityCallback = (FragmentCallable) context;
     }
 
     @Override

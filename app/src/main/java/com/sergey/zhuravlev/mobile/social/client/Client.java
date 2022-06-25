@@ -1,11 +1,15 @@
 package com.sergey.zhuravlev.mobile.social.client;
 
+import android.util.Log;
+
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import com.sergey.zhuravlev.mobile.social.client.api.ChatEndpoints;
 import com.sergey.zhuravlev.mobile.social.client.api.LoginEndpoints;
 import com.sergey.zhuravlev.mobile.social.client.api.MessageEndpoints;
 import com.sergey.zhuravlev.mobile.social.client.api.ProfileEndpoints;
+import com.sergey.zhuravlev.mobile.social.client.dto.ErrorDto;
+import com.sergey.zhuravlev.mobile.social.enums.ErrorCode;
 
 import org.jetbrains.annotations.NotNull;
 
@@ -15,6 +19,7 @@ import okhttp3.Interceptor;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
 import okhttp3.Response;
+import retrofit2.HttpException;
 import retrofit2.Retrofit;
 import retrofit2.adapter.guava.GuavaCallAdapterFactory;
 import retrofit2.converter.jackson.JacksonConverterFactory;
@@ -59,6 +64,21 @@ public class Client {
 
     public static void setBarrierToken(String barrierToken) {
         Client.barrierToken = barrierToken;
+    }
+
+    public static ErrorCode exceptionHandling(Throwable ex) {
+        if (ex instanceof HttpException) {
+            retrofit2.Response<?> response = ((HttpException) ex).response();
+            try {
+                if (response != null && response.errorBody() != null) {
+                    ErrorDto errorDto = objectMapper.readValue(response.errorBody().byteStream(), ErrorDto.class);
+                    return errorDto.getCode();
+                }
+            } catch (IOException e) {
+                Log.e("CLIENT", "Unable to parse error from server:", e);
+            }
+        }
+        return null;
     }
 
     public static String getBaseUrl() {

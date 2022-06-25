@@ -17,11 +17,12 @@ import androidx.navigation.ui.NavigationUI;
 import com.sergey.zhuravlev.mobile.social.client.Client;
 import com.sergey.zhuravlev.mobile.social.constrain.IntentConstrains;
 import com.sergey.zhuravlev.mobile.social.constrain.Preferences;
-import com.sergey.zhuravlev.mobile.social.constrain.RequestActivityCodes;
+import com.sergey.zhuravlev.mobile.social.constrain.ActivityCodes;
 import com.sergey.zhuravlev.mobile.social.databinding.ActivityMainBinding;
 import com.sergey.zhuravlev.mobile.social.ui.login.LoginActivity;
+import com.sergey.zhuravlev.mobile.social.util.FragmentCallable;
 
-public class MainActivity extends AppCompatActivity {
+public class MainActivity extends AppCompatActivity implements FragmentCallable {
 
     private ActivityMainBinding binding;
     private boolean isLogin;
@@ -37,7 +38,7 @@ public class MainActivity extends AppCompatActivity {
         loadPreferences();
         if (!isLogin) {
             Intent intent = new Intent(MainActivity.this, LoginActivity.class);
-            startActivityForResult(intent, RequestActivityCodes.LOGIN_REQUEST);
+            startActivityForResult(intent, ActivityCodes.LOGIN_REQUEST);
         }
 
         BottomNavigationView navView = findViewById(R.id.nav_view);
@@ -55,11 +56,21 @@ public class MainActivity extends AppCompatActivity {
     protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
         switch (requestCode) {
-            case RequestActivityCodes.LOGIN_REQUEST:
+            case ActivityCodes.LOGIN_REQUEST:
                 String token = data.getStringExtra(IntentConstrains.EXTRA_TOKEN);
                 Client.setBarrierToken(token);
                 savePreferences(token);
                 break;
+        }
+    }
+
+    @Override
+    public void onFragmentEvent(int eventCode) {
+        switch (eventCode) {
+            case ActivityCodes.TOKEN_EXPIRED_CODE:
+                Client.setBarrierToken(null);
+                isLogin = false;
+                invalidatePreferences();
         }
     }
 
@@ -79,6 +90,14 @@ public class MainActivity extends AppCompatActivity {
                 Context.MODE_PRIVATE);
         SharedPreferences.Editor editor = settings.edit();
         editor.putString(Preferences.PREF_TOKEN, token);
+        editor.apply();
+    }
+
+    private void invalidatePreferences() {
+        SharedPreferences settings = getSharedPreferences(Preferences.PREF_TOKEN,
+                Context.MODE_PRIVATE);
+        SharedPreferences.Editor editor = settings.edit();
+        editor.remove(Preferences.PREF_TOKEN);
         editor.apply();
     }
 
