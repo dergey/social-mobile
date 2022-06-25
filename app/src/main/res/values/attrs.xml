@@ -3,4 +3,12 @@
     <!-- Other values-->
     <attr name="backgroundErrorLayoutColor" format="reference" />
     <attr name="textErrorLayoutColor" format="reference" />
+    <attr name="linkTextViewColor" format="reference" />
+    <attr name="headerTextViewColor" format="reference" />
+    <attr name="hintTextViewColor" format="reference" />
+    <attr name="borderEditTextColor" format="reference" />
+    <attr name="borderFocusedEditTextColor" format="reference" />
+    <attr name="buttonTextColor" format="reference" />
+    <attr name="backgroundButtonColor" format="reference" />
+    <attr name="backgroundPressedButtonColor" format="reference" />
 </resources>
