@@ -30,4 +30,8 @@
         <item name="android:textSize">10sp</item>
         <item name="android:textStyle">italic</item>
     </style>
+
+    <style name="TextLabel" parent="Widget.MaterialComponents.TextInputLayout.FilledBox">
+        <item name="android:textSize">18sp</item>
+    </style>
 </resources>

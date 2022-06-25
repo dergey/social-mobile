@@ -1,0 +1,208 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".ui.profile.ProfileSettingActivity">
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:paddingBottom="16dp" >
+
+        <EditText
+            android:id="@+id/birthday_edit_text"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="24dp"
+            android:layout_marginTop="8dp"
+            android:layout_marginEnd="24dp"
+            android:background="@drawable/text_edit_background"
+            android:ems="10"
+            android:inputType="date"
+            android:paddingStart="20dp"
+            android:paddingTop="14dp"
+            android:paddingEnd="20dp"
+            android:paddingBottom="14dp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.0"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/birthday_text_view" />
+
+        <TextView
+            android:id="@+id/birthday_text_view"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="16dp"
+            android:text="Birthday"
+            android:textSize="18sp"
+            app:layout_constraintStart_toStartOf="@+id/birthday_edit_text"
+            app:layout_constraintTop_toBottomOf="@+id/username_edit_text_layout" />
+
+        <com.google.android.material.textfield.TextInputLayout
+            android:id="@+id/username_edit_text_layout"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="24dp"
+            android:layout_marginTop="8dp"
+            android:layout_marginEnd="24dp"
+            android:theme="@style/TextLabel"
+            app:hintEnabled="false"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.0"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/username_text_view"
+            app:prefixText="\@"
+            app:prefixTextColor="@color/hint_color">
+
+            <com.google.android.material.textfield.TextInputEditText
+                android:id="@+id/username_edit_text"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:background="@drawable/text_edit_background"
+                android:inputType="text"
+                android:paddingStart="20dp"
+                android:paddingTop="14dp"
+                android:paddingEnd="20dp"
+                android:paddingBottom="14dp" />
+
+        </com.google.android.material.textfield.TextInputLayout>
+
+        <TextView
+            android:id="@+id/username_text_view"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="16dp"
+            android:text="User name"
+            android:textSize="18sp"
+            app:layout_constraintStart_toStartOf="@+id/username_edit_text_layout"
+            app:layout_constraintTop_toBottomOf="@+id/additional_name_edit_text" />
+
+        <EditText
+            android:id="@+id/additional_name_edit_text"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="24dp"
+            android:layout_marginTop="8dp"
+            android:layout_marginEnd="24dp"
+            android:background="@drawable/text_edit_background"
+            android:ems="10"
+            android:inputType="textCapWords"
+            android:paddingStart="20dp"
+            android:paddingTop="14dp"
+            android:paddingEnd="20dp"
+            android:paddingBottom="14dp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.0"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/additional_name_text_view" />
+
+        <TextView
+            android:id="@+id/additional_name_text_view"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="16dp"
+            android:text="Additional name"
+            android:textSize="18sp"
+            app:layout_constraintStart_toStartOf="@+id/additional_name_edit_text"
+            app:layout_constraintTop_toBottomOf="@+id/last_name_edit_text" />
+
+        <EditText
+            android:id="@+id/last_name_edit_text"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="24dp"
+            android:layout_marginTop="8dp"
+            android:layout_marginEnd="24dp"
+            android:background="@drawable/text_edit_background"
+            android:ems="10"
+            android:inputType="textCapWords"
+            android:paddingStart="20dp"
+            android:paddingTop="14dp"
+            android:paddingEnd="20dp"
+            android:paddingBottom="14dp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/last_name_text_view" />
+
+        <TextView
+            android:id="@+id/last_name_text_view"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="16dp"
+            android:text="Last name"
+            android:textSize="18sp"
+            app:layout_constraintStart_toStartOf="@+id/last_name_edit_text"
+            app:layout_constraintTop_toBottomOf="@+id/first_name_edit_text" />
+
+        <Button
+            android:id="@+id/save_button"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="24dp"
+            android:layout_marginTop="32dp"
+            android:layout_marginEnd="24dp"
+            android:background="@drawable/button_background"
+            android:fontFamily="sans-serif-medium"
+            android:insetTop="0dp"
+            android:insetBottom="0dp"
+            android:letterSpacing="0.0"
+            android:paddingTop="14dp"
+            android:paddingBottom="14dp"
+            android:text="Save"
+            android:textAllCaps="false"
+            android:textColor="?attr/buttonTextColor"
+            android:textSize="18sp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.0"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/birthday_edit_text" />
+
+        <TextView
+            android:id="@+id/account_settings_text_view"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="24dp"
+            android:fontFamily="@font/inter_bold"
+            android:text="Account Settings"
+            android:textColor="?attr/headerTextViewColor"
+            android:textSize="24sp"
+            android:typeface="normal"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            tools:text="Account Settings" />
+
+        <TextView
+            android:id="@+id/first_name_text_view"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="24dp"
+            android:text="First name"
+            android:textSize="18sp"
+            app:layout_constraintStart_toStartOf="@+id/first_name_edit_text"
+            app:layout_constraintTop_toBottomOf="@+id/account_settings_text_view" />
+
+        <EditText
+            android:id="@+id/first_name_edit_text"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="24dp"
+            android:layout_marginTop="8dp"
+            android:layout_marginEnd="24dp"
+            android:background="@drawable/text_edit_background"
+            android:ems="10"
+            android:inputType="textCapWords"
+            android:paddingStart="20dp"
+            android:paddingTop="14dp"
+            android:paddingEnd="20dp"
+            android:paddingBottom="14dp"
+            app:layout_constraintEnd_toEndOf="parent"
+
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/first_name_text_view" />
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+</ScrollView>
