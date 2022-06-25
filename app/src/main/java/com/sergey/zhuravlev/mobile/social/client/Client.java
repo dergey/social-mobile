@@ -35,7 +35,7 @@ public class Client {
         }
     }
 
-    private static final String BASE_URL = "http://192.168.31.24:8080";
+    private static final String BASE_URL = "https://social.xpolr.space";
     private static final OkHttpClient client = new OkHttpClient.Builder()
             .addInterceptor(new BearerTokenInterceptor())
             .followRedirects(false)
