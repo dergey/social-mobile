@@ -19,10 +19,14 @@ import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.bumptech.glide.load.model.GlideUrl;
 import com.bumptech.glide.load.model.LazyHeaders;
 import com.bumptech.glide.request.RequestOptions;
+import com.google.common.collect.Iterables;
 import com.sergey.zhuravlev.mobile.social.R;
 import com.sergey.zhuravlev.mobile.social.client.Client;
+import com.sergey.zhuravlev.mobile.social.client.dto.message.MessageDto;
+import com.sergey.zhuravlev.mobile.social.client.mapper.MessageModelMapper;
 import com.sergey.zhuravlev.mobile.social.database.model.MessageModel;
 import com.sergey.zhuravlev.mobile.social.enums.MessageSenderType;
+import com.sergey.zhuravlev.mobile.social.ui.common.Item;
 
 import org.jetbrains.annotations.NotNull;
 
@@ -49,6 +53,11 @@ public class MessageAdapter extends PagingDataAdapter<Item<MessageModel>, Recycl
 
     public Context getContext() {
         return context;
+    }
+
+    public void addNewMessage(MessageModel messageModel) {
+        this.snapshot().add(new Item.RepoItem<>(messageModel));
+        notifyItemInserted(this.snapshot().size() - 1);
     }
 
     @Override

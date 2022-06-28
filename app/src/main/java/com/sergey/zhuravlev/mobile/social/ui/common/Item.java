@@ -1,4 +1,4 @@
-package com.sergey.zhuravlev.mobile.social.ui.message;
+package com.sergey.zhuravlev.mobile.social.ui.common;
 
 import java.time.LocalDate;
 

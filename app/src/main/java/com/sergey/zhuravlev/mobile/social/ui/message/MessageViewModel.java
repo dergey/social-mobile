@@ -1,8 +1,10 @@
 package com.sergey.zhuravlev.mobile.social.ui.message;
 
 import android.content.Context;
+import android.net.Uri;
 
 import androidx.lifecycle.LiveData;
+import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.Transformations;
 import androidx.lifecycle.ViewModel;
 import androidx.lifecycle.ViewModelKt;
@@ -11,10 +13,12 @@ import androidx.paging.PagingData;
 import androidx.paging.PagingDataTransforms;
 import androidx.paging.PagingLiveData;
 
-import com.sergey.zhuravlev.mobile.social.data.MessageRepository;
 import com.sergey.zhuravlev.mobile.social.client.dto.message.MessageDto;
-import com.sergey.zhuravlev.mobile.social.database.model.ChatPreviewModel;
+import com.sergey.zhuravlev.mobile.social.data.MessageRepository;
 import com.sergey.zhuravlev.mobile.social.database.model.MessageModel;
+import com.sergey.zhuravlev.mobile.social.ui.common.LiveDataFutureCallback;
+import com.sergey.zhuravlev.mobile.social.ui.common.UiResult;
+import com.sergey.zhuravlev.mobile.social.ui.common.Item;
 
 import java.time.LocalDate;
 import java.util.Objects;
@@ -26,12 +30,23 @@ import kotlinx.coroutines.CoroutineScope;
 @ExperimentalPagingApi
 public class MessageViewModel extends ViewModel {
 
+    private final MutableLiveData<UiResult<MessageDto>> createMessageResult = new MutableLiveData<>();
+    private final MutableLiveData<UiResult<Void>> deleteMessageResult = new MutableLiveData<>();
+
     private final MessageRepository messageRepository;
     private final Executor executor;
 
-    public MessageViewModel(Context context) {
+    MessageViewModel(Context context) {
         this.messageRepository = MessageRepository.getInstance(context);
         this.executor = Executors.newSingleThreadExecutor();
+    }
+
+    public LiveData<UiResult<MessageDto>> getCreateMessageResult() {
+        return createMessageResult;
+    }
+
+    public LiveData<UiResult<Void>> getDeleteMessageResult() {
+        return deleteMessageResult;
     }
 
     public LiveData<PagingData<Item<MessageModel>>> fetchChatMessageModelLiveData(Long chatId) {
@@ -62,6 +77,22 @@ public class MessageViewModel extends ViewModel {
         );
         CoroutineScope viewModelScope = ViewModelKt.getViewModelScope(this);
         return PagingLiveData.cachedIn(liveData, viewModelScope);
+    }
+
+    public void createTextMessage(Long chatId, String text) {
+        messageRepository.createTextMessage(chatId, text, new LiveDataFutureCallback<>(createMessageResult));
+    }
+
+    public void createImageMessage(Long chatId, final Uri filePath) {
+        messageRepository.createImageMessage(chatId, filePath, new LiveDataFutureCallback<>(createMessageResult));
+    }
+
+    public void createStickerMessage(Long chatId, Long stickerId) {
+        messageRepository.createStickerMessage(chatId, stickerId, new LiveDataFutureCallback<>(createMessageResult));
+    }
+
+    public void deleteMessage(Long chatId, Long messageId) {
+        messageRepository.deleteMessage(chatId, messageId, new LiveDataFutureCallback<>(deleteMessageResult));
     }
 
 }

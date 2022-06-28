@@ -7,6 +7,10 @@ public class CreateTextMessageDto extends CreateMessageDto {
     public CreateTextMessageDto() {
     }
 
+    public CreateTextMessageDto(String text) {
+        this.text = text;
+    }
+
     public String getText() {
         return text;
     }

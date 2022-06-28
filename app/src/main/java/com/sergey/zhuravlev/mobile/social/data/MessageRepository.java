@@ -1,6 +1,7 @@
 package com.sergey.zhuravlev.mobile.social.data;
 
 import android.content.Context;
+import android.net.Uri;
 
 import androidx.lifecycle.LiveData;
 import androidx.paging.ExperimentalPagingApi;
@@ -9,8 +10,12 @@ import androidx.paging.PagingConfig;
 import androidx.paging.PagingData;
 import androidx.paging.PagingLiveData;
 
+import com.google.common.util.concurrent.FutureCallback;
+import com.google.common.util.concurrent.Futures;
 import com.sergey.zhuravlev.mobile.social.client.Client;
 import com.sergey.zhuravlev.mobile.social.client.api.MessageEndpoints;
+import com.sergey.zhuravlev.mobile.social.client.dto.ErrorDto;
+import com.sergey.zhuravlev.mobile.social.client.dto.LoginResponseDto;
 import com.sergey.zhuravlev.mobile.social.client.dto.message.MessageDto;
 import com.sergey.zhuravlev.mobile.social.database.AppDatabase;
 import com.sergey.zhuravlev.mobile.social.database.dao.ChatPreviewModelDao;
@@ -33,12 +38,14 @@ public class MessageRepository {
     private final AppDatabase database;
     private final MessageEndpoints messageEndpoints;
     private final MessageModelDao messageModelDao;
+    private final MessageDataSource dataSource;
 
     private MessageRepository(Context context) {
         this.messageEndpoints = Client.getMessageEndpoints();
         this.executor = Executors.newSingleThreadExecutor();
         this.database = AppDatabase.getInstance(context);
         this.messageModelDao = database.getMessageModelDao();
+        this.dataSource = new MessageDataSource(messageEndpoints, executor, context);
     }
 
     public static MessageRepository getInstance(Context context) {
@@ -55,6 +62,22 @@ public class MessageRepository {
                 new MessageRemoteMediator(messageEndpoints, database, chatId, DEFAULT_PAGE_SIZE, executor),
                 () -> messageModelDao.getAllMessageModel(chatId));
         return PagingLiveData.getLiveData(pager);
+    }
+
+    public void createTextMessage(Long chatId, String text, FutureCallback<Result<MessageDto, ErrorDto>> callback) {
+        Futures.addCallback(dataSource.createTextMessage(chatId, text), callback, executor);
+    }
+
+    public void createImageMessage(Long chatId, final Uri filePath, FutureCallback<Result<MessageDto, ErrorDto>> callback) {
+        Futures.addCallback(dataSource.createImageMessage(chatId, filePath), callback, executor);
+    }
+
+    public void createStickerMessage(Long chatId, Long stickerId, FutureCallback<Result<MessageDto, ErrorDto>> callback) {
+        Futures.addCallback(dataSource.createStickerMessage(chatId, stickerId), callback, executor);
+    }
+
+    public void deleteMessage(Long chatId, Long messageId, FutureCallback<Result<Void, ErrorDto>> callback) {
+        Futures.addCallback(dataSource.deleteMessage(chatId, messageId), callback, executor);
     }
 
     public PagingConfig getDefaultPageConfig() {
