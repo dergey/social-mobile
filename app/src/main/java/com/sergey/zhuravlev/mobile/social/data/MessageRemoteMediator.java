@@ -88,7 +88,7 @@ public class MessageRemoteMediator extends ListenableFutureRemoteMediator<Intege
                         messageModelDao.insertAll(toPageableModels(response, chatId));
                     });
 
-                    return new MediatorResult.Success(response.getHasNext());
+                    return new MediatorResult.Success(!response.getHasNext());
                 }, executor);
 
         ListenableFuture<MediatorResult> ioCatchingNetworkResult =
