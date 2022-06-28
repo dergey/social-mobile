@@ -113,8 +113,8 @@ public class MessageAdapter extends PagingDataAdapter<Item<MessageModel>, Recycl
         public MessageViewHolder(@NonNull @NotNull View itemView) {
             super(itemView);
             constraintLayout = (ConstraintLayout) itemView.getRootView();
-            messageText = itemView.findViewById(R.id.messageText);
-            messageDate = itemView.findViewById(R.id.messageDate);
+            messageText = itemView.findViewById(R.id.message_text_view);
+            messageDate = itemView.findViewById(R.id.message_date_text_view);
         }
 
         public static MessageViewHolder getInstance(ViewGroup parent) {
@@ -127,9 +127,9 @@ public class MessageAdapter extends PagingDataAdapter<Item<MessageModel>, Recycl
             ConstraintSet cs = new ConstraintSet();
             cs.clone(constraintLayout);
             if (item.getSender() == MessageSenderType.TARGET) {
-                cs.setHorizontalBias(R.id.cardView, 0f);
+                cs.setHorizontalBias(R.id.card_view, 0f);
             } else {
-                cs.setHorizontalBias(R.id.cardView, 100f);
+                cs.setHorizontalBias(R.id.card_view, 100f);
             }
             cs.applyTo(constraintLayout);
             switch (item.getType()) {
@@ -158,8 +158,8 @@ public class MessageAdapter extends PagingDataAdapter<Item<MessageModel>, Recycl
         public MessageImageViewHolder(@NonNull @NotNull View itemView) {
             super(itemView);
             constraintLayout = (ConstraintLayout) itemView.getRootView();
-            messageImage = itemView.findViewById(R.id.messageImage);
-            messageDate = itemView.findViewById(R.id.messageDate);
+            messageImage = itemView.findViewById(R.id.message_image_view);
+            messageDate = itemView.findViewById(R.id.message_date_text_view);
         }
 
         public static MessageImageViewHolder getInstance(ViewGroup parent) {
@@ -172,9 +172,9 @@ public class MessageAdapter extends PagingDataAdapter<Item<MessageModel>, Recycl
             ConstraintSet cs = new ConstraintSet();
             cs.clone(constraintLayout);
             if (item.getSender() == MessageSenderType.TARGET) {
-                cs.setHorizontalBias(R.id.cardView, 0f);
+                cs.setHorizontalBias(R.id.card_view, 0f);
             } else {
-                cs.setHorizontalBias(R.id.cardView, 100f);
+                cs.setHorizontalBias(R.id.card_view, 100f);
             }
             cs.applyTo(constraintLayout);
 
