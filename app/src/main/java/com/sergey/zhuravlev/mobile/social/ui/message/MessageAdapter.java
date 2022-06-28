@@ -23,23 +23,23 @@ import com.sergey.zhuravlev.mobile.social.R;
 import com.sergey.zhuravlev.mobile.social.client.Client;
 import com.sergey.zhuravlev.mobile.social.database.model.MessageModel;
 import com.sergey.zhuravlev.mobile.social.enums.MessageSenderType;
-import com.sergey.zhuravlev.mobile.social.client.dto.message.ImageMessageDto;
-import com.sergey.zhuravlev.mobile.social.client.dto.message.MessageDto;
-import com.sergey.zhuravlev.mobile.social.client.dto.message.TextMessageDto;
-import com.sergey.zhuravlev.mobile.social.enums.MessageType;
 
 import org.jetbrains.annotations.NotNull;
 
+import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.Locale;
 import java.util.Objects;
 
-public class MessageAdapter extends PagingDataAdapter<MessageModel, RecyclerView.ViewHolder> {
+public class MessageAdapter extends PagingDataAdapter<Item<MessageModel>, RecyclerView.ViewHolder> {
 
     private final static int VIEW_TYPE_TEXT = 0;
     private final static int VIEW_TYPE_IMAGE = 1;
+    private final static int VIEW_TYPE_SEPARATOR = 100;
+    private final static int VIEW_TYPE_PLACEHOLDER = 200;
 
     private final Context context;
+    private final static DateTimeFormatter DATE_FORMATTER = DateTimeFormatter.ofPattern("MMMM dd, yyyy", Locale.ENGLISH);
     private final static DateTimeFormatter TIME_FORMATTER = DateTimeFormatter.ofPattern("HH:mm", Locale.ENGLISH);
 
     public MessageAdapter(Context context) {
@@ -53,17 +53,23 @@ public class MessageAdapter extends PagingDataAdapter<MessageModel, RecyclerView
 
     @Override
     public int getItemViewType(int position) {
-        MessageModel message = getItem(position);
-        if (message == null) {
-            return 0;
+        Item<MessageModel> messageItem = peek(position);
+        if (messageItem == null) {
+            return VIEW_TYPE_PLACEHOLDER;
         }
-        switch (message.getType()) {
-            case TEXT:
-                return VIEW_TYPE_TEXT;
-            case IMAGE:
-                return VIEW_TYPE_IMAGE;
-            default:
-                return 0;
+        if (messageItem instanceof Item.RepoItem) {
+            switch (((Item.RepoItem<MessageModel>) messageItem).getModel().getType()) {
+                case TEXT:
+                    return VIEW_TYPE_TEXT;
+                case IMAGE:
+                    return VIEW_TYPE_IMAGE;
+                default:
+                    throw new IllegalArgumentException(String.format("Data on position %s isn't supported", position));
+            }
+        } else if (messageItem instanceof Item.DateSeparatorItem) {
+            return VIEW_TYPE_SEPARATOR;
+        } else {
+            throw new IllegalArgumentException(String.format("Item on position %s isn't supported", position));
         }
     }
 
@@ -76,6 +82,8 @@ public class MessageAdapter extends PagingDataAdapter<MessageModel, RecyclerView
                 return MessageViewHolder.getInstance(parent);
             case VIEW_TYPE_IMAGE:
                 return MessageImageViewHolder.getInstance(parent);
+            case VIEW_TYPE_SEPARATOR:
+                return SeparatorViewHolder.getInstance(parent);
             default:
                 throw new IllegalArgumentException("ViewType: " + viewType);
         }
@@ -83,14 +91,17 @@ public class MessageAdapter extends PagingDataAdapter<MessageModel, RecyclerView
 
     @Override
     public void onBindViewHolder(@NonNull @NotNull RecyclerView.ViewHolder holder, int position) {
-        MessageModel message = getItem(position);
-        if (message != null) {
-            if (holder instanceof MessageViewHolder) {
-                ((MessageViewHolder) holder).bind(message, context);
-            } else if (holder instanceof MessageImageViewHolder) {
-                ((MessageImageViewHolder) holder).bind(message, context);
-            }
+        if (holder instanceof MessageViewHolder) {
+            Item.RepoItem<MessageModel> messageItem = (Item.RepoItem<MessageModel>) getItem(position);
+            ((MessageViewHolder) holder).bind(messageItem.getModel(), context);
+        } else if (holder instanceof MessageImageViewHolder) {
+            Item.RepoItem<MessageModel> messageItem = (Item.RepoItem<MessageModel>) getItem(position);
+            ((MessageImageViewHolder) holder).bind(messageItem.getModel(), context);
+        } else if (holder instanceof SeparatorViewHolder) {
+            Item.DateSeparatorItem<MessageModel> separatorItem = (Item.DateSeparatorItem<MessageModel>) getItem(position);
+            ((SeparatorViewHolder) holder).bind(separatorItem.getDate(), context);
         }
+
     }
 
     static class MessageViewHolder extends RecyclerView.ViewHolder {
@@ -184,16 +195,61 @@ public class MessageAdapter extends PagingDataAdapter<MessageModel, RecyclerView
         }
     }
 
-    static class RepositoryComparator extends DiffUtil.ItemCallback<MessageModel> {
+    static class SeparatorViewHolder extends RecyclerView.ViewHolder {
+
+        private final TextView dateTextView;
+
+        public SeparatorViewHolder(@NonNull @NotNull View itemView) {
+            super(itemView);
+            dateTextView = itemView.findViewById(R.id.date_text_view);
+        }
+
+        public static SeparatorViewHolder getInstance(ViewGroup parent) {
+            LayoutInflater inflater = LayoutInflater.from(parent.getContext());
+            View view = inflater.inflate(R.layout.item_date_separator, parent, false);
+            return new SeparatorViewHolder(view);
+        }
+
+        public SeparatorViewHolder bind(LocalDate item, Context context) {
+            dateTextView.setText(item.format(DATE_FORMATTER));
+            return this;
+        }
+    }
+
+    static class RepositoryComparator extends DiffUtil.ItemCallback<Item<MessageModel>> {
 
         @Override
-        public boolean areItemsTheSame(@NonNull @NotNull MessageModel oldItem, @NonNull @NotNull MessageModel newItem) {
-            return Objects.equals(oldItem, newItem);
+        public boolean areItemsTheSame(@NonNull Item<MessageModel> oldItem, @NonNull Item<MessageModel> newItem) {
+            boolean isSameChatPreviewModel = oldItem instanceof Item.RepoItem
+                    && newItem instanceof Item.RepoItem
+                    && Objects.equals(
+                    ((Item.RepoItem<MessageModel>) oldItem).getModel().getId(),
+                    ((Item.RepoItem<MessageModel>) newItem).getModel().getId());
+
+            boolean isSameSeparator = oldItem instanceof Item.DateSeparatorItem
+                    && newItem instanceof Item.DateSeparatorItem
+                    && Objects.equals(
+                    ((Item.DateSeparatorItem<MessageModel>) oldItem).getDate(),
+                    ((Item.DateSeparatorItem<MessageModel>) newItem).getDate());
+
+            return isSameChatPreviewModel || isSameSeparator;
         }
 
         @Override
-        public boolean areContentsTheSame(@NonNull @NotNull MessageModel oldItem, @NonNull @NotNull MessageModel newItem) {
-            return Objects.equals(oldItem, newItem);
+        public boolean areContentsTheSame(@NonNull Item<MessageModel> oldItem, @NonNull Item<MessageModel> newItem) {
+            boolean isSameChatPreviewModel = oldItem instanceof Item.RepoItem
+                    && newItem instanceof Item.RepoItem
+                    && Objects.equals(
+                    ((Item.RepoItem<MessageModel>) oldItem).getModel(),
+                    ((Item.RepoItem<MessageModel>) newItem).getModel());
+
+            boolean isSameSeparator = oldItem instanceof Item.DateSeparatorItem
+                    && newItem instanceof Item.DateSeparatorItem
+                    && Objects.equals(
+                    ((Item.DateSeparatorItem<MessageModel>) oldItem).getDate(),
+                    ((Item.DateSeparatorItem<MessageModel>) newItem).getDate());
+
+            return isSameChatPreviewModel || isSameSeparator;
         }
     }
 
