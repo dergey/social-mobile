@@ -8,6 +8,7 @@ import com.sergey.zhuravlev.mobile.social.client.api.ChatEndpoints;
 import com.sergey.zhuravlev.mobile.social.client.api.LoginEndpoints;
 import com.sergey.zhuravlev.mobile.social.client.api.MessageEndpoints;
 import com.sergey.zhuravlev.mobile.social.client.api.ProfileEndpoints;
+import com.sergey.zhuravlev.mobile.social.client.api.RegistrationEndpoints;
 import com.sergey.zhuravlev.mobile.social.client.dto.ErrorDto;
 import com.sergey.zhuravlev.mobile.social.enums.ErrorCode;
 
@@ -87,6 +88,10 @@ public class Client {
 
     public static LoginEndpoints getLoginEndpoints() {
         return retrofit.create(LoginEndpoints.class);
+    }
+
+    public static RegistrationEndpoints getRegistrationEndpoints() {
+        return retrofit.create(RegistrationEndpoints.class);
     }
 
     public static ChatEndpoints getChatEndpoints() {
