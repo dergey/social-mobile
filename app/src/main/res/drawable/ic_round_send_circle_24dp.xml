@@ -5,6 +5,11 @@
     android:viewportWidth="24"
     android:viewportHeight="24">
     <path
+        android:pathData="M0.115,12.004a11.874,11.874 0,1 0,23.748 0a11.874,11.874 0,1 0,-23.748 0z"
+        android:strokeWidth="0"
+        android:fillAlpha="0.3"
+        android:fillColor="?attr/backgroundButtonColor"/>
+    <path
         android:pathData="m6.154,18.921l14.378,-6.163c0.667,-0.288 0.667,-1.228 0,-1.516l-14.378,-6.163c-0.544,-0.239 -1.145,0.165 -1.145,0.75l-0.008,3.799c0,0.412 0.305,0.766 0.717,0.816l11.643,1.557l-11.643,1.549c-0.412,0.058 -0.717,0.412 -0.717,0.824l0.008,3.799c0,0.585 0.601,0.989 1.145,0.75l0,-0z"
         android:strokeWidth="0"
         android:fillColor="?attr/backgroundButtonColor"/>
