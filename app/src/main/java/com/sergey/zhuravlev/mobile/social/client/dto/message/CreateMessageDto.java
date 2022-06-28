@@ -16,9 +16,6 @@ public abstract class CreateMessageDto {
 
     private MessageType type;
 
-    public CreateMessageDto() {
-    }
-
     public CreateMessageDto(MessageType type) {
         this.type = type;
     }

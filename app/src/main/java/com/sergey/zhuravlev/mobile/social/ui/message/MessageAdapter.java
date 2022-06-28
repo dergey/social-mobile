@@ -55,11 +55,6 @@ public class MessageAdapter extends PagingDataAdapter<Item<MessageModel>, Recycl
         return context;
     }
 
-    public void addNewMessage(MessageModel messageModel) {
-        this.snapshot().add(new Item.RepoItem<>(messageModel));
-        notifyItemInserted(this.snapshot().size() - 1);
-    }
-
     @Override
     public int getItemViewType(int position) {
         Item<MessageModel> messageItem = peek(position);
