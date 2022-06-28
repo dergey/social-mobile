@@ -38,9 +38,9 @@ public class MessageActivity extends AppCompatActivity {
         recyclerView.setLayoutManager(new LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false));
         recyclerView.setAdapter(adapter);
 
-        EditText editText = binding.editTextTextPersonName;
+        EditText editText = binding.messageEditText;
 
-        ImageButton button = binding.imageButton;
+        ImageButton button = binding.sendMessageButton;
         button.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
