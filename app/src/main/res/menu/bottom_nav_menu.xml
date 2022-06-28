@@ -3,11 +3,11 @@
 
     <item
         android:id="@+id/navigation_chats"
-        android:icon="@drawable/forum"
+        android:icon="@drawable/ic_forum_24dp"
         android:title="@string/title_chats" />
     <item
         android:id="@+id/navigation_profile"
-        android:icon="@drawable/account"
+        android:icon="@drawable/ic_account_24dp"
         android:title="@string/title_profile" />
 
 </menu>

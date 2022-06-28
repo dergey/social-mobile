@@ -2,7 +2,6 @@ package com.sergey.zhuravlev.mobile.social.ui.chat;
 
 import android.content.Context;
 import android.content.Intent;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -15,26 +14,19 @@ import androidx.recyclerview.widget.DiffUtil;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.bumptech.glide.Glide;
-import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.bumptech.glide.load.model.GlideUrl;
 import com.bumptech.glide.load.model.LazyHeaders;
 import com.bumptech.glide.request.RequestOptions;
 import com.sergey.zhuravlev.mobile.social.R;
 import com.sergey.zhuravlev.mobile.social.client.Client;
 import com.sergey.zhuravlev.mobile.social.constrain.IntentConstrains;
-import com.sergey.zhuravlev.mobile.social.client.dto.chat.ChatPreviewDto;
-import com.sergey.zhuravlev.mobile.social.client.dto.message.MessageDto;
-import com.sergey.zhuravlev.mobile.social.client.dto.message.TextMessageDto;
 import com.sergey.zhuravlev.mobile.social.database.model.ChatPreviewModel;
 import com.sergey.zhuravlev.mobile.social.database.model.MessageEmbeddable;
 import com.sergey.zhuravlev.mobile.social.ui.message.MessageActivity;
 
 import org.jetbrains.annotations.NotNull;
 
-import java.time.LocalDateTime;
-import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
-import java.util.Date;
 import java.util.Locale;
 import java.util.Objects;
 
@@ -114,9 +106,9 @@ public class ChatAdapter extends PagingDataAdapter<ChatPreviewModel, RecyclerVie
                 }
                 chatLastMessageDate.setText(lastMessage.getCreateAt().format(TIME_FORMATTER));
                 if (lastMessage.isRead()) {
-                    unreadMark.setImageResource(R.drawable.moon_new);
+                    unreadMark.setImageResource(R.drawable.ic_moon_new_24dp);
                 } else {
-                    unreadMark.setImageResource(R.drawable.moon_new_fill);
+                    unreadMark.setImageResource(R.drawable.ic_moon_new_fill_24dp);
                 }
             }
             String chatProfileAvatarUrl = String.format("%s/api/profile/%s/avatar", Client.getBaseUrl(), item.getTargetProfile().getUsername());

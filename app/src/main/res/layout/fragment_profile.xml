@@ -117,7 +117,7 @@
             android:id="@+id/birth_date_image_view"
             android:layout_width="wrap_content"
             android:layout_height="match_parent"
-            android:src="@drawable/cake_variant"
+            android:src="@drawable/ic_cake_variant_24dp"
             app:tint="#fff" />
 
         <Space
@@ -147,7 +147,7 @@
             android:layout_width="wrap_content"
             android:layout_height="match_parent"
             android:layout_weight="1"
-            android:src="@drawable/asterisk"
+            android:src="@drawable/ic_asterisk_24dp"
             app:tint="#fff" />
 
         <Space
