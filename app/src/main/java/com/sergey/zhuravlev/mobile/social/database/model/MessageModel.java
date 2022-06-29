@@ -123,4 +123,18 @@ public class MessageModel {
         return Objects.hash(id, createAt, updateAt);
     }
 
+    @Override
+    public String toString() {
+        return "MessageModel{" +
+                "id=" + id +
+                ", chatId=" + chatId +
+                ", type=" + type +
+                ", sender=" + sender +
+                ", text='" + text + '\'' +
+                ", createAt=" + createAt +
+                ", updateAt=" + updateAt +
+                ", read=" + read +
+                ", pageable=" + pageable +
+                '}';
+    }
 }

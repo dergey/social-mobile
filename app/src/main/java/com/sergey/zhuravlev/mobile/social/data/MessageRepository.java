@@ -3,6 +3,7 @@ package com.sergey.zhuravlev.mobile.social.data;
 import android.content.Context;
 import android.net.Uri;
 
+import androidx.annotation.Nullable;
 import androidx.lifecycle.LiveData;
 import androidx.paging.ExperimentalPagingApi;
 import androidx.paging.Pager;
@@ -17,6 +18,7 @@ import com.sergey.zhuravlev.mobile.social.client.api.MessageEndpoints;
 import com.sergey.zhuravlev.mobile.social.client.dto.ErrorDto;
 import com.sergey.zhuravlev.mobile.social.client.dto.LoginResponseDto;
 import com.sergey.zhuravlev.mobile.social.client.dto.message.MessageDto;
+import com.sergey.zhuravlev.mobile.social.client.mapper.MessageModelMapper;
 import com.sergey.zhuravlev.mobile.social.database.AppDatabase;
 import com.sergey.zhuravlev.mobile.social.database.dao.ChatPreviewModelDao;
 import com.sergey.zhuravlev.mobile.social.database.dao.MessageModelDao;
@@ -65,7 +67,22 @@ public class MessageRepository {
     }
 
     public void createTextMessage(Long chatId, String text, FutureCallback<Result<MessageDto, ErrorDto>> callback) {
-        Futures.addCallback(dataSource.createTextMessage(chatId, text), callback, executor);
+        Futures.addCallback(dataSource.createTextMessage(chatId, text), new FutureCallback<>() {
+            @Override
+            public void onSuccess(@Nullable Result<MessageDto, ErrorDto> result) {
+                if (result.isSuccess()) {
+                    messageModelDao.insert(MessageModelMapper.toModel(((Result.Success<MessageDto, ErrorDto>) result).getData()));
+                }
+                callback.onSuccess(result);
+            }
+
+            @Override
+            public void onFailure(Throwable t) {
+                callback.onFailure(t);
+            }
+        }, executor);
+
+
     }
 
     public void createImageMessage(Long chatId, final Uri filePath, FutureCallback<Result<MessageDto, ErrorDto>> callback) {
@@ -81,7 +98,7 @@ public class MessageRepository {
     }
 
     public PagingConfig getDefaultPageConfig() {
-        return new PagingConfig(DEFAULT_PAGE_SIZE, 0, true);
+        return new PagingConfig(DEFAULT_PAGE_SIZE, 1, false);
     }
 
 }

@@ -15,10 +15,16 @@ import java.util.List;
 public interface MessageModelDao {
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
+    void insert(MessageModel messageModel);
+
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
     void insertAll(List<MessageModel> messageModels);
 
     @Query("SELECT * FROM messages WHERE chat_id = :chatId")
     PagingSource<Integer, MessageModel> getAllMessageModel(Long chatId);
+
+    @Query("SELECT count(*) FROM messages WHERE chat_id = :chatId AND pageable_page = :page ")
+    Integer getCountOfStoredPageElement(Long chatId, Integer page);
 
     @Query("DELETE FROM messages")
     void clearAllMessageModel();

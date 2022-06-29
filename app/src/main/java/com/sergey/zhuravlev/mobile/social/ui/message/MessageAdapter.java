@@ -57,10 +57,7 @@ public class MessageAdapter extends PagingDataAdapter<Item<MessageModel>, Recycl
 
     @Override
     public int getItemViewType(int position) {
-        Item<MessageModel> messageItem = peek(position);
-        if (messageItem == null) {
-            return VIEW_TYPE_PLACEHOLDER;
-        }
+        Item<MessageModel> messageItem = getItem(position);
         if (messageItem instanceof Item.RepoItem) {
             switch (((Item.RepoItem<MessageModel>) messageItem).getModel().getType()) {
                 case TEXT:
@@ -105,7 +102,6 @@ public class MessageAdapter extends PagingDataAdapter<Item<MessageModel>, Recycl
             Item.DateSeparatorItem<MessageModel> separatorItem = (Item.DateSeparatorItem<MessageModel>) getItem(position);
             ((SeparatorViewHolder) holder).bind(separatorItem.getDate(), context);
         }
-
     }
 
     static class MessageViewHolder extends RecyclerView.ViewHolder {

@@ -75,4 +75,16 @@ public class PageDto<T> {
     public void setContent(List<T> content) {
         this.content = content;
     }
+
+    @Override
+    public String toString() {
+        return "PageDto{" +
+                "size=" + size +
+                ", number=" + number +
+                ", totalPages=" + totalPages +
+                ", totalElements=" + totalElements +
+                ", hasNext=" + hasNext +
+                ", content=" + content +
+                '}';
+    }
 }

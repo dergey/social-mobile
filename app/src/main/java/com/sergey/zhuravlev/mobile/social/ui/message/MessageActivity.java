@@ -35,7 +35,8 @@ public class MessageActivity extends AppCompatActivity {
         adapter = new MessageAdapter(this);
 
         recyclerView = binding.messageRecyclerView;
-        recyclerView.setLayoutManager(new LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false));
+        LinearLayoutManager linearLayoutManager = new LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false);
+        recyclerView.setLayoutManager(linearLayoutManager);
         recyclerView.setAdapter(adapter);
 
         EditText editText = binding.messageEditText;
@@ -55,9 +56,8 @@ public class MessageActivity extends AppCompatActivity {
                     adapter.submitData(getLifecycle(), pagingData)
             );
             viewModel.getCreateMessageResult().observe(this, result -> {
-                if (!result.isHasErrors()) {
-                    //todo insert into DB, and load cache.
-                }
+                adapter.refresh();
+                linearLayoutManager.scrollToPositionWithOffset(adapter.getItemCount() - 1, 20);
             });
 
 
