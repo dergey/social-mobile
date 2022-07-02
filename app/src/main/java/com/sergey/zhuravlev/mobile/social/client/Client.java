@@ -76,7 +76,7 @@ public class Client {
                     return errorDto.getCode();
                 }
             } catch (IOException e) {
-                Log.e("CLIENT", "Unable to parse error from server:", e);
+                Log.e("Client/exceptionHandling", "Unable to parse error from server:", e);
             }
         }
         return null;

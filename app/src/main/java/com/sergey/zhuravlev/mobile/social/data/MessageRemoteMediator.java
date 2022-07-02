@@ -67,13 +67,13 @@ public class MessageRemoteMediator extends ListenableFutureRemoteMediator<Intege
                                                        @NotNull PagingState<Integer, MessageModel> state) {
         switch (loadType) {
             case REFRESH:
-                Log.i("message_mediator", "REFRESH CALL");
+                Log.i("MessageRemoteMediator/loadFuture", "Calling refresh");
                 return refreshFuture(state);
             case PREPEND:
-                Log.i("message_mediator", "PREPEND CALL");
+                Log.i("MessageRemoteMediator/loadFuture", "Calling prepend");
                 return Futures.immediateFuture(new MediatorResult.Success(true));
             case APPEND:
-                Log.i("message_mediator", "APPEND CALL");
+                Log.i("MessageRemoteMediator/loadFuture", "Calling append");
                 return appendFuture(state);
             default:
                 throw new IllegalArgumentException("LoadType: " + loadType);
@@ -84,7 +84,6 @@ public class MessageRemoteMediator extends ListenableFutureRemoteMediator<Intege
         ListenableFuture<MediatorResult> networkResult = Futures.transform(
                 endpoints.getChatMessages(chatId, getClosestRemoteKey(state), pageSize),
                 response -> {
-                    Log.i("message_mediator", "--- get response: " + response);
                     database.runInTransaction(() -> {
                         List<Long> newNetworkIds = response.getContent().stream()
                                 .map(MessageDto::getId)
@@ -145,7 +144,7 @@ public class MessageRemoteMediator extends ListenableFutureRemoteMediator<Intege
         ListenableFuture<MediatorResult> networkResult;
         if (lastPageElements % pageSize != 0 || !unpageableItems.isEmpty()) {
             // Update current page
-            Log.i("MessageRemoteMediator", String.format("Updating current page (pageSize not fully: %s, contain unpageableItems: %s)",
+            Log.i("MessageRemoteMediator/appendFuture", String.format("Updating current page (pageSize not fully: %s, contain unpageableItems: %s)",
                     lastPageElements % pageSize != 0, unpageableItems.size()));
             networkResult = Futures.transform(
                     endpoints.getChatMessages(chatId, lastPageNumber, pageSize),
@@ -184,20 +183,14 @@ public class MessageRemoteMediator extends ListenableFutureRemoteMediator<Intege
                 Futures.catching(
                         networkResult,
                         IOException.class,
-                        e -> {
-                            Log.i("message_mediator", "Error when api called: ", e);
-                            return new MediatorResult.Error(e);
-                        },
+                        MediatorResult.Error::new,
                         executor
                 );
 
         return Futures.catching(
                 ioCatchingNetworkResult,
                 HttpException.class,
-                e -> {
-                    Log.i("message_mediator", "Error when api called: ", e);
-                    return new MediatorResult.Error(e);
-                },
+                MediatorResult.Error::new,
                 executor
         );
     }

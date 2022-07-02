@@ -41,17 +41,17 @@ public class LoginViewModel extends ViewModel {
             public void onSuccess(Result<LoginResponseDto, ErrorDto> result) {
                 if (result.isSuccess()) {
                     LoginResponseDto data = ((Result.Success<LoginResponseDto, ErrorDto>) result).getData();
-                    Log.i("LOGIN_METHOD", "Successful authorization [jwtToken = " + data.getJwtToken() + "]");
+                    Log.i("LoginViewModel/login", "Successful authorization [jwtToken = " + data.getJwtToken() + "]");
                     loginResult.postValue(LoginResult.success(data.getJwtToken()));
                 } else {
                     String errorMessage = ((Result.Error<LoginResponseDto, ErrorDto>) result).getMessage();
                     ErrorDto errorData = ((Result.Error<LoginResponseDto, ErrorDto>) result).getErrorObject(ErrorDto.class);
                     if (errorData != null) {
-                        Log.w("LOGIN_METHOD", "Authorization error [code = " + errorData.getCode() + "; message = " + errorData.getMessage() + "]");
+                        Log.w("LoginViewModel/login", "Authorization error [code = " + errorData.getCode() + "; message = " + errorData.getMessage() + "]");
                         processServerFieldError(errorData);
                         loginResult.postValue(LoginResult.error(errorData));
                     } else {
-                        Log.e("LOGIN_METHOD", "Authorization error. " + errorMessage);
+                        Log.e("LoginViewModel/login", "Authorization error. " + errorMessage);
                         loginResult.postValue(LoginResult.error(errorMessage));
                     }
                 }
