@@ -65,6 +65,7 @@ public class MessageModelMapper {
         model.setUpdateAt(dto.getUpdateAt());
         model.setRead(dto.isRead());
         model.setPrepend(false);
+        model.setPrependError(false);
         if (dto instanceof TextMessageDto) {
             model.setText(((TextMessageDto) dto).getText());
         }
