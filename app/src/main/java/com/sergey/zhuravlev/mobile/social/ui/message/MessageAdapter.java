@@ -5,6 +5,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
@@ -109,12 +110,16 @@ public class MessageAdapter extends PagingDataAdapter<Item<MessageModel>, Recycl
         private final ConstraintLayout constraintLayout;
         private final TextView messageText;
         private final TextView messageDate;
+        private final ImageView sendErrorImageView;
+        private final ProgressBar sendStatusProgressBar;
 
         public MessageViewHolder(@NonNull @NotNull View itemView) {
             super(itemView);
             constraintLayout = (ConstraintLayout) itemView.getRootView();
             messageText = itemView.findViewById(R.id.message_text_view);
             messageDate = itemView.findViewById(R.id.message_date_text_view);
+            sendErrorImageView = itemView.findViewById(R.id.send_error_image_view);
+            sendStatusProgressBar = itemView.findViewById(R.id.send_status_progress_bar);
         }
 
         public static MessageViewHolder getInstance(ViewGroup parent) {
@@ -145,6 +150,17 @@ public class MessageAdapter extends PagingDataAdapter<Item<MessageModel>, Recycl
                     break;
             }
             messageDate.setText(item.getCreateAt().format(TIME_FORMATTER));
+            // Status logic:
+            if (item.isPrepend() && !item.isPrependError()) {
+                sendStatusProgressBar.setVisibility(View.VISIBLE);
+            } else {
+                sendStatusProgressBar.setVisibility(View.GONE);
+            }
+            if (item.isPrependError()) {
+                sendErrorImageView.setVisibility(View.VISIBLE);
+            } else {
+                sendErrorImageView.setVisibility(View.GONE);
+            }
             return this;
         }
     }
@@ -183,7 +199,7 @@ public class MessageAdapter extends PagingDataAdapter<Item<MessageModel>, Recycl
             String messageImageUrl = String.format("%s/api/chat/%s/message/%s/image_preview",
                     Client.getBaseUrl(),
                     item.getChatId(),
-                    item.getId());
+                    item.getNetworkId());
             GlideUrl glideUrl = new GlideUrl(messageImageUrl,
                     new LazyHeaders.Builder()
                             .addHeader("Authorization", "Bearer " + Client.getBarrierToken())

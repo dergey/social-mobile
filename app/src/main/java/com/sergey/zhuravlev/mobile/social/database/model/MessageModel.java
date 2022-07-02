@@ -15,8 +15,11 @@ import java.util.Objects;
 @Entity(tableName = "messages")
 public class MessageModel {
 
-    @PrimaryKey(autoGenerate = false)
+    @PrimaryKey(autoGenerate = true)
     private Long id;
+
+    @ColumnInfo(name = "network_id")
+    private Long networkId;
 
     @ColumnInfo(name = "chat_id")
     private Long chatId;
@@ -35,6 +38,11 @@ public class MessageModel {
 
     private boolean read;
 
+    private boolean prepend;
+
+    @ColumnInfo(name = "prepend_error")
+    private boolean prependError;
+
     @Embedded(prefix = "pageable_")
     private Pageable pageable;
 
@@ -44,6 +52,14 @@ public class MessageModel {
 
     public void setId(Long id) {
         this.id = id;
+    }
+
+    public Long getNetworkId() {
+        return networkId;
+    }
+
+    public void setNetworkId(Long networkId) {
+        this.networkId = networkId;
     }
 
     public Long getChatId() {
@@ -102,6 +118,22 @@ public class MessageModel {
         this.read = read;
     }
 
+    public boolean isPrepend() {
+        return prepend;
+    }
+
+    public void setPrepend(boolean prepend) {
+        this.prepend = prepend;
+    }
+
+    public boolean isPrependError() {
+        return prependError;
+    }
+
+    public void setPrependError(boolean prependError) {
+        this.prependError = prependError;
+    }
+
     public Pageable getPageable() {
         return pageable;
     }
@@ -115,18 +147,19 @@ public class MessageModel {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         MessageModel that = (MessageModel) o;
-        return id.equals(that.id) && createAt.equals(that.createAt) && updateAt.equals(that.updateAt);
+        return prepend == that.prepend && prependError == that.prependError && id.equals(that.id) && Objects.equals(networkId, that.networkId) && createAt.equals(that.createAt) && updateAt.equals(that.updateAt);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(id, createAt, updateAt);
+        return Objects.hash(id, networkId, createAt, updateAt, prepend, prependError);
     }
 
     @Override
     public String toString() {
         return "MessageModel{" +
                 "id=" + id +
+                ", networkId=" + networkId +
                 ", chatId=" + chatId +
                 ", type=" + type +
                 ", sender=" + sender +
@@ -134,7 +167,10 @@ public class MessageModel {
                 ", createAt=" + createAt +
                 ", updateAt=" + updateAt +
                 ", read=" + read +
+                ", prepend=" + prepend +
+                ", prependError=" + prependError +
                 ", pageable=" + pageable +
                 '}';
     }
+
 }

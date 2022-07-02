@@ -2,6 +2,7 @@ package com.sergey.zhuravlev.mobile.social.data;
 
 import android.content.Context;
 import android.net.Uri;
+import android.util.Log;
 
 import androidx.annotation.Nullable;
 import androidx.lifecycle.LiveData;
@@ -10,21 +11,22 @@ import androidx.paging.Pager;
 import androidx.paging.PagingConfig;
 import androidx.paging.PagingData;
 import androidx.paging.PagingLiveData;
+import androidx.paging.PagingSource;
 
 import com.google.common.util.concurrent.FutureCallback;
 import com.google.common.util.concurrent.Futures;
 import com.sergey.zhuravlev.mobile.social.client.Client;
 import com.sergey.zhuravlev.mobile.social.client.api.MessageEndpoints;
 import com.sergey.zhuravlev.mobile.social.client.dto.ErrorDto;
-import com.sergey.zhuravlev.mobile.social.client.dto.LoginResponseDto;
 import com.sergey.zhuravlev.mobile.social.client.dto.message.MessageDto;
-import com.sergey.zhuravlev.mobile.social.client.mapper.MessageModelMapper;
 import com.sergey.zhuravlev.mobile.social.database.AppDatabase;
-import com.sergey.zhuravlev.mobile.social.database.dao.ChatPreviewModelDao;
 import com.sergey.zhuravlev.mobile.social.database.dao.MessageModelDao;
-import com.sergey.zhuravlev.mobile.social.database.model.ChatPreviewModel;
 import com.sergey.zhuravlev.mobile.social.database.model.MessageModel;
+import com.sergey.zhuravlev.mobile.social.ui.common.LiveDataFutureCallback;
+import com.sergey.zhuravlev.mobile.social.ui.common.NetworkLiveDataFutureCallback;
 
+import java.util.LinkedHashMap;
+import java.util.Map;
 import java.util.concurrent.Executor;
 import java.util.concurrent.Executors;
 
@@ -47,7 +49,7 @@ public class MessageRepository {
         this.executor = Executors.newSingleThreadExecutor();
         this.database = AppDatabase.getInstance(context);
         this.messageModelDao = database.getMessageModelDao();
-        this.dataSource = new MessageDataSource(messageEndpoints, executor, context);
+        this.dataSource = new MessageDataSource(messageEndpoints, database, executor, context);
     }
 
     public static MessageRepository getInstance(Context context) {
@@ -57,32 +59,23 @@ public class MessageRepository {
         return instance;
     }
 
+
     public LiveData<PagingData<MessageModel>> letChatMessageModelLiveData(Long chatId) {
         Pager<Integer, MessageModel> pager = new Pager<>(
                 getDefaultPageConfig(),
                 null,
                 new MessageRemoteMediator(messageEndpoints, database, chatId, DEFAULT_PAGE_SIZE, executor),
-                () -> messageModelDao.getAllMessageModel(chatId));
+                () -> {
+                    PagingSource<Integer, MessageModel> pagingSource = messageModelDao.getAllMessageModel(chatId);
+                    return pagingSource;
+                });
         return PagingLiveData.getLiveData(pager);
     }
 
-    public void createTextMessage(Long chatId, String text, FutureCallback<Result<MessageDto, ErrorDto>> callback) {
-        Futures.addCallback(dataSource.createTextMessage(chatId, text), new FutureCallback<>() {
-            @Override
-            public void onSuccess(@Nullable Result<MessageDto, ErrorDto> result) {
-                if (result.isSuccess()) {
-                    messageModelDao.insert(MessageModelMapper.toModel(((Result.Success<MessageDto, ErrorDto>) result).getData()));
-                }
-                callback.onSuccess(result);
-            }
-
-            @Override
-            public void onFailure(Throwable t) {
-                callback.onFailure(t);
-            }
-        }, executor);
-
-
+    public void createTextMessage(Long chatId, String text,
+                                  FutureCallback<MessageModel> partialCallback,
+                                  FutureCallback<Result<MessageDto, ErrorDto>> callback) {
+        Futures.addCallback(dataSource.createTextMessage(chatId, text, partialCallback), callback, executor);
     }
 
     public void createImageMessage(Long chatId, final Uri filePath, FutureCallback<Result<MessageDto, ErrorDto>> callback) {

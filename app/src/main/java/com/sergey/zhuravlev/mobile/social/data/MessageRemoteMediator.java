@@ -1,7 +1,5 @@
 package com.sergey.zhuravlev.mobile.social.data;
 
-import static androidx.paging.LoadType.*;
-
 import android.util.Log;
 
 import androidx.paging.ExperimentalPagingApi;
@@ -13,31 +11,28 @@ import androidx.paging.PagingState;
 import com.google.common.collect.Iterables;
 import com.google.common.util.concurrent.Futures;
 import com.google.common.util.concurrent.ListenableFuture;
-import com.google.common.util.concurrent.ListenableFutureTask;
-import com.sergey.zhuravlev.mobile.social.client.api.ChatEndpoints;
 import com.sergey.zhuravlev.mobile.social.client.api.MessageEndpoints;
 import com.sergey.zhuravlev.mobile.social.client.dto.PageDto;
 import com.sergey.zhuravlev.mobile.social.client.dto.message.MessageDto;
-import com.sergey.zhuravlev.mobile.social.client.mapper.ChatModelMapper;
 import com.sergey.zhuravlev.mobile.social.client.mapper.MessageModelMapper;
 import com.sergey.zhuravlev.mobile.social.database.AppDatabase;
-import com.sergey.zhuravlev.mobile.social.database.dao.ChatPreviewModelDao;
 import com.sergey.zhuravlev.mobile.social.database.dao.MessageModelDao;
-import com.sergey.zhuravlev.mobile.social.database.model.ChatPreviewModel;
 import com.sergey.zhuravlev.mobile.social.database.model.MessageModel;
 import com.sergey.zhuravlev.mobile.social.database.paggeble.Pageable;
 
 import org.jetbrains.annotations.NotNull;
 
 import java.io.IOException;
-import java.io.InvalidObjectException;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
+import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.concurrent.Executor;
+import java.util.function.Function;
+import java.util.stream.Collectors;
 
-import okhttp3.MultipartBody;
 import retrofit2.HttpException;
 
 
@@ -91,7 +86,13 @@ public class MessageRemoteMediator extends ListenableFutureRemoteMediator<Intege
                 response -> {
                     Log.i("message_mediator", "--- get response: " + response);
                     database.runInTransaction(() -> {
-                        messageModelDao.insertAll(toPageableModels(response, chatId));
+                        List<Long> newNetworkIds = response.getContent().stream()
+                                .map(MessageDto::getId)
+                                .collect(Collectors.toList());
+                        Map<Long, MessageModel> currentMessageModels = messageModelDao.getAllByNetworkIds(newNetworkIds).stream()
+                                .collect(Collectors.toMap(MessageModel::getNetworkId, Function.identity()));
+                        List<MessageModel> updatedPageableModels = updatePageableModels(currentMessageModels, response, chatId);
+                        messageModelDao.insertAll(updatedPageableModels);
                     });
                     return new MediatorResult.Success(!response.getHasNext());
                 }, executor);
@@ -100,20 +101,14 @@ public class MessageRemoteMediator extends ListenableFutureRemoteMediator<Intege
                 Futures.catching(
                         networkResult,
                         IOException.class,
-                        e -> {
-                            Log.i("message_mediator", "Error when api called: ", e);
-                            return new MediatorResult.Error(e);
-                        },
+                        MediatorResult.Error::new,
                         executor
                 );
 
         return Futures.catching(
                 ioCatchingNetworkResult,
                 HttpException.class,
-                e -> {
-                    Log.i("message_mediator", "Error when api called: ", e);
-                    return new MediatorResult.Error(e);
-                },
+                MediatorResult.Error::new,
                 executor
         );
     }
@@ -123,39 +118,64 @@ public class MessageRemoteMediator extends ListenableFutureRemoteMediator<Intege
 
         int lastPageElements;
         int lastPageNumber;
+        List<Long> unpageableItems = new ArrayList<>();
 
-        if (lastPage == null) {
+        if (lastPage == null || lastPage.getData().isEmpty()) {
             lastPageElements = 0;
             lastPageNumber = 0;
         } else {
-            MessageModel lastItem = Iterables.getLast(lastPage.getData(), null);
+            MessageModel lastPageableItem = null;
+
+            for (MessageModel messageModel : lastPage.getData()) {
+                if (Objects.isNull(messageModel.getPageable())) {
+                    unpageableItems.add(messageModel.getId());
+                    continue;
+                }
+                lastPageableItem = messageModel;
+            }
+
             lastPageElements = lastPage.getData().size();
-            if (lastItem == null) {
+            if (lastPageableItem == null) {
                 lastPageNumber = 0;
             } else {
-                lastPageNumber = lastItem.getPageable().getPage();
+                lastPageNumber = lastPageableItem.getPageable().getPage();
             }
         }
 
         ListenableFuture<MediatorResult> networkResult;
-        if (lastPageElements % pageSize == 0) {
-            // Get next page if current full
-            networkResult = Futures.transform(
-                    endpoints.getChatMessages(chatId, lastPageNumber + 1, pageSize),
-                    response -> {
-                        messageModelDao.insertAll(toPageableModels(response, chatId));
-                        return new MediatorResult.Success(!response.getHasNext());
-                    }, executor);
-        } else {
+        if (lastPageElements % pageSize != 0 || !unpageableItems.isEmpty()) {
             // Update current page
-            Log.i("message_mediator", "--- update page: " + lastPageNumber);
+            Log.i("MessageRemoteMediator", String.format("Updating current page (pageSize not fully: %s, contain unpageableItems: %s)",
+                    lastPageElements % pageSize != 0, unpageableItems.size()));
             networkResult = Futures.transform(
                     endpoints.getChatMessages(chatId, lastPageNumber, pageSize),
                     response -> {
                         database.runInTransaction(() -> {
-                            messageModelDao.insertAll(toPageableModels(response, chatId));
+                            messageModelDao.clearAll(unpageableItems);
+                            List<Long> newNetworkIds = response.getContent().stream()
+                                    .map(MessageDto::getId)
+                                    .collect(Collectors.toList());
+                            Map<Long, MessageModel> currentMessageModels = messageModelDao.getAllByNetworkIds(newNetworkIds).stream()
+                                    .collect(Collectors.toMap(MessageModel::getNetworkId, Function.identity()));
+                            List<MessageModel> updatedPageableModels = updatePageableModels(currentMessageModels, response, chatId);
+                            messageModelDao.insertAll(updatedPageableModels);
                         });
-
+                        return new MediatorResult.Success(!response.getHasNext());
+                    }, executor);
+        } else {
+            // Get next page if current full
+            networkResult = Futures.transform(
+                    endpoints.getChatMessages(chatId, lastPageNumber + 1, pageSize),
+                    response -> {
+                        database.runInTransaction(() -> {
+                            List<Long> newNetworkIds = response.getContent().stream()
+                                    .map(MessageDto::getId)
+                                    .collect(Collectors.toList());
+                            Map<Long, MessageModel> currentMessageModels = messageModelDao.getAllByNetworkIds(newNetworkIds).stream()
+                                    .collect(Collectors.toMap(MessageModel::getNetworkId, Function.identity()));
+                            List<MessageModel> updatedPageableModels = updatePageableModels(currentMessageModels, response, chatId);
+                            messageModelDao.insertAll(updatedPageableModels);
+                        });
                         return new MediatorResult.Success(!response.getHasNext());
                     }, executor);
         }
@@ -180,30 +200,6 @@ public class MessageRemoteMediator extends ListenableFutureRemoteMediator<Intege
                 },
                 executor
         );
-    }
-
-    /**
-     * get the first page number inserted which had the data
-     */
-    private Integer getFirstPageNumber(PagingState<Integer, MessageModel> state) {
-        return Optional.ofNullable(Iterables.getFirst(state.getPages(), null))
-                .filter(p -> !Iterables.isEmpty(p.getData()))
-                .map(PagingSource.LoadResult.Page::getData)
-                .flatMap(data -> Optional.ofNullable(Iterables.getFirst(data, null)))
-                .map(model -> model.getPageable().getPage())
-                .orElse(null);
-    }
-
-    /**
-     * get the last page number inserted which had the data
-     */
-    private Integer getLastPageNumber(PagingState<Integer, MessageModel> state) {
-        return Optional.ofNullable(Iterables.getLast(state.getPages(), null))
-                .filter(p -> !Iterables.isEmpty(p.getData()))
-                .map(PagingSource.LoadResult.Page::getData)
-                .flatMap(data -> Optional.ofNullable(Iterables.getLast(data, null)))
-                .map(model -> model.getPageable().getPage())
-                .orElse(null);
     }
 
     /**
@@ -217,15 +213,19 @@ public class MessageRemoteMediator extends ListenableFutureRemoteMediator<Intege
     }
 
     @SuppressWarnings("ConstantConditions")
-    public static List<MessageModel> toPageableModels(PageDto<MessageDto> page, Long chatId) {
+    public static List<MessageModel> updatePageableModels(Map<Long, MessageModel> oldModels, PageDto<MessageDto> page, Long chatId) {
         List<MessageModel> models = new ArrayList<>();
         for (MessageDto dto : page.getContent()) {
-            MessageModel model = MessageModelMapper.toModel(dto);
+            MessageModel model;
+            if (oldModels.containsKey(dto.getId())) {
+                model = MessageModelMapper.updateModel(oldModels.get(dto.getId()), dto);
+            } else {
+                model = MessageModelMapper.toModel(dto);
+            }
             model.setChatId(chatId);
             model.setPageable(new Pageable(page.getNumber()));
             models.add(model);
         }
         return models;
     }
-
 }

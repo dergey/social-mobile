@@ -9,7 +9,7 @@ import java.time.LocalDateTime;
 
 public class MessageEmbeddable {
 
-    private Long id;
+    private Long networkId;
 
     private MessageType type;
 
@@ -25,12 +25,12 @@ public class MessageEmbeddable {
 
     private boolean read;
 
-    public Long getId() {
-        return id;
+    public Long getNetworkId() {
+        return networkId;
     }
 
-    public void setId(Long id) {
-        this.id = id;
+    public void setNetworkId(Long networkId) {
+        this.networkId = networkId;
     }
 
     public MessageType getType() {

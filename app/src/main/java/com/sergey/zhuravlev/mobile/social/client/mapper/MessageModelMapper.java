@@ -21,7 +21,7 @@ public class MessageModelMapper {
         }
 
         MessageEmbeddable model = new MessageEmbeddable();
-        model.setId(dto.getId());
+        model.setNetworkId(dto.getId());
         model.setType(dto.getType());
         model.setSender(dto.getSender());
         model.setCreateAt(dto.getCreateAt());
@@ -40,7 +40,7 @@ public class MessageModelMapper {
         }
 
         MessageModel model = new MessageModel();
-        model.setId(dto.getId());
+        model.setNetworkId(dto.getId());
         model.setType(dto.getType());
         model.setSender(dto.getSender());
         model.setCreateAt(dto.getCreateAt());
@@ -50,6 +50,24 @@ public class MessageModelMapper {
             model.setText(((TextMessageDto) dto).getText());
         }
         //todo add type specific setter/getter
+        return model;
+    }
+
+    public static MessageModel updateModel(MessageModel model, MessageDto dto) {
+        if (Objects.isNull(dto)) {
+            return model;
+        }
+
+        model.setNetworkId(dto.getId());
+        model.setType(dto.getType());
+        model.setSender(dto.getSender());
+        model.setCreateAt(dto.getCreateAt());
+        model.setUpdateAt(dto.getUpdateAt());
+        model.setRead(dto.isRead());
+        model.setPrepend(false);
+        if (dto instanceof TextMessageDto) {
+            model.setText(((TextMessageDto) dto).getText());
+        }
         return model;
     }
 

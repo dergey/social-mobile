@@ -17,6 +17,7 @@ import com.sergey.zhuravlev.mobile.social.client.dto.message.MessageDto;
 import com.sergey.zhuravlev.mobile.social.data.MessageRepository;
 import com.sergey.zhuravlev.mobile.social.database.model.MessageModel;
 import com.sergey.zhuravlev.mobile.social.ui.common.LiveDataFutureCallback;
+import com.sergey.zhuravlev.mobile.social.ui.common.NetworkLiveDataFutureCallback;
 import com.sergey.zhuravlev.mobile.social.ui.common.UiResult;
 import com.sergey.zhuravlev.mobile.social.ui.common.Item;
 
@@ -31,6 +32,7 @@ import kotlinx.coroutines.CoroutineScope;
 public class MessageViewModel extends ViewModel {
 
     private final MutableLiveData<UiResult<MessageDto>> createMessageResult = new MutableLiveData<>();
+    private final MutableLiveData<MessageModel> databaseCreateMessage = new MutableLiveData<>();
     private final MutableLiveData<UiResult<Void>> deleteMessageResult = new MutableLiveData<>();
 
     private final MessageRepository messageRepository;
@@ -43,6 +45,10 @@ public class MessageViewModel extends ViewModel {
 
     public LiveData<UiResult<MessageDto>> getCreateMessageResult() {
         return createMessageResult;
+    }
+
+    public LiveData<MessageModel> getDatabaseCreateMessage() {
+        return databaseCreateMessage;
     }
 
     public LiveData<UiResult<Void>> getDeleteMessageResult() {
@@ -80,19 +86,21 @@ public class MessageViewModel extends ViewModel {
     }
 
     public void createTextMessage(Long chatId, String text) {
-        messageRepository.createTextMessage(chatId, text, new LiveDataFutureCallback<>(createMessageResult));
+        messageRepository.createTextMessage(chatId, text,
+                new LiveDataFutureCallback<>(databaseCreateMessage),
+                new NetworkLiveDataFutureCallback<>(createMessageResult));
     }
 
     public void createImageMessage(Long chatId, final Uri filePath) {
-        messageRepository.createImageMessage(chatId, filePath, new LiveDataFutureCallback<>(createMessageResult));
+        messageRepository.createImageMessage(chatId, filePath, new NetworkLiveDataFutureCallback<>(createMessageResult));
     }
 
     public void createStickerMessage(Long chatId, Long stickerId) {
-        messageRepository.createStickerMessage(chatId, stickerId, new LiveDataFutureCallback<>(createMessageResult));
+        messageRepository.createStickerMessage(chatId, stickerId, new NetworkLiveDataFutureCallback<>(createMessageResult));
     }
 
     public void deleteMessage(Long chatId, Long messageId) {
-        messageRepository.deleteMessage(chatId, messageId, new LiveDataFutureCallback<>(deleteMessageResult));
+        messageRepository.deleteMessage(chatId, messageId, new NetworkLiveDataFutureCallback<>(deleteMessageResult));
     }
 
 }
