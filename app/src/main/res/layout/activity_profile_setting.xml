@@ -203,6 +203,17 @@
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/first_name_text_view" />
 
+        <ImageView
+            android:id="@+id/ab_back_image_view"
+            android:layout_width="34dp"
+            android:layout_height="34dp"
+            android:layout_marginStart="24dp"
+            android:layout_marginTop="24dp"
+            android:padding="4dp"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:srcCompat="@drawable/abc_ic_ab_back_material" />
+
     </androidx.constraintlayout.widget.ConstraintLayout>
 
 </ScrollView>

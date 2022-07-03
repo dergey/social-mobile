@@ -6,6 +6,17 @@
     android:layout_height="match_parent"
     tools:context=".ui.registration.RegistrationActivity">
 
+    <ImageView
+        android:id="@+id/ab_back_image_view2"
+        android:layout_width="34dp"
+        android:layout_height="34dp"
+        android:layout_marginStart="24dp"
+        android:layout_marginTop="24dp"
+        android:padding="4dp"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:srcCompat="@drawable/abc_ic_ab_back_material" />
+
     <TextView
         android:id="@+id/hint_text_view2"
         android:layout_width="wrap_content"

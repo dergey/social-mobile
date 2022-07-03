@@ -1,17 +1,8 @@
 package com.sergey.zhuravlev.mobile.social.ui.login;
 
 import android.app.Activity;
-
-import androidx.constraintlayout.widget.ConstraintLayout;
-import androidx.lifecycle.Observer;
-import androidx.lifecycle.ViewModelProvider;
-
 import android.content.Intent;
 import android.os.Bundle;
-
-import androidx.annotation.Nullable;
-import androidx.appcompat.app.AppCompatActivity;
-
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.view.KeyEvent;
@@ -19,13 +10,17 @@ import android.view.View;
 import android.view.inputmethod.EditorInfo;
 import android.widget.Button;
 import android.widget.EditText;
-import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import androidx.annotation.Nullable;
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.constraintlayout.widget.ConstraintLayout;
+import androidx.lifecycle.Observer;
+import androidx.lifecycle.ViewModelProvider;
+
 import com.sergey.zhuravlev.mobile.social.constrain.IntentConstrains;
 import com.sergey.zhuravlev.mobile.social.databinding.ActivityLoginBinding;
-import com.sergey.zhuravlev.mobile.social.ui.message.MessageActivity;
 import com.sergey.zhuravlev.mobile.social.ui.registration.RegistrationActivity;
 
 public class LoginActivity extends AppCompatActivity {
@@ -147,7 +142,6 @@ public class LoginActivity extends AppCompatActivity {
                 if (!startNextMatchingActivity(intent)) {
                     startActivity(intent);
                 }
-                finish();
             }
         });
     }

@@ -37,8 +37,15 @@ public class MainActivity extends AppCompatActivity implements FragmentCallable 
         // Before navbar initialize
         loadPreferences();
         if (!isLogin) {
-            Intent intent = new Intent(MainActivity.this, LoginActivity.class);
-            startActivityForResult(intent, ActivityCodes.LOGIN_REQUEST);
+            Intent currentIntent = getIntent();
+            String token = currentIntent.getStringExtra(IntentConstrains.EXTRA_TOKEN);
+            if (token != null) {
+                Client.setBarrierToken(token);
+                savePreferences(token);
+            } else {
+                Intent intent = new Intent(MainActivity.this, LoginActivity.class);
+                startActivity(intent);
+            }
         }
 
         BottomNavigationView navView = findViewById(R.id.nav_view);
@@ -50,18 +57,6 @@ public class MainActivity extends AppCompatActivity implements FragmentCallable 
         NavController navController = Navigation.findNavController(this, R.id.nav_host_fragment_activity_main);
        // NavigationUI.setupActionBarWithNavController(this, navController, appBarConfiguration);
         NavigationUI.setupWithNavController(binding.navView, navController);
-    }
-
-    @Override
-    protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
-        super.onActivityResult(requestCode, resultCode, data);
-        switch (requestCode) {
-            case ActivityCodes.LOGIN_REQUEST:
-                String token = data.getStringExtra(IntentConstrains.EXTRA_TOKEN);
-                Client.setBarrierToken(token);
-                savePreferences(token);
-                break;
-        }
     }
 
     @Override
