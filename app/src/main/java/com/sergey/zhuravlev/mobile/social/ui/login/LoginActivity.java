@@ -2,6 +2,7 @@ package com.sergey.zhuravlev.mobile.social.ui.login;
 
 import android.app.Activity;
 
+import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProvider;
 
@@ -46,6 +47,8 @@ public class LoginActivity extends AppCompatActivity {
         final EditText passwordEditText = binding.passwordEditText;
         final Button loginButton = binding.loginButton;
         final TextView signUpTextView = binding.signUpTextView;
+        final ConstraintLayout errorLayout = binding.errorLayout;
+        final TextView errorTextView = binding.errorTextView;
         //final ProgressBar loadingProgressBar = binding.loading;
 
         loginViewModel.getLoginFormState().observe(this, new Observer<LoginFormState>() {
@@ -55,6 +58,7 @@ public class LoginActivity extends AppCompatActivity {
                     return;
                 }
                 loginButton.setEnabled(loginFormState.isDataValid());
+                errorLayout.setVisibility(View.INVISIBLE);
                 if (loginFormState.getEmailError() != null) {
                     emailEditText.setError(getString(loginFormState.getEmailError()));
                 }
@@ -79,7 +83,10 @@ public class LoginActivity extends AppCompatActivity {
                 //loadingProgressBar.setVisibility(View.GONE);
 
                 if (loginResult.getErrorMessage() != null) {
-                    showLoginFailed(loginResult.getErrorMessage());
+                    errorLayout.setVisibility(View.VISIBLE);
+                    errorTextView.setText(loginResult.getErrorMessage());
+                    loginButton.setEnabled(false);
+                    //showLoginFailed(loginResult.getErrorMessage());
                 }
 
                 if (loginResult.isHasErrors()) {

@@ -6,7 +6,13 @@
             <solid android:color="?attr/backgroundPressedButtonColor"/>
         </shape>
     </item>
-    <item android:state_pressed="false">
+    <item android:state_enabled="false">
+        <shape android:shape="rectangle">
+            <corners android:radius="5dp" />
+            <solid android:color="?attr/backgroundDisableButtonColor" />
+        </shape>
+    </item>
+    <item>
         <shape android:shape="rectangle">
             <corners android:radius="5dp" />
             <solid android:color="?attr/backgroundButtonColor" />

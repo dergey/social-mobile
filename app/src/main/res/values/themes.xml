@@ -28,6 +28,7 @@
         <item name="borderFocusedEditTextColor">@color/focused_border_color</item>
         <item name="buttonTextColor">@color/button_text_color</item>
         <item name="backgroundButtonColor">@color/active_button_color</item>
+        <item name="backgroundDisableButtonColor">@color/disable_button_color</item>
         <item name="backgroundPressedButtonColor">@color/pressed_active_button_color</item>
     </style>
 

@@ -8,6 +8,8 @@
     <color name="black">#FF000000</color>
     <color name="white">#FFFFFFFF</color>
     <color name="error">#D32F2F</color>
+    <color name="warning">#FFD166</color>
+    <color name="warning_corner">#AC8D46</color>
 
     <color name="link_color">#0f6fec</color>
     <color name="header_color">#14191e</color>
@@ -16,6 +18,7 @@
     <color name="focused_border_color">#2882FA</color>
     <color name="button_text_color">#e1e4e6</color>
     <color name="active_button_color">#0F6FEC</color>
+    <color name="disable_button_color">#7D7D7D</color>
     <color name="pressed_active_button_color">#0C59BD</color>
 
     <color name="link_color_night">#3A4ECD</color>
@@ -25,5 +28,7 @@
     <color name="focused_border_color_night">#0F328C</color>
     <color name="button_text_color_night">#e1e4e6</color>
     <color name="active_button_color_night">#2882FA</color>
+    <color name="disable_button_color_night">#969696</color>
     <color name="pressed_active_button_color_night">#0C59BD</color>
+
 </resources>
