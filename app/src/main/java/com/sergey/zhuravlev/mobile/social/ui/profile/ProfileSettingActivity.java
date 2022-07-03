@@ -6,6 +6,7 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.text.Editable;
 import android.text.TextWatcher;
+import android.util.Log;
 import android.view.KeyEvent;
 import android.view.View;
 import android.view.inputmethod.EditorInfo;
@@ -28,6 +29,7 @@ import com.sergey.zhuravlev.mobile.social.client.dto.ErrorDto;
 import com.sergey.zhuravlev.mobile.social.constrain.IntentConstrains;
 import com.sergey.zhuravlev.mobile.social.databinding.ActivityProfileSettingBinding;
 import com.sergey.zhuravlev.mobile.social.ui.login.LoginActivity;
+import com.sergey.zhuravlev.mobile.social.ui.registration.RegistrationActivity;
 import com.sergey.zhuravlev.mobile.social.util.StringUtils;
 
 import java.time.LocalDate;
@@ -149,6 +151,23 @@ public class ProfileSettingActivity extends AppCompatActivity {
                 }
                 if (profileSettingFormState.getBirthDateErrorString() != null) {
                     birthdayEditText.setError(profileSettingFormState.getBirthDateErrorString());
+                }
+
+                // todo its not working, pls use Task and Backstack
+                if (profileSettingFormState.getEmailErrorString() != null) {
+
+                    Intent startingIntent = new Intent(getApplicationContext(), RegistrationActivity.class);
+                    startingIntent.putExtra(IntentConstrains.EXTRA_REGISTRATION_EMAIL_ERROR, profileSettingFormState.getEmailErrorString());
+                    startingIntent.addFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT);
+                    startActivity(startingIntent);
+                    overridePendingTransition(R.anim.slide_in_from_left, R.anim.slide_out_to_right);
+                }
+                if (profileSettingFormState.getPasswordErrorString() != null) {
+                    Intent startingIntent = new Intent(getApplicationContext(), RegistrationActivity.class);
+                    startingIntent.putExtra(IntentConstrains.EXTRA_REGISTRATION_PASSWORD_ERROR, profileSettingFormState.getPasswordErrorString());
+                    startingIntent.addFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT);
+                    startActivity(startingIntent);
+                    overridePendingTransition(R.anim.slide_in_from_left, R.anim.slide_out_to_right);
                 }
             }
         });

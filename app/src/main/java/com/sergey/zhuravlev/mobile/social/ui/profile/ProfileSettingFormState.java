@@ -26,23 +26,35 @@ class ProfileSettingFormState {
     private Integer birthDateError;
     @Nullable
     private String birthDateErrorString;
+    @Nullable
+    private Integer emailError;
+    @Nullable
+    private String emailErrorString;
+    @Nullable
+    private Integer passwordError;
+    @Nullable
+    private String passwordErrorString;
 
     private boolean isDataValid;
 
     ProfileSettingFormState(@Nullable Integer firstNameError, @Nullable Integer lastNameError,
                             @Nullable Integer additionalNameError, @Nullable Integer usernameError,
-                            @Nullable Integer birthDateError) {
+                            @Nullable Integer birthDateError, @Nullable Integer emailError,
+                            @Nullable Integer passwordError) {
         this.firstNameError = firstNameError;
         this.lastNameError = lastNameError;
         this.additionalNameError = additionalNameError;
         this.usernameError = usernameError;
         this.birthDateError = birthDateError;
+        this.emailError = emailError;
+        this.passwordError = passwordError;
         this.isDataValid = false;
     }
 
     ProfileSettingFormState(@Nullable String firstNameError, @Nullable String lastNameError,
                             @Nullable String additionalNameError, @Nullable String usernameError,
-                            @Nullable String birthDateError) {
+                            @Nullable String birthDateError, @Nullable String emailError,
+                            @Nullable String passwordError) {
         this.firstNameError = null;
         this.firstNameErrorString = firstNameError;
         this.lastNameError = null;
@@ -53,6 +65,10 @@ class ProfileSettingFormState {
         this.usernameErrorString = usernameError;
         this.birthDateError = null;
         this.birthDateErrorString = birthDateError;
+        this.emailError = null;
+        this.emailErrorString = emailError;
+        this.passwordError = null;
+        this.passwordErrorString = passwordError;
         this.isDataValid = false;
     }
 
@@ -158,6 +174,42 @@ class ProfileSettingFormState {
 
     public void setBirthDateErrorString(@Nullable String birthDateErrorString) {
         this.birthDateErrorString = birthDateErrorString;
+    }
+
+    @Nullable
+    public Integer getEmailError() {
+        return emailError;
+    }
+
+    public void setEmailError(@Nullable Integer emailError) {
+        this.emailError = emailError;
+    }
+
+    @Nullable
+    public String getEmailErrorString() {
+        return emailErrorString;
+    }
+
+    public void setEmailErrorString(@Nullable String emailErrorString) {
+        this.emailErrorString = emailErrorString;
+    }
+
+    @Nullable
+    public Integer getPasswordError() {
+        return passwordError;
+    }
+
+    public void setPasswordError(@Nullable Integer passwordError) {
+        this.passwordError = passwordError;
+    }
+
+    @Nullable
+    public String getPasswordErrorString() {
+        return passwordErrorString;
+    }
+
+    public void setPasswordErrorString(@Nullable String passwordErrorString) {
+        this.passwordErrorString = passwordErrorString;
     }
 
     boolean isDataValid() {

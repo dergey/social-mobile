@@ -52,6 +52,10 @@ public class RegistrationViewModel extends ViewModel {
         }
     }
 
+    public void processServerFieldError(String emailError, String passwordError) {
+        registrationFormState.postValue(new RegistrationFormState(emailError, passwordError, null));
+    }
+
     // A placeholder username validation check
     private boolean isUserNameValid(String username) {
         if (username == null) {

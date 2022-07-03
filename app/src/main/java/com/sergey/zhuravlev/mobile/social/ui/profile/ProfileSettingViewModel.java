@@ -70,10 +70,10 @@ public class ProfileSettingViewModel extends ViewModel {
         for (ErrorDto.FieldError field : errorDto.getFields()) {
             switch (field.getField()) {
                 case "email":
-                    //todo!
+                    formState.setEmailErrorString(field.getMessage());
                     break;
                 case "password":
-                    //todo!
+                    formState.setPasswordErrorString(field.getMessage());
                     break;
                 case "username":
                     formState.setUsernameErrorString(field.getMessage());
@@ -91,6 +91,7 @@ public class ProfileSettingViewModel extends ViewModel {
                     formState.setBirthDateErrorString(field.getMessage());
                     break;
             }
+            profileSettingFormState.postValue(formState);
         }
     }
 

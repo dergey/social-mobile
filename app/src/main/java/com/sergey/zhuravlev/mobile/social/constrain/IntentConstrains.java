@@ -7,4 +7,6 @@ public class IntentConstrains {
     public static final String EXTRA_REGISTRATION_EMAIL = "registration_email";
     public static final String EXTRA_REGISTRATION_PASSWORD = "registration_password";
     public static final String EXTRA_PROFILE_SETTING_TYPE = "profile_setting_type";
+    public static final String EXTRA_REGISTRATION_EMAIL_ERROR = "registration_email_error";
+    public static final String EXTRA_REGISTRATION_PASSWORD_ERROR = "registration_password_error";
 }

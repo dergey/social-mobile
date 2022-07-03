@@ -10,6 +10,7 @@ import android.view.inputmethod.EditorInfo;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
@@ -20,6 +21,7 @@ import com.sergey.zhuravlev.mobile.social.R;
 import com.sergey.zhuravlev.mobile.social.constrain.IntentConstrains;
 import com.sergey.zhuravlev.mobile.social.databinding.ActivityRegistrationBinding;
 import com.sergey.zhuravlev.mobile.social.ui.profile.ProfileSettingActivity;
+import com.sergey.zhuravlev.mobile.social.util.StringUtils;
 
 public class RegistrationActivity extends AppCompatActivity {
 
@@ -108,6 +110,19 @@ public class RegistrationActivity extends AppCompatActivity {
                         passwordEditText.getText().toString());
             }
         });
+    }
+
+    @Override
+    public void onTopResumedActivityChanged(boolean isTopResumedActivity) {
+        if (isTopResumedActivity) {
+            Intent intent = getIntent();
+            String emailError = intent.getStringExtra(IntentConstrains.EXTRA_REGISTRATION_EMAIL_ERROR);
+            String passwordError = intent.getStringExtra(IntentConstrains.EXTRA_REGISTRATION_PASSWORD_ERROR);
+            if (!StringUtils.isBlank(emailError) || !StringUtils.isBlank(passwordError)) {
+                registrationViewModel.processServerFieldError(emailError, passwordError);
+            }
+        }
+        super.onTopResumedActivityChanged(isTopResumedActivity);
     }
 
     private void startNextStepActivity(String email, String password) {
