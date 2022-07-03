@@ -1,6 +1,7 @@
 package com.sergey.zhuravlev.mobile.social.ui.message;
 
 import android.content.Context;
+import android.net.Uri;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -19,7 +20,9 @@ import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.bumptech.glide.load.model.GlideUrl;
 import com.bumptech.glide.load.model.LazyHeaders;
+import com.bumptech.glide.load.resource.bitmap.DownsampleStrategy;
 import com.bumptech.glide.request.RequestOptions;
+import com.bumptech.glide.signature.ObjectKey;
 import com.google.common.collect.Iterables;
 import com.sergey.zhuravlev.mobile.social.R;
 import com.sergey.zhuravlev.mobile.social.client.Client;
@@ -196,17 +199,28 @@ public class MessageAdapter extends PagingDataAdapter<Item<MessageModel>, Recycl
 
             messageDate.setText(item.getCreateAt().format(TIME_FORMATTER));
 
-            String messageImageUrl = String.format("%s/api/chat/%s/message/%s/image_preview",
-                    Client.getBaseUrl(),
-                    item.getChatId(),
-                    item.getNetworkId());
-            GlideUrl glideUrl = new GlideUrl(messageImageUrl,
-                    new LazyHeaders.Builder()
-                            .addHeader("Authorization", "Bearer " + Client.getBarrierToken())
-                            .build());
-            Glide.with(context).load(glideUrl)
-                    .diskCacheStrategy(DiskCacheStrategy.NONE).skipMemoryCache(true)
-                    .apply(RequestOptions.centerCropTransform()).into(messageImage);
+            if (!item.isPrepend()) {
+                String messageImageUrl = String.format("%s/api/chat/%s/message/%s/image_preview",
+                        Client.getBaseUrl(),
+                        item.getChatId(),
+                        item.getNetworkId());
+                GlideUrl glideUrl = new GlideUrl(messageImageUrl,
+                        new LazyHeaders.Builder()
+                                .addHeader("Authorization", "Bearer " + Client.getBarrierToken())
+                                .build());
+                Glide.with(context).load(glideUrl)
+                        .signature(new ObjectKey(messageImageUrl))
+                        .centerCrop()
+                        .into(messageImage);
+            } else {
+                Uri uri = Uri.parse(item.getGlideSignature());
+                ObjectKey objectKey = new ObjectKey(item.getGlideSignature());
+                Glide.with(context).asBitmap()
+                        .load(uri)
+                        .signature(objectKey)
+                        .onlyRetrieveFromCache(true)
+                        .into(messageImage);
+            }
             return this;
         }
     }

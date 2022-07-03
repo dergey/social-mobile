@@ -78,8 +78,10 @@ public class MessageRepository {
         Futures.addCallback(dataSource.createTextMessage(chatId, text, partialCallback), callback, executor);
     }
 
-    public void createImageMessage(Long chatId, final Uri filePath, FutureCallback<Result<MessageDto, ErrorDto>> callback) {
-        Futures.addCallback(dataSource.createImageMessage(chatId, filePath), callback, executor);
+    public void createImageMessage(Long chatId, final Uri filePath,
+                                   FutureCallback<MessageModel> partialCallback,
+                                   FutureCallback<Result<MessageDto, ErrorDto>> callback) {
+        Futures.addCallback(dataSource.createImageMessage(chatId, filePath, partialCallback), callback, executor);
     }
 
     public void createStickerMessage(Long chatId, Long stickerId, FutureCallback<Result<MessageDto, ErrorDto>> callback) {

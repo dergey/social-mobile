@@ -92,7 +92,9 @@ public class MessageViewModel extends ViewModel {
     }
 
     public void createImageMessage(Long chatId, final Uri filePath) {
-        messageRepository.createImageMessage(chatId, filePath, new NetworkLiveDataFutureCallback<>(createMessageResult));
+        messageRepository.createImageMessage(chatId, filePath,
+                new LiveDataFutureCallback<>(databaseCreateMessage),
+                new NetworkLiveDataFutureCallback<>(createMessageResult));
     }
 
     public void createStickerMessage(Long chatId, Long stickerId) {

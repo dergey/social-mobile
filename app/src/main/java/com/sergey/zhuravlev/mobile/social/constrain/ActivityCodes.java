@@ -6,4 +6,5 @@ public class ActivityCodes {
 
     public static final int LOGIN_REQUEST = 1000;
 
+    public static final int IMAGE_CHOOSE_REQUEST = 1010;
 }

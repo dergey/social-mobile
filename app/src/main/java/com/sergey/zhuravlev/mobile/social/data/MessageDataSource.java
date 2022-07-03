@@ -1,11 +1,18 @@
 package com.sergey.zhuravlev.mobile.social.data;
 
 import android.content.Context;
+import android.graphics.Bitmap;
 import android.net.Uri;
 import android.util.Log;
 
 import androidx.annotation.Nullable;
 
+import com.bumptech.glide.Glide;
+import com.bumptech.glide.load.engine.DiskCacheStrategy;
+import com.bumptech.glide.load.resource.bitmap.DownsampleStrategy;
+import com.bumptech.glide.request.RequestOptions;
+import com.bumptech.glide.signature.ObjectKey;
+import com.google.common.cache.AbstractLoadingCache;
 import com.google.common.io.ByteStreams;
 import com.google.common.util.concurrent.FutureCallback;
 import com.google.common.util.concurrent.Futures;
@@ -22,13 +29,18 @@ import com.sergey.zhuravlev.mobile.social.database.dao.MessageModelDao;
 import com.sergey.zhuravlev.mobile.social.database.model.MessageModel;
 import com.sergey.zhuravlev.mobile.social.enums.MessageSenderType;
 import com.sergey.zhuravlev.mobile.social.enums.MessageType;
+import com.sergey.zhuravlev.mobile.social.util.GlideCompressedImage;
 
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.time.LocalDateTime;
 import java.util.concurrent.Executor;
 import java.util.concurrent.atomic.AtomicLong;
 
+import kotlin.jvm.functions.Function1;
 import okhttp3.MediaType;
 import okhttp3.MultipartBody;
 import okhttp3.RequestBody;
@@ -132,30 +144,100 @@ public class MessageDataSource {
     }
 
 
-    public ListenableFuture<Result<MessageDto, ErrorDto>> createImageMessage(Long chatId, final Uri filePath) {
-        ListenableFuture<MultipartBody.Part> multipartBodyPartFuture = ListenableFutureTask.create(() -> {
-            InputStream is = context.getContentResolver().openInputStream(filePath);
-            byte[] imageBytes = ByteStreams.toByteArray(is);
-            RequestBody requestFile = RequestBody.create(MediaType.parse("multipart/form-data"), imageBytes);
-            return MultipartBody.Part.createFormData("image",
-                    filePath.getPath().substring(filePath.getPath().lastIndexOf('/') + 1),
-                    requestFile);
-        });
+    public ListenableFuture<Result<MessageDto, ErrorDto>> createImageMessage(Long chatId, final Uri filePath,
+                                                                             FutureCallback<MessageModel> partialCallback) {
+
+        final AtomicLong modelIdAtomicLong = new AtomicLong();
+
+        MessageModel prepareModel = new MessageModel();
+        prepareModel.setSender(MessageSenderType.SOURCE);
+        prepareModel.setChatId(chatId);
+        prepareModel.setType(MessageType.IMAGE);
+        prepareModel.setSender(MessageSenderType.SOURCE);
+        prepareModel.setRead(true);
+        prepareModel.setPrepend(true);
+        prepareModel.setCreateAt(LocalDateTime.now());
+        prepareModel.setUpdateAt(LocalDateTime.now());
+
+        ListenableFuture<GlideCompressedImage> glideCompressedFuture = Futures.submit(() -> {
+            GlideCompressedImage glideCompressedImage = new GlideCompressedImage();
+            glideCompressedImage.setGlideSignature(filePath.toString());
+            glideCompressedImage.setFilename(filePath.getPath().substring(filePath.getPath().lastIndexOf('/') + 1));
+
+            Bitmap bitmap = Glide.with(context)
+                    .asBitmap()
+                    .load(filePath)
+                    .apply(new RequestOptions()
+                            .override(1280)
+                            .downsample(DownsampleStrategy.AT_MOST)
+                            .signature(new ObjectKey(glideCompressedImage.getGlideSignature())))
+                    .submit().get();
+
+            ByteArrayOutputStream out = new ByteArrayOutputStream();
+            bitmap.compress(Bitmap.CompressFormat.JPEG, 85, out);
+            byte[] byteArray = out.toByteArray();
+            out.close();
+            glideCompressedImage.setBytearray(byteArray);
+            return glideCompressedImage;
+        }, executor);
+
+        glideCompressedFuture = Futures.transform(glideCompressedFuture,
+                glideCompressedImage -> {
+                    prepareModel.setGlideSignature(glideCompressedImage.getGlideSignature());
+                    long id = messageModelDao.insert(prepareModel);
+                    prepareModel.setId(id);
+                    modelIdAtomicLong.set(id);
+                    partialCallback.onSuccess(prepareModel);
+                    return glideCompressedImage;
+                },
+                executor);
+
+        ListenableFuture<MultipartBody.Part> multipartBodyPartFuture = Futures.transform(glideCompressedFuture,
+                glideCompressedImage -> {
+                    RequestBody requestFile = RequestBody.create(MediaType.parse("multipart/form-data"),
+                            glideCompressedImage.getBytearray());
+                    return MultipartBody.Part.createFormData("image", glideCompressedImage.getFilename(),
+                            requestFile);
+                }, executor);
 
         ListenableFuture<MessageDto> messageFuture = Futures.transformAsync(multipartBodyPartFuture,
                 input -> messageEndpoints.createImageMessage(chatId, input),
                 executor);
 
-        ListenableFuture<Result<MessageDto, ErrorDto>> loginFuture =
+        ListenableFuture<Result<MessageDto, ErrorDto>> messageResultFuture =
                 Futures.transform(messageFuture,
                         Result.Success::new, executor);
 
         ListenableFuture<Result<MessageDto, ErrorDto>> partialResultFuture =
-                Futures.catching(loginFuture, HttpException.class,
+                Futures.catching(messageResultFuture, HttpException.class,
                         Result.Error::fromHttpException, executor);
 
-        return Futures.catching(partialResultFuture,
-                IOException.class, Result.Error::fromIOException, executor);
+        ListenableFuture<Result<MessageDto, ErrorDto>> catchingResultFuture =
+                Futures.catching(partialResultFuture,
+                        IOException.class, Result.Error::fromIOException, executor);
+
+        return Futures.transform(catchingResultFuture,
+                result -> {
+                    if (result.isSuccess()) {
+                        Result.Success<MessageDto, ErrorDto> successResult = (Result.Success<MessageDto, ErrorDto>) result;
+                        database.runInTransaction(() -> {
+                            MessageModel prependModel = messageModelDao.getOne(modelIdAtomicLong.get());
+                            messageModelDao.insert(MessageModelMapper.updateModel(prependModel, successResult.getData()));
+                        });
+                        //todo add deletion from the Glide cache
+                    } else {
+                        Result.Error<MessageDto, ErrorDto> errorResult = (Result.Error<MessageDto, ErrorDto>) result;
+                        Log.w("MessageDataSource/createImageMessage", "Backend return error result: " + errorResult.getMessage());
+                        database.runInTransaction(() -> {
+                            MessageModel prependModel = messageModelDao.getOne(modelIdAtomicLong.get());
+                            prependModel.setPrependError(true);
+                            messageModelDao.insert(prependModel);
+                            Log.w("MessageDataSource/createImageMessage", "Insert model with error: " + prependModel);
+                        });
+                    }
+                    return result;
+                },
+                executor);
     }
 
     public ListenableFuture<Result<Void, ErrorDto>> deleteMessage(Long chatId, Long messageId) {

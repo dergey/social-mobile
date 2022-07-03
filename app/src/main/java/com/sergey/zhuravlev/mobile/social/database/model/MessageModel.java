@@ -1,5 +1,7 @@
 package com.sergey.zhuravlev.mobile.social.database.model;
 
+import android.net.Uri;
+
 import androidx.room.ColumnInfo;
 import androidx.room.Embedded;
 import androidx.room.Entity;
@@ -29,6 +31,9 @@ public class MessageModel {
     private MessageSenderType sender;
 
     private String text;
+
+    @ColumnInfo(name = "glide_signature")
+    private String glideSignature;
 
     @ColumnInfo(name = "create_at")
     private LocalDateTime createAt;
@@ -92,6 +97,14 @@ public class MessageModel {
 
     public void setText(String text) {
         this.text = text;
+    }
+
+    public String getGlideSignature() {
+        return glideSignature;
+    }
+
+    public void setGlideSignature(String glideSignature) {
+        this.glideSignature = glideSignature;
     }
 
     public LocalDateTime getCreateAt() {

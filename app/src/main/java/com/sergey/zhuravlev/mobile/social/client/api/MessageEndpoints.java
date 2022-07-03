@@ -10,6 +10,7 @@ import okhttp3.MultipartBody;
 import retrofit2.http.Body;
 import retrofit2.http.DELETE;
 import retrofit2.http.GET;
+import retrofit2.http.Multipart;
 import retrofit2.http.POST;
 import retrofit2.http.PUT;
 import retrofit2.http.Part;
@@ -26,9 +27,10 @@ public interface MessageEndpoints {
     @POST("/api/chat/{chatId}/message")
     ListenableFuture<MessageDto> createMessage(@Path("chatId") Long chatId, @Body CreateMessageDto dto);
 
+    @Multipart
     @POST("/api/chat/{chatId}/message/image")
     ListenableFuture<MessageDto> createImageMessage(@Path("chatId") Long chatId,
-                                                    @Part("image") MultipartBody.Part image);
+                                                    @Part MultipartBody.Part image);
 
     @PUT("/api/chat/{chatId}/message/{messageId}")
     ListenableFuture<MessageDto> updateTextMessage(@Path("chatId") Long chatId, @Path("messageId") Long messageId,

@@ -1,8 +1,8 @@
 package com.sergey.zhuravlev.mobile.social.database;
 
 import android.content.Context;
-import android.os.Message;
 
+import androidx.room.AutoMigration;
 import androidx.room.Database;
 import androidx.room.Room;
 import androidx.room.RoomDatabase;
@@ -34,7 +34,9 @@ public abstract class AppDatabase extends RoomDatabase {
     }
 
     private static AppDatabase buildDatabase(Context context) {
-        return Room.databaseBuilder(context.getApplicationContext(), AppDatabase.class, SOCIAL_DB).build();
+        return Room.databaseBuilder(context.getApplicationContext(), AppDatabase.class, SOCIAL_DB)
+                .fallbackToDestructiveMigration()
+                .build();
     }
 
 }
