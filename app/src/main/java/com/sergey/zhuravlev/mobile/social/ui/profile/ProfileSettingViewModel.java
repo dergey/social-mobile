@@ -5,7 +5,6 @@ import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.ViewModel;
 
 import com.sergey.zhuravlev.mobile.social.client.dto.ErrorDto;
-import com.sergey.zhuravlev.mobile.social.client.dto.LoginDto;
 import com.sergey.zhuravlev.mobile.social.client.dto.LoginResponseDto;
 import com.sergey.zhuravlev.mobile.social.client.dto.user.UserDto;
 import com.sergey.zhuravlev.mobile.social.data.LoginRepository;
@@ -54,7 +53,7 @@ public class ProfileSettingViewModel extends ViewModel {
                                           String username, String birthDate) {
 //  todo :
 //        if (!isUserNameValid(username)) {
-//            registrationFormState.setValue(new RegistrationFormState(R.string.invalid_username, null, null));
+//            registrationFormState.setValue(new RegistrationFormState(R.string.invalid_email, null, null));
 //        } else if (!isPasswordValid(password)) {
 //            registrationFormState.setValue(new RegistrationFormState(null, R.string.invalid_password, null));
 //        } else if (!isPasswordConfirmValid(password, confirmPassword)) {

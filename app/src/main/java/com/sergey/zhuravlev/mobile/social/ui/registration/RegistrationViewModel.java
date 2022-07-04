@@ -42,7 +42,7 @@ public class RegistrationViewModel extends ViewModel {
 
     public void registrationDataChanged(String username, String password, String confirmPassword) {
         if (!isUserNameValid(username)) {
-            registrationFormState.setValue(new RegistrationFormState(R.string.invalid_username, null, null));
+            registrationFormState.setValue(new RegistrationFormState(R.string.invalid_email, null, null));
         } else if (!isPasswordValid(password)) {
             registrationFormState.setValue(new RegistrationFormState(null, R.string.invalid_password, null));
         } else if (!isPasswordConfirmValid(password, confirmPassword)) {
