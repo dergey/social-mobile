@@ -5,6 +5,7 @@ import com.sergey.zhuravlev.mobile.social.client.dto.PageDto;
 import com.sergey.zhuravlev.mobile.social.client.dto.message.CreateMessageDto;
 import com.sergey.zhuravlev.mobile.social.client.dto.message.MessageDto;
 import com.sergey.zhuravlev.mobile.social.client.dto.message.UpdateTextMessageDto;
+import com.sergey.zhuravlev.mobile.social.client.utils.Sort;
 
 import okhttp3.MultipartBody;
 import retrofit2.http.Body;
@@ -22,7 +23,8 @@ public interface MessageEndpoints {
     @GET("/api/chat/{chatId}/message")
     ListenableFuture<PageDto<MessageDto>> getChatMessages(@Path("chatId") Long chatId,
                                                           @Query(value = "page") Integer page,
-                                                          @Query(value = "size") Integer size);
+                                                          @Query(value = "size") Integer size,
+                                                          @Query(value = "sort") Sort sort);
 
     @POST("/api/chat/{chatId}/message")
     ListenableFuture<MessageDto> createMessage(@Path("chatId") Long chatId, @Body CreateMessageDto dto);

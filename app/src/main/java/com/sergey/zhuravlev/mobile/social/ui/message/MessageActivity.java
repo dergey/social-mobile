@@ -47,7 +47,7 @@ public class MessageActivity extends AppCompatActivity {
         adapter = new MessageAdapter(this);
 
         recyclerView = binding.messageRecyclerView;
-        LinearLayoutManager linearLayoutManager = new LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false);
+        LinearLayoutManager linearLayoutManager = new LinearLayoutManager(this, LinearLayoutManager.VERTICAL, true);
         recyclerView.setLayoutManager(linearLayoutManager);
         recyclerView.setAdapter(adapter);
 
@@ -104,7 +104,7 @@ public class MessageActivity extends AppCompatActivity {
                 @Override
                 public void onItemRangeInserted(int positionStart, int itemCount) {
                     super.onItemRangeInserted(positionStart, itemCount);
-                    linearLayoutManager.scrollToPositionWithOffset(adapter.getItemCount() - 1, 20);
+                    linearLayoutManager.scrollToPositionWithOffset(0, 0);
                     adapter.unregisterAdapterDataObserver(this);
                 }
             });

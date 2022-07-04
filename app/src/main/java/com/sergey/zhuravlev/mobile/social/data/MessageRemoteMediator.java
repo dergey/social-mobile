@@ -15,6 +15,8 @@ import com.sergey.zhuravlev.mobile.social.client.api.MessageEndpoints;
 import com.sergey.zhuravlev.mobile.social.client.dto.PageDto;
 import com.sergey.zhuravlev.mobile.social.client.dto.message.MessageDto;
 import com.sergey.zhuravlev.mobile.social.client.mapper.MessageModelMapper;
+import com.sergey.zhuravlev.mobile.social.client.utils.Direction;
+import com.sergey.zhuravlev.mobile.social.client.utils.Sort;
 import com.sergey.zhuravlev.mobile.social.database.AppDatabase;
 import com.sergey.zhuravlev.mobile.social.database.dao.MessageModelDao;
 import com.sergey.zhuravlev.mobile.social.database.model.MessageModel;
@@ -82,7 +84,7 @@ public class MessageRemoteMediator extends ListenableFutureRemoteMediator<Intege
 
     private ListenableFuture<MediatorResult> refreshFuture(@NotNull PagingState<Integer, MessageModel> state) {
         ListenableFuture<MediatorResult> networkResult = Futures.transform(
-                endpoints.getChatMessages(chatId, getClosestRemoteKey(state), pageSize),
+                endpoints.getChatMessages(chatId, getClosestRemoteKey(state), pageSize, new Sort("createAt", Direction.DESC)),
                 response -> {
                     database.runInTransaction(() -> {
                         List<Long> newNetworkIds = response.getContent().stream()
@@ -147,7 +149,7 @@ public class MessageRemoteMediator extends ListenableFutureRemoteMediator<Intege
             Log.i("MessageRemoteMediator/appendFuture", String.format("Updating current page (pageSize not fully: %s, contain unpageableItems: %s)",
                     lastPageElements % pageSize != 0, unpageableItems.size()));
             networkResult = Futures.transform(
-                    endpoints.getChatMessages(chatId, lastPageNumber, pageSize),
+                    endpoints.getChatMessages(chatId, lastPageNumber, pageSize, new Sort("createAt", Direction.DESC)),
                     response -> {
                         database.runInTransaction(() -> {
                             messageModelDao.clearAll(unpageableItems);
@@ -164,7 +166,7 @@ public class MessageRemoteMediator extends ListenableFutureRemoteMediator<Intege
         } else {
             // Get next page if current full
             networkResult = Futures.transform(
-                    endpoints.getChatMessages(chatId, lastPageNumber + 1, pageSize),
+                    endpoints.getChatMessages(chatId, lastPageNumber + 1, pageSize, new Sort("createAt", Direction.DESC)),
                     response -> {
                         database.runInTransaction(() -> {
                             List<Long> newNetworkIds = response.getContent().stream()

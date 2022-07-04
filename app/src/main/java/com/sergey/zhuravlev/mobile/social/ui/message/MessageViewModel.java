@@ -62,20 +62,20 @@ public class MessageViewModel extends ViewModel {
                 pagingData -> {
                     PagingData<Item<MessageModel>> newPagingData = PagingDataTransforms.map(pagingData, executor, Item.RepoItem::new);
                     newPagingData = PagingDataTransforms.insertSeparators(newPagingData, executor, (before, after) -> {
-                        if (after == null) {
-                            return null;
-                        }
-
-                        LocalDate afterCreateAtDate = ((Item.RepoItem<MessageModel>) after).getModel().getCreateAt().toLocalDate();
                         if (before == null) {
-                            return new Item.DateSeparatorItem<>(afterCreateAtDate);
+                            return null;
                         }
 
                         LocalDate beforeCreateAtDate = ((Item.RepoItem<MessageModel>) before).getModel().getCreateAt().toLocalDate();
-                        if (Objects.equals(beforeCreateAtDate, afterCreateAtDate)) {
+                        if (after == null) {
+                            return new Item.DateSeparatorItem<>(beforeCreateAtDate);
+                        }
+
+                        LocalDate afterCreateAtDate = ((Item.RepoItem<MessageModel>) after).getModel().getCreateAt().toLocalDate();
+                        if (Objects.equals(afterCreateAtDate, beforeCreateAtDate)) {
                             return null;
                         } else {
-                            return new Item.DateSeparatorItem<>(afterCreateAtDate);
+                            return new Item.DateSeparatorItem<>(beforeCreateAtDate);
                         }
                     });
                     return newPagingData;
