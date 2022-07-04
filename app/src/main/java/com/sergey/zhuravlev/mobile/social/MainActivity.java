@@ -97,6 +97,16 @@ public class MainActivity extends AppCompatActivity implements FragmentCallable 
     }
 
     @Override
+    protected void onNewIntent(Intent intent) {
+        super.onNewIntent(intent);
+        String token = intent.getStringExtra(IntentConstrains.EXTRA_TOKEN);
+        if (token != null) {
+            Client.setBarrierToken(token);
+            savePreferences(token);
+        }
+    }
+
+    @Override
     public void onPause() {
         super.onPause();
         if (isLogin) {
