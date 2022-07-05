@@ -91,7 +91,7 @@ public class ProfileFragment extends Fragment {
                         new LazyHeaders.Builder()
                                 .addHeader("Authorization", "Bearer " + Client.getBarrierToken())
                                 .build());
-                Glide.with(getActivity()).load(glideUrl)
+                Glide.with(getContext()).load(glideUrl)
                         .signature(GlideUtils.getMediaStoreSignature(currentProfileResult.getData().getAvatar()))
                         .apply(RequestOptions.circleCropTransform()).into(avatarImageView);
 

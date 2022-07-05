@@ -10,10 +10,17 @@
         <item name="colorPrimary">@color/purple_200</item>
         <item name="colorPrimaryVariant">@color/purple_700</item>
         <item name="colorOnPrimary">@color/black</item>
+
         <!-- Secondary brand color. -->
         <item name="colorSecondary">@color/teal_200</item>
         <item name="colorSecondaryVariant">@color/teal_200</item>
         <item name="colorOnSecondary">@color/black</item>
+
+        <!-- Text color. -->
+        <item name="textColorPrimary">@color/white</item>
+        <item name="textColorSecond">@color/dark_gray</item>
+        <item name="textColorBackground">@color/gray</item>
+
         <!-- Customize your theme here. -->
         <item name="backgroundErrorLayoutColor">@color/error</item>
         <item name="linkTextViewColor">@color/link_color_night</item>
@@ -27,12 +34,4 @@
         <item name="backgroundPressedButtonColor">@color/pressed_active_button_color_night</item>
     </style>
 
-    <style name="TextAppearanceDate" parent="@android:style/TextAppearance.Material.Small">
-        <item name="android:textSize">10sp</item>
-        <item name="android:textStyle">italic</item>
-    </style>
-
-    <style name="TextLabel" parent="Widget.MaterialComponents.TextInputLayout.FilledBox">
-        <item name="android:textSize">18sp</item>
-    </style>
 </resources>

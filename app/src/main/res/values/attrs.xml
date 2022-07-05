@@ -1,5 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
+    <!-- Common values-->
+    <attr name="textColorPrimary" format="reference" />
+    <attr name="textColorSecond" format="reference" />
+    <attr name="textColorBackground" format="reference" />
     <!-- Other values-->
     <attr name="backgroundErrorLayoutColor" format="reference" />
     <attr name="textErrorLayoutColor" format="reference" />

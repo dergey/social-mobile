@@ -67,10 +67,10 @@ public class ChatAdapter extends PagingDataAdapter<ChatAndLastMessageModel, Recy
         private MessageModel lastMessage;
 
         private final ImageView chatProfileAvatar;
-        private final ImageView unreadMark;
         private final TextView chatTitle;
         private final TextView chatLastMessageText;
         private final TextView chatLastMessageDate;
+        private final TextView unreadCountTextView;
 
         public ChatViewHolder(@NonNull @NotNull View itemView) {
             super(itemView);
@@ -78,7 +78,7 @@ public class ChatAdapter extends PagingDataAdapter<ChatAndLastMessageModel, Recy
             chatTitle = itemView.findViewById(R.id.chatTitle);
             chatLastMessageText = itemView.findViewById(R.id.lastMessageText);
             chatLastMessageDate = itemView.findViewById(R.id.lastMessageDate);
-            unreadMark = itemView.findViewById(R.id.unreadMark);
+            unreadCountTextView = itemView.findViewById(R.id.unread_count_text_view);
         }
 
         public static ChatViewHolder getInstance(ViewGroup parent) {
@@ -110,9 +110,9 @@ public class ChatAdapter extends PagingDataAdapter<ChatAndLastMessageModel, Recy
                 }
                 chatLastMessageDate.setText(lastMessage.getCreateAt().format(TIME_FORMATTER));
                 if (lastMessage.isRead()) {
-                    unreadMark.setImageResource(R.drawable.ic_moon_new_24dp);
+                    unreadCountTextView.setVisibility(View.GONE);
                 } else {
-                    unreadMark.setImageResource(R.drawable.ic_moon_new_fill_24dp);
+                    unreadCountTextView.setVisibility(View.VISIBLE);
                 }
             }
             String chatProfileAvatarUrl = String.format("%s/api/profile/%s/avatar", Client.getBaseUrl(), chat.getTargetProfile().getUsername());

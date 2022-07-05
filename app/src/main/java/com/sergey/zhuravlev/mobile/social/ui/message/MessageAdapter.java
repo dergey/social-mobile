@@ -191,9 +191,9 @@ public class MessageAdapter extends PagingDataAdapter<Item<MessageModel>, Recycl
             ConstraintSet cs = new ConstraintSet();
             cs.clone(constraintLayout);
             if (item.getSender() == MessageSenderType.TARGET) {
-                cs.setHorizontalBias(R.id.card_view, 0f);
+                cs.setHorizontalBias(R.id.image_layout, 0f);
             } else {
-                cs.setHorizontalBias(R.id.card_view, 100f);
+                cs.setHorizontalBias(R.id.image_layout, 100f);
             }
             cs.applyTo(constraintLayout);
 
