@@ -9,12 +9,17 @@ import androidx.paging.PagingConfig;
 import androidx.paging.PagingData;
 import androidx.paging.PagingLiveData;
 
+import com.google.common.util.concurrent.FutureCallback;
+import com.google.common.util.concurrent.Futures;
 import com.sergey.zhuravlev.mobile.social.client.Client;
 import com.sergey.zhuravlev.mobile.social.client.api.ChatEndpoints;
+import com.sergey.zhuravlev.mobile.social.client.dto.ErrorDto;
+import com.sergey.zhuravlev.mobile.social.client.dto.message.MessageDto;
 import com.sergey.zhuravlev.mobile.social.database.AppDatabase;
 import com.sergey.zhuravlev.mobile.social.database.dao.ChatModelDao;
 import com.sergey.zhuravlev.mobile.social.database.model.ChatAndLastMessageModel;
 import com.sergey.zhuravlev.mobile.social.database.model.ChatModel;
+import com.sergey.zhuravlev.mobile.social.database.model.MessageModel;
 
 import java.util.concurrent.Executor;
 import java.util.concurrent.Executors;
@@ -31,12 +36,14 @@ public class ChatRepository {
     private final AppDatabase database;
     private final ChatEndpoints chatEndpoints;
     private final ChatModelDao chatModelDao;
+    private final ChatDataSource dataSource;
 
     private ChatRepository(Context context) {
         this.chatEndpoints = Client.getChatEndpoints();
         this.executor = Executors.newSingleThreadExecutor();
         this.database = AppDatabase.getInstance(context);
         this.chatModelDao = database.getChatModelDao();
+        this.dataSource = new ChatDataSource(chatEndpoints, database, executor);
     }
 
     public static ChatRepository getInstance(Context context) {
@@ -46,8 +53,8 @@ public class ChatRepository {
         return instance;
     }
 
-    public void updateReadStatus() {
-
+    public void updateReadStatus(Long chatId, FutureCallback<Result<Void, ErrorDto>> callback) {
+        Futures.addCallback(dataSource.updateReadStatus(chatId), callback, executor);
     }
 
     public LiveData<PagingData<ChatAndLastMessageModel>> letChatPreviewModelLiveData() {

@@ -5,19 +5,13 @@ import android.graphics.Bitmap;
 import android.net.Uri;
 import android.util.Log;
 
-import androidx.annotation.Nullable;
-
 import com.bumptech.glide.Glide;
-import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.bumptech.glide.load.resource.bitmap.DownsampleStrategy;
 import com.bumptech.glide.request.RequestOptions;
 import com.bumptech.glide.signature.ObjectKey;
-import com.google.common.cache.AbstractLoadingCache;
-import com.google.common.io.ByteStreams;
 import com.google.common.util.concurrent.FutureCallback;
 import com.google.common.util.concurrent.Futures;
 import com.google.common.util.concurrent.ListenableFuture;
-import com.google.common.util.concurrent.ListenableFutureTask;
 import com.sergey.zhuravlev.mobile.social.client.api.MessageEndpoints;
 import com.sergey.zhuravlev.mobile.social.client.dto.ErrorDto;
 import com.sergey.zhuravlev.mobile.social.client.dto.message.CreateStickerMessageDto;
@@ -33,16 +27,12 @@ import com.sergey.zhuravlev.mobile.social.enums.MessageSenderType;
 import com.sergey.zhuravlev.mobile.social.enums.MessageType;
 import com.sergey.zhuravlev.mobile.social.util.GlideCompressedImage;
 
-import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
-import java.io.FileNotFoundException;
 import java.io.IOException;
-import java.io.InputStream;
 import java.time.LocalDateTime;
 import java.util.concurrent.Executor;
 import java.util.concurrent.atomic.AtomicLong;
 
-import kotlin.jvm.functions.Function1;
 import okhttp3.MediaType;
 import okhttp3.MultipartBody;
 import okhttp3.RequestBody;
@@ -119,14 +109,14 @@ public class MessageDataSource {
                     if (result.isSuccess()) {
                         Result.Success<MessageDto, ErrorDto> successResult = (Result.Success<MessageDto, ErrorDto>) result;
                         database.runInTransaction(() -> {
-                            MessageModel prependModel = messageModelDao.getOne(modelIdAtomicLong.get());
+                            MessageModel prependModel = messageModelDao.getOneById(modelIdAtomicLong.get());
                             messageModelDao.insert(MessageModelMapper.updateModel(prependModel, successResult.getData()));
                         });
                     } else {
                         Result.Error<MessageDto, ErrorDto> errorResult = (Result.Error<MessageDto, ErrorDto>) result;
                         Log.w("MessageDataSource/createTextMessage", "Backend return error result: " + errorResult.getMessage());
                         database.runInTransaction(() -> {
-                            MessageModel prependModel = messageModelDao.getOne(modelIdAtomicLong.get());
+                            MessageModel prependModel = messageModelDao.getOneById(modelIdAtomicLong.get());
                             prependModel.setPrependError(true);
                             messageModelDao.insert(prependModel);
                             Log.w("MessageDataSource/createTextMessage", "Insert model with error: " + prependModel);
@@ -235,7 +225,7 @@ public class MessageDataSource {
                     if (result.isSuccess()) {
                         Result.Success<MessageDto, ErrorDto> successResult = (Result.Success<MessageDto, ErrorDto>) result;
                         database.runInTransaction(() -> {
-                            MessageModel prependModel = messageModelDao.getOne(modelIdAtomicLong.get());
+                            MessageModel prependModel = messageModelDao.getOneById(modelIdAtomicLong.get());
                             messageModelDao.insert(MessageModelMapper.updateModel(prependModel, successResult.getData()));
                         });
                         //todo add deletion from the Glide cache
@@ -243,7 +233,7 @@ public class MessageDataSource {
                         Result.Error<MessageDto, ErrorDto> errorResult = (Result.Error<MessageDto, ErrorDto>) result;
                         Log.w("MessageDataSource/createImageMessage", "Backend return error result: " + errorResult.getMessage());
                         database.runInTransaction(() -> {
-                            MessageModel prependModel = messageModelDao.getOne(modelIdAtomicLong.get());
+                            MessageModel prependModel = messageModelDao.getOneById(modelIdAtomicLong.get());
                             prependModel.setPrependError(true);
                             messageModelDao.insert(prependModel);
                             Log.w("MessageDataSource/createImageMessage", "Insert model with error: " + prependModel);

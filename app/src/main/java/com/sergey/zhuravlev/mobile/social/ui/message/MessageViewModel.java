@@ -14,6 +14,7 @@ import androidx.paging.PagingDataTransforms;
 import androidx.paging.PagingLiveData;
 
 import com.sergey.zhuravlev.mobile.social.client.dto.message.MessageDto;
+import com.sergey.zhuravlev.mobile.social.data.ChatRepository;
 import com.sergey.zhuravlev.mobile.social.data.MessageRepository;
 import com.sergey.zhuravlev.mobile.social.database.model.MessageModel;
 import com.sergey.zhuravlev.mobile.social.ui.common.LiveDataFutureCallback;
@@ -34,12 +35,15 @@ public class MessageViewModel extends ViewModel {
     private final MutableLiveData<UiResult<MessageDto>> createMessageResult = new MutableLiveData<>();
     private final MutableLiveData<MessageModel> databaseCreateMessage = new MutableLiveData<>();
     private final MutableLiveData<UiResult<Void>> deleteMessageResult = new MutableLiveData<>();
+    private final MutableLiveData<UiResult<Void>> updateReadStatusResult = new MutableLiveData<>();
 
     private final MessageRepository messageRepository;
+    private final ChatRepository chatRepository;
     private final Executor executor;
 
     MessageViewModel(Context context) {
         this.messageRepository = MessageRepository.getInstance(context);
+        this.chatRepository = ChatRepository.getInstance(context);
         this.executor = Executors.newSingleThreadExecutor();
     }
 
@@ -53,6 +57,10 @@ public class MessageViewModel extends ViewModel {
 
     public LiveData<UiResult<Void>> getDeleteMessageResult() {
         return deleteMessageResult;
+    }
+
+    public LiveData<UiResult<Void>> getUpdateReadStatusResult() {
+        return updateReadStatusResult;
     }
 
     public LiveData<PagingData<Item<MessageModel>>> fetchChatMessageModelLiveData(Long chatId) {
@@ -103,6 +111,10 @@ public class MessageViewModel extends ViewModel {
 
     public void deleteMessage(Long chatId, Long messageId) {
         messageRepository.deleteMessage(chatId, messageId, new NetworkLiveDataFutureCallback<>(deleteMessageResult));
+    }
+
+    public void updateReadStatus(Long chatId) {
+        chatRepository.updateReadStatus(chatId, new NetworkLiveDataFutureCallback<>(updateReadStatusResult));
     }
 
 }

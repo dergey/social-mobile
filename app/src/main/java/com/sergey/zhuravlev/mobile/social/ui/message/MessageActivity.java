@@ -115,6 +115,7 @@ public class MessageActivity extends AppCompatActivity {
             viewModel.fetchChatMessageModelLiveData(chatId).observe(this, pagingData ->
                     adapter.submitData(getLifecycle(), pagingData)
             );
+            viewModel.updateReadStatus(chatId);
         } else {
             finish();
         }
