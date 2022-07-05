@@ -1,17 +1,11 @@
 package com.sergey.zhuravlev.mobile.social.client.mapper;
 
-import com.sergey.zhuravlev.mobile.social.client.dto.PageDto;
-import com.sergey.zhuravlev.mobile.social.client.dto.chat.ChatPreviewDto;
 import com.sergey.zhuravlev.mobile.social.client.dto.message.ImageMessageDto;
 import com.sergey.zhuravlev.mobile.social.client.dto.message.MessageDto;
 import com.sergey.zhuravlev.mobile.social.client.dto.message.TextMessageDto;
-import com.sergey.zhuravlev.mobile.social.database.model.ChatPreviewModel;
 import com.sergey.zhuravlev.mobile.social.database.model.MessageEmbeddable;
 import com.sergey.zhuravlev.mobile.social.database.model.MessageModel;
-import com.sergey.zhuravlev.mobile.social.database.paggeble.Pageable;
 
-import java.util.ArrayList;
-import java.util.List;
 import java.util.Objects;
 
 public class MessageModelMapper {
@@ -67,6 +61,7 @@ public class MessageModelMapper {
         model.setRead(dto.isRead());
         model.setPrepend(false);
         model.setPrependError(false);
+        model.setPageable(model.getPageable());
         if (dto instanceof TextMessageDto) {
             model.setText(((TextMessageDto) dto).getText());
         }

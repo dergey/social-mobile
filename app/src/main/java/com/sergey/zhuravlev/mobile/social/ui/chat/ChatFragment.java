@@ -95,7 +95,7 @@ public class ChatFragment extends Fragment {
         recyclerView.setAdapter(adapter);
 
         chatViewModel.fetchChatPreviewModelLiveData().observe(getActivity(), pagingData ->
-                adapter.submitData(getLifecycle(), pagingData)
+                adapter.submitData(this.getLifecycle(), pagingData)
         );
 
         return root;

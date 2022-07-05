@@ -5,14 +5,13 @@ import androidx.room.Embedded;
 import androidx.room.Entity;
 import androidx.room.PrimaryKey;
 
-import com.sergey.zhuravlev.mobile.social.client.dto.chat.ChatPreviewDto;
 import com.sergey.zhuravlev.mobile.social.database.paggeble.Pageable;
 
 import java.time.LocalDateTime;
 import java.util.Objects;
 
-@Entity(tableName = "chat_previews")
-public class ChatPreviewModel {
+@Entity(tableName = "chats")
+public class ChatModel {
 
     @PrimaryKey(autoGenerate = false)
     private long id;
@@ -29,8 +28,8 @@ public class ChatPreviewModel {
     @ColumnInfo(name = "message_allow")
     private boolean messageAllow;
 
-    @Embedded(prefix = "message_")
-    private MessageEmbeddable lastMessage;
+    @ColumnInfo(name = "last_message_id")
+    private long lastMessageId;
 
     @Embedded(prefix = "pageable_")
     private Pageable pageable;
@@ -75,12 +74,12 @@ public class ChatPreviewModel {
         this.messageAllow = messageAllow;
     }
 
-    public MessageEmbeddable getLastMessage() {
-        return lastMessage;
+    public long getLastMessageId() {
+        return lastMessageId;
     }
 
-    public void setLastMessage(MessageEmbeddable lastMessage) {
-        this.lastMessage = lastMessage;
+    public void setLastMessageId(long lastMessageId) {
+        this.lastMessageId = lastMessageId;
     }
 
     public Pageable getPageable() {
@@ -95,7 +94,7 @@ public class ChatPreviewModel {
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
-        ChatPreviewModel model = (ChatPreviewModel) o;
+        ChatModel model = (ChatModel) o;
         return id == model.id && createAt.equals(model.createAt) && updateAt.equals(model.updateAt);
     }
 

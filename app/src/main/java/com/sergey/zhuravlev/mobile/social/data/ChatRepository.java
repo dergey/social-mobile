@@ -11,10 +11,10 @@ import androidx.paging.PagingLiveData;
 
 import com.sergey.zhuravlev.mobile.social.client.Client;
 import com.sergey.zhuravlev.mobile.social.client.api.ChatEndpoints;
-import com.sergey.zhuravlev.mobile.social.client.dto.chat.ChatPreviewDto;
 import com.sergey.zhuravlev.mobile.social.database.AppDatabase;
-import com.sergey.zhuravlev.mobile.social.database.dao.ChatPreviewModelDao;
-import com.sergey.zhuravlev.mobile.social.database.model.ChatPreviewModel;
+import com.sergey.zhuravlev.mobile.social.database.dao.ChatModelDao;
+import com.sergey.zhuravlev.mobile.social.database.model.ChatAndLastMessageModel;
+import com.sergey.zhuravlev.mobile.social.database.model.ChatModel;
 
 import java.util.concurrent.Executor;
 import java.util.concurrent.Executors;
@@ -30,13 +30,13 @@ public class ChatRepository {
     private final Executor executor;
     private final AppDatabase database;
     private final ChatEndpoints chatEndpoints;
-    private final ChatPreviewModelDao chatPreviewModelDao;
+    private final ChatModelDao chatModelDao;
 
     private ChatRepository(Context context) {
         this.chatEndpoints = Client.getChatEndpoints();
         this.executor = Executors.newSingleThreadExecutor();
         this.database = AppDatabase.getInstance(context);
-        this.chatPreviewModelDao = database.getChatPreviewModelDao();
+        this.chatModelDao = database.getChatModelDao();
     }
 
     public static ChatRepository getInstance(Context context) {
@@ -50,12 +50,12 @@ public class ChatRepository {
 
     }
 
-    public LiveData<PagingData<ChatPreviewModel>> letChatPreviewModelLiveData() {
-        Pager<Integer, ChatPreviewModel> pager = new Pager<>(
+    public LiveData<PagingData<ChatAndLastMessageModel>> letChatPreviewModelLiveData() {
+        Pager<Integer, ChatAndLastMessageModel> pager = new Pager<>(
                 getDefaultPageConfig(),
                 null,
                 new ChatRemoteMediator(chatEndpoints, database, DEFAULT_PAGE_SIZE, executor),
-                chatPreviewModelDao::getAllChatModel);
+                chatModelDao::getAllChatAndLastMessageModel);
         return PagingLiveData.getLiveData(pager);
     }
 

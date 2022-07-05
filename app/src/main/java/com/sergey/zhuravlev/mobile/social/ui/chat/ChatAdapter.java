@@ -20,8 +20,10 @@ import com.bumptech.glide.request.RequestOptions;
 import com.sergey.zhuravlev.mobile.social.R;
 import com.sergey.zhuravlev.mobile.social.client.Client;
 import com.sergey.zhuravlev.mobile.social.constrain.IntentConstrains;
-import com.sergey.zhuravlev.mobile.social.database.model.ChatPreviewModel;
+import com.sergey.zhuravlev.mobile.social.database.model.ChatAndLastMessageModel;
+import com.sergey.zhuravlev.mobile.social.database.model.ChatModel;
 import com.sergey.zhuravlev.mobile.social.database.model.MessageEmbeddable;
+import com.sergey.zhuravlev.mobile.social.database.model.MessageModel;
 import com.sergey.zhuravlev.mobile.social.ui.message.MessageActivity;
 
 import org.jetbrains.annotations.NotNull;
@@ -30,7 +32,7 @@ import java.time.format.DateTimeFormatter;
 import java.util.Locale;
 import java.util.Objects;
 
-public class ChatAdapter extends PagingDataAdapter<ChatPreviewModel, RecyclerView.ViewHolder> {
+public class ChatAdapter extends PagingDataAdapter<ChatAndLastMessageModel, RecyclerView.ViewHolder> {
 
     private final Context context;
     private final static DateTimeFormatter TIME_FORMATTER = DateTimeFormatter.ofPattern("HH:mm", Locale.ENGLISH);
@@ -53,15 +55,16 @@ public class ChatAdapter extends PagingDataAdapter<ChatPreviewModel, RecyclerVie
 
     @Override
     public void onBindViewHolder(@NonNull @NotNull RecyclerView.ViewHolder holder, int position) {
-        ChatPreviewModel chatPreview = getItem(position);
-        if (holder instanceof ChatViewHolder && chatPreview != null) {
-            ((ChatViewHolder) holder).bind(chatPreview, context);
+        ChatAndLastMessageModel chatAndLastMessage = getItem(position);
+        if (holder instanceof ChatViewHolder && chatAndLastMessage != null) {
+            ((ChatViewHolder) holder).bind(chatAndLastMessage, context);
         }
     }
 
     static class ChatViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
 
-        private ChatPreviewModel item;
+        private ChatModel chat;
+        private MessageModel lastMessage;
 
         private final ImageView chatProfileAvatar;
         private final ImageView unreadMark;
@@ -86,11 +89,12 @@ public class ChatAdapter extends PagingDataAdapter<ChatPreviewModel, RecyclerVie
             return chatViewHolder;
         }
 
-        public ChatViewHolder bind(ChatPreviewModel item, Context context) {
-            this.item = item;
-            chatTitle.setText(String.format("%s %s", item.getTargetProfile().getFirstName(), item.getTargetProfile().getSecondName()));
+        public ChatViewHolder bind(ChatAndLastMessageModel item, Context context) {
+            this.chat = item.getChat();
+            this.lastMessage = item.getLastMessage();
 
-            MessageEmbeddable lastMessage = item.getLastMessage();
+            chatTitle.setText(String.format("%s %s", chat.getTargetProfile().getFirstName(), chat.getTargetProfile().getSecondName()));
+
             if (lastMessage != null) {
                 switch (lastMessage.getType()) {
                     case TEXT:
@@ -111,7 +115,7 @@ public class ChatAdapter extends PagingDataAdapter<ChatPreviewModel, RecyclerVie
                     unreadMark.setImageResource(R.drawable.ic_moon_new_fill_24dp);
                 }
             }
-            String chatProfileAvatarUrl = String.format("%s/api/profile/%s/avatar", Client.getBaseUrl(), item.getTargetProfile().getUsername());
+            String chatProfileAvatarUrl = String.format("%s/api/profile/%s/avatar", Client.getBaseUrl(), chat.getTargetProfile().getUsername());
             GlideUrl glideUrl = new GlideUrl(chatProfileAvatarUrl,
                     new LazyHeaders.Builder()
                             .addHeader("Authorization", "Bearer " + Client.getBarrierToken())
@@ -125,21 +129,21 @@ public class ChatAdapter extends PagingDataAdapter<ChatPreviewModel, RecyclerVie
         @Override
         public void onClick(final View view) {
             Intent intent = new Intent(view.getContext(), MessageActivity.class);
-            intent.putExtra(IntentConstrains.EXTRA_CHAT_ID, item.getId());
+            intent.putExtra(IntentConstrains.EXTRA_CHAT_ID, chat.getId());
             view.getContext().startActivity(intent);
         }
     }
 
-    static class RepositoryComparator extends DiffUtil.ItemCallback<ChatPreviewModel> {
+    static class RepositoryComparator extends DiffUtil.ItemCallback<ChatAndLastMessageModel> {
 
         @Override
-        public boolean areItemsTheSame(@NonNull @NotNull ChatPreviewModel oldItem, @NonNull @NotNull ChatPreviewModel newItem) {
-            return Objects.equals(oldItem, newItem);
+        public boolean areItemsTheSame(@NonNull @NotNull ChatAndLastMessageModel oldItem, @NonNull @NotNull ChatAndLastMessageModel newItem) {
+            return Objects.equals(oldItem.getChat(), newItem.getChat());
         }
 
         @Override
-        public boolean areContentsTheSame(@NonNull @NotNull ChatPreviewModel oldItem, @NonNull @NotNull ChatPreviewModel newItem) {
-            return Objects.equals(oldItem, newItem);
+        public boolean areContentsTheSame(@NonNull @NotNull ChatAndLastMessageModel oldItem, @NonNull @NotNull ChatAndLastMessageModel newItem) {
+            return Objects.equals(oldItem.getChat(), newItem.getChat());
         }
     }
 

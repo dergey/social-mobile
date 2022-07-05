@@ -75,11 +75,11 @@ public class MessageRemoteMediator extends ListenableFutureRemoteMediator<Intege
                 Log.i("MessageRemoteMediator/loadFuture", "Calling refresh");
                 return refreshFuture(state);
             case PREPEND:
-                Log.i("MessageRemoteMediator/loadFuture", "Calling prepend");
+                // Skip the prepend step, because the refresh is called on start up.
                 return Futures.immediateFuture(new MediatorResult.Success(true));
             case APPEND:
                 Log.i("MessageRemoteMediator/loadFuture", "Calling append");
-                return appendFuture(state);
+                return appendFuture();
             default:
                 throw new IllegalArgumentException("LoadType: " + loadType);
         }
@@ -106,23 +106,10 @@ public class MessageRemoteMediator extends ListenableFutureRemoteMediator<Intege
                     return new MediatorResult.Success(!response.getHasNext());
                 }, executor);
 
-        ListenableFuture<MediatorResult> ioCatchingNetworkResult =
-                Futures.catching(
-                        mediatorResult,
-                        IOException.class,
-                        MediatorResult.Error::new,
-                        executor
-                );
-
-        return Futures.catching(
-                ioCatchingNetworkResult,
-                HttpException.class,
-                MediatorResult.Error::new,
-                executor
-        );
+        return catchFutureNetworkException(mediatorResult);
     }
 
-    private ListenableFuture<MediatorResult> appendFuture(@NotNull PagingState<Integer, MessageModel> state) {
+    private ListenableFuture<MediatorResult> appendFuture() {
         ListenableFuture<Integer> databaseLastPageResult = Futures.submit(() -> {
             Integer lastPage = messageModelDao.getLastPage(chatId);
             Log.i("MessageRemoteMediator/appendFuture", String.format("Gets %s page", lastPage + 1));
@@ -146,7 +133,10 @@ public class MessageRemoteMediator extends ListenableFutureRemoteMediator<Intege
                     return new MediatorResult.Success(!response.getHasNext());
                 }, executor);
 
+        return catchFutureNetworkException(mediatorResult);
+    }
 
+    private ListenableFuture<MediatorResult> catchFutureNetworkException(ListenableFuture<MediatorResult> mediatorResult) {
         ListenableFuture<MediatorResult> ioCatchingNetworkResult =
                 Futures.catching(
                         mediatorResult,
@@ -154,7 +144,6 @@ public class MessageRemoteMediator extends ListenableFutureRemoteMediator<Intege
                         MediatorResult.Error::new,
                         executor
                 );
-
         return Futures.catching(
                 ioCatchingNetworkResult,
                 HttpException.class,

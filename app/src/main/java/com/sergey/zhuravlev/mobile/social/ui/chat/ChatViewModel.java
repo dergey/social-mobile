@@ -10,8 +10,7 @@ import androidx.paging.PagingData;
 import androidx.paging.PagingLiveData;
 
 import com.sergey.zhuravlev.mobile.social.data.ChatRepository;
-import com.sergey.zhuravlev.mobile.social.client.dto.chat.ChatPreviewDto;
-import com.sergey.zhuravlev.mobile.social.database.model.ChatPreviewModel;
+import com.sergey.zhuravlev.mobile.social.database.model.ChatAndLastMessageModel;
 
 import kotlinx.coroutines.CoroutineScope;
 
@@ -24,7 +23,7 @@ public class ChatViewModel extends ViewModel {
         this.chatRepository = ChatRepository.getInstance(context);
     }
 
-    public LiveData<PagingData<ChatPreviewModel>> fetchChatPreviewModelLiveData() {
+    public LiveData<PagingData<ChatAndLastMessageModel>> fetchChatPreviewModelLiveData() {
         CoroutineScope viewModelScope = ViewModelKt.getViewModelScope(this);
         return PagingLiveData.cachedIn(chatRepository.letChatPreviewModelLiveData(), viewModelScope);
     }

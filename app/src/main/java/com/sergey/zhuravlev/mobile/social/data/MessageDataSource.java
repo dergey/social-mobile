@@ -25,7 +25,9 @@ import com.sergey.zhuravlev.mobile.social.client.dto.message.CreateTextMessageDt
 import com.sergey.zhuravlev.mobile.social.client.dto.message.MessageDto;
 import com.sergey.zhuravlev.mobile.social.client.mapper.MessageModelMapper;
 import com.sergey.zhuravlev.mobile.social.database.AppDatabase;
+import com.sergey.zhuravlev.mobile.social.database.dao.ChatModelDao;
 import com.sergey.zhuravlev.mobile.social.database.dao.MessageModelDao;
+import com.sergey.zhuravlev.mobile.social.database.model.ChatModel;
 import com.sergey.zhuravlev.mobile.social.database.model.MessageModel;
 import com.sergey.zhuravlev.mobile.social.enums.MessageSenderType;
 import com.sergey.zhuravlev.mobile.social.enums.MessageType;
@@ -52,6 +54,7 @@ public class MessageDataSource {
     private final MessageEndpoints messageEndpoints;
     private final AppDatabase database;
     private final MessageModelDao messageModelDao;
+    private final ChatModelDao chatModelDao;
     private final Executor executor;
     private final Context context;
 
@@ -59,6 +62,7 @@ public class MessageDataSource {
         this.messageEndpoints = messageEndpoints;
         this.database = database;
         this.messageModelDao = database.getMessageModelDao();
+        this.chatModelDao = database.getChatModelDao();
         this.executor = executor;
         this.context = context;
     }
@@ -83,9 +87,14 @@ public class MessageDataSource {
 
         ListenableFuture<MessageModel> databaseFuture = Futures.transform(prepareModelFuture,
                 model -> {
-                    long id = messageModelDao.insert(model);
-                    model.setId(id);
-                    modelIdAtomicLong.set(id);
+                    database.runInTransaction(() -> {
+                        long id = messageModelDao.insert(model);
+                        ChatModel chatModel = chatModelDao.getOneById(model.getChatId());
+                        chatModel.setLastMessageId(id);
+                        chatModelDao.insert(chatModel);
+                        modelIdAtomicLong.set(id);
+                    });
+                    model.setId(modelIdAtomicLong.get());
                     partialCallback.onSuccess(prepareModel);
                     return model;
                 },
@@ -184,9 +193,14 @@ public class MessageDataSource {
         glideCompressedFuture = Futures.transform(glideCompressedFuture,
                 glideCompressedImage -> {
                     prepareModel.setGlideSignature(glideCompressedImage.getGlideSignature());
-                    long id = messageModelDao.insert(prepareModel);
-                    prepareModel.setId(id);
-                    modelIdAtomicLong.set(id);
+                    database.runInTransaction(() -> {
+                        long id = messageModelDao.insert(prepareModel);
+                        ChatModel chatModel = chatModelDao.getOneById(prepareModel.getChatId());
+                        chatModel.setLastMessageId(id);
+                        chatModelDao.insert(chatModel);
+                        modelIdAtomicLong.set(id);
+                    });
+                    prepareModel.setId(modelIdAtomicLong.get());
                     partialCallback.onSuccess(prepareModel);
                     return glideCompressedImage;
                 },

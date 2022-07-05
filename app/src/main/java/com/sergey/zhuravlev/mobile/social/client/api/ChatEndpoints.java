@@ -5,6 +5,7 @@ import com.sergey.zhuravlev.mobile.social.client.dto.PageDto;
 import com.sergey.zhuravlev.mobile.social.client.dto.chat.ChatDto;
 import com.sergey.zhuravlev.mobile.social.client.dto.chat.ChatPreviewDto;
 import com.sergey.zhuravlev.mobile.social.client.dto.chat.CreateChatDto;
+import com.sergey.zhuravlev.mobile.social.client.utils.Sort;
 
 import retrofit2.http.Body;
 import retrofit2.http.GET;
@@ -16,7 +17,8 @@ public interface ChatEndpoints {
 
     @GET("/api/chat")
     ListenableFuture<PageDto<ChatPreviewDto>> getCurrentUserChats(@Query(value = "page") Integer page,
-                                                                  @Query(value = "size") Integer size);
+                                                                  @Query(value = "size") Integer size,
+                                                                  @Query(value = "sort") Sort sort);
 
     @POST("/api/chat")
     ListenableFuture<ChatDto> getOrCreateChat(@Body CreateChatDto dto);
