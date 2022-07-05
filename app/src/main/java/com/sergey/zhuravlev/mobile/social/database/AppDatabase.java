@@ -14,7 +14,7 @@ import com.sergey.zhuravlev.mobile.social.database.dao.MessageModelDao;
 import com.sergey.zhuravlev.mobile.social.database.model.ChatModel;
 import com.sergey.zhuravlev.mobile.social.database.model.MessageModel;
 
-@Database(version = 4, entities = {ChatModel.class, MessageModel.class}, exportSchema = false)
+@Database(version = 5, entities = {ChatModel.class, MessageModel.class}, exportSchema = false)
 @TypeConverters({LocalDateTimeConverter.class, EnumStringConverter.class})
 public abstract class AppDatabase extends RoomDatabase {
 

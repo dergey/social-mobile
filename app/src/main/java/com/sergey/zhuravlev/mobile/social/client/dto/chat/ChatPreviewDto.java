@@ -18,17 +18,20 @@ public class ChatPreviewDto {
 
     private boolean messageAllow;
 
+    private Long unreadMessages;
+
     private MessageDto lastMessage;
 
     public ChatPreviewDto() {
     }
 
-    public ChatPreviewDto(Long id, ProfileDto targetProfile, LocalDateTime createAt, LocalDateTime updateAt, boolean messageAllow, MessageDto lastMessage) {
+    public ChatPreviewDto(Long id, ProfileDto targetProfile, LocalDateTime createAt, LocalDateTime updateAt, boolean messageAllow, Long unreadMessages, MessageDto lastMessage) {
         this.id = id;
         this.targetProfile = targetProfile;
         this.createAt = createAt;
         this.updateAt = updateAt;
         this.messageAllow = messageAllow;
+        this.unreadMessages = unreadMessages;
         this.lastMessage = lastMessage;
     }
 
@@ -70,6 +73,14 @@ public class ChatPreviewDto {
 
     public void setMessageAllow(boolean messageAllow) {
         this.messageAllow = messageAllow;
+    }
+
+    public Long getUnreadMessages() {
+        return unreadMessages;
+    }
+
+    public void setUnreadMessages(Long unreadMessages) {
+        this.unreadMessages = unreadMessages;
     }
 
     public MessageDto getLastMessage() {

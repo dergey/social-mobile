@@ -28,6 +28,9 @@ public class ChatModel {
     @ColumnInfo(name = "message_allow")
     private boolean messageAllow;
 
+    @ColumnInfo(name = "unread_messages")
+    private Long unreadMessages;
+
     @ColumnInfo(name = "last_message_id")
     private long lastMessageId;
 
@@ -74,6 +77,14 @@ public class ChatModel {
         this.messageAllow = messageAllow;
     }
 
+    public Long getUnreadMessages() {
+        return unreadMessages;
+    }
+
+    public void setUnreadMessages(Long unreadMessages) {
+        this.unreadMessages = unreadMessages;
+    }
+
     public long getLastMessageId() {
         return lastMessageId;
     }
@@ -100,12 +111,13 @@ public class ChatModel {
                 lastMessageId == chatModel.lastMessageId &&
                 targetProfile.equals(chatModel.targetProfile) &&
                 createAt.equals(chatModel.createAt) &&
-                updateAt.equals(chatModel.updateAt);
+                updateAt.equals(chatModel.updateAt) &&
+                unreadMessages.equals(chatModel.unreadMessages);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(id, targetProfile, createAt, updateAt, messageAllow, lastMessageId);
+        return Objects.hash(id, targetProfile, createAt, updateAt, unreadMessages, messageAllow, lastMessageId);
     }
 }
 

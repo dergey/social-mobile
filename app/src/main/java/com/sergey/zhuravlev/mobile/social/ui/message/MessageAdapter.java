@@ -114,7 +114,7 @@ public class MessageAdapter extends PagingDataAdapter<Item<MessageModel>, Recycl
         private final TextView messageText;
         private final TextView messageDate;
         private final ImageView sendErrorImageView;
-        private final ProgressBar sendStatusProgressBar;
+        private final ImageView sendStatusImageView;
 
         public MessageViewHolder(@NonNull @NotNull View itemView) {
             super(itemView);
@@ -122,7 +122,7 @@ public class MessageAdapter extends PagingDataAdapter<Item<MessageModel>, Recycl
             messageText = itemView.findViewById(R.id.message_text_view);
             messageDate = itemView.findViewById(R.id.message_date_text_view);
             sendErrorImageView = itemView.findViewById(R.id.send_error_image_view);
-            sendStatusProgressBar = itemView.findViewById(R.id.send_status_progress_bar);
+            sendStatusImageView = itemView.findViewById(R.id.send_status_image_view);
         }
 
         public static MessageViewHolder getInstance(ViewGroup parent) {
@@ -136,8 +136,10 @@ public class MessageAdapter extends PagingDataAdapter<Item<MessageModel>, Recycl
             cs.clone(constraintLayout);
             if (item.getSender() == MessageSenderType.TARGET) {
                 cs.setHorizontalBias(R.id.card_view, 0f);
+                sendStatusImageView.setVisibility(View.GONE);
             } else {
                 cs.setHorizontalBias(R.id.card_view, 100f);
+                sendStatusImageView.setVisibility(View.VISIBLE);
             }
             cs.applyTo(constraintLayout);
             switch (item.getType()) {
@@ -153,12 +155,19 @@ public class MessageAdapter extends PagingDataAdapter<Item<MessageModel>, Recycl
                     break;
             }
             messageDate.setText(item.getCreateAt().format(TIME_FORMATTER));
+
             // Status logic:
-            if (item.isPrepend() && !item.isPrependError()) {
-                sendStatusProgressBar.setVisibility(View.VISIBLE);
+            if (item.isPrepend()) {
+                sendStatusImageView.setImageResource(R.drawable.ic_round_access_time_24);
             } else {
-                sendStatusProgressBar.setVisibility(View.GONE);
+                if (item.isRead()) {
+                    sendStatusImageView.setImageResource(R.drawable.ic_round_done_all_24);
+                } else {
+                    sendStatusImageView.setImageResource(R.drawable.ic_round_done_24);
+                }
             }
+
+            // Error logic:
             if (item.isPrependError()) {
                 sendErrorImageView.setVisibility(View.VISIBLE);
             } else {

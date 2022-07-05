@@ -60,6 +60,7 @@ public class ChatFragment extends Fragment {
                     && adapter.getItemCount() == 0 ?
                     View.VISIBLE : View.GONE);
             if (combinedLoadStates.getRefresh() instanceof LoadState.Error) {
+                Log.w("ChatAdapter/onRefresh", "Throw error: ", ((LoadState.Error) combinedLoadStates.getRefresh()).getError());
                 ErrorCode errorCode = Client.exceptionHandling(((LoadState.Error) combinedLoadStates.getRefresh()).getError());
                 if (Objects.equals(errorCode, ErrorCode.UNAUTHORIZED)) {
                     activityCallback.onFragmentEvent(ActivityCodes.TOKEN_EXPIRED_CODE);

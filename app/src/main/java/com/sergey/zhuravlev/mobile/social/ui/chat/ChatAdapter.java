@@ -109,10 +109,11 @@ public class ChatAdapter extends PagingDataAdapter<ChatAndLastMessageModel, Recy
                         break;
                 }
                 chatLastMessageDate.setText(lastMessage.getCreateAt().format(TIME_FORMATTER));
-                if (lastMessage.isRead()) {
-                    unreadCountTextView.setVisibility(View.GONE);
-                } else {
+                if (chat.getUnreadMessages() > 0) {
+                    unreadCountTextView.setText(String.valueOf(chat.getUnreadMessages()));
                     unreadCountTextView.setVisibility(View.VISIBLE);
+                } else {
+                    unreadCountTextView.setVisibility(View.GONE);
                 }
             }
             String chatProfileAvatarUrl = String.format("%s/api/profile/%s/avatar", Client.getBaseUrl(), chat.getTargetProfile().getUsername());

@@ -159,13 +159,13 @@ public class MessageModel {
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
-        MessageModel that = (MessageModel) o;
-        return prepend == that.prepend && prependError == that.prependError && id.equals(that.id) && Objects.equals(networkId, that.networkId) && createAt.equals(that.createAt) && updateAt.equals(that.updateAt);
+        MessageModel model = (MessageModel) o;
+        return read == model.read && prepend == model.prepend && prependError == model.prependError && id.equals(model.id) && Objects.equals(networkId, model.networkId) && sender == model.sender && createAt.equals(model.createAt) && updateAt.equals(model.updateAt);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(id, networkId, createAt, updateAt, prepend, prependError);
+        return Objects.hash(id, networkId, sender, createAt, updateAt, read, prepend, prependError);
     }
 
     @Override

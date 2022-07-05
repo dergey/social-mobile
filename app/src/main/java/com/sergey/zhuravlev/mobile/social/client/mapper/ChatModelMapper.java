@@ -20,6 +20,7 @@ public class ChatModelMapper {
         model.setCreateAt(dto.getCreateAt());
         model.setUpdateAt(dto.getUpdateAt());
         model.setMessageAllow(dto.isMessageAllow());
+        model.setUnreadMessages(dto.getUnreadMessages());
         model.setLastMessageId(messageModel.getId());
         return model;
     }
@@ -33,6 +34,7 @@ public class ChatModelMapper {
         model.setCreateAt(dto.getCreateAt());
         model.setUpdateAt(dto.getUpdateAt());
         model.setMessageAllow(dto.isMessageAllow());
+        model.setUnreadMessages(dto.getUnreadMessages());
         model.setLastMessageId(messageModel.getId());
         return model;
     }
