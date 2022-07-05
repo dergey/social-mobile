@@ -48,17 +48,20 @@ public class MessageRemoteMediator extends ListenableFutureRemoteMediator<Intege
     private final Executor executor;
 
     private final Integer pageSize;
+    private final Integer pageStart;
     private final Long chatId;
 
     public MessageRemoteMediator(MessageEndpoints messageEndpoints,
                                  AppDatabase database,
                                  Long chatId,
+                                 Integer pageStart,
                                  Integer pageSize,
                                  Executor executor) {
         this.endpoints = messageEndpoints;
         this.database = database;
         this.messageModelDao = database.getMessageModelDao();
         this.chatId = chatId;
+        this.pageStart = pageStart;
         this.pageSize = pageSize;
         this.executor = executor;
     }
@@ -83,10 +86,15 @@ public class MessageRemoteMediator extends ListenableFutureRemoteMediator<Intege
     }
 
     private ListenableFuture<MediatorResult> refreshFuture(@NotNull PagingState<Integer, MessageModel> state) {
-        ListenableFuture<MediatorResult> networkResult = Futures.transform(
-                endpoints.getChatMessages(chatId, getClosestRemoteKey(state), pageSize, new Sort("createAt", Direction.DESC)),
+        Integer page = getClosestRemoteKey(state);
+        Log.i("MessageRemoteMediator/refreshFuture", String.format("Refreshing %s page", page));
+        ListenableFuture<MediatorResult> mediatorResult = Futures.transform(
+                endpoints.getChatMessages(chatId, page, pageSize, new Sort("createAt", Direction.DESC)),
                 response -> {
                     database.runInTransaction(() -> {
+                        // Reset all saved page instance after refreshing page:
+                        messageModelDao.resetPageableAfterPageMessageModel(chatId, page);
+                        // Updating page cache with new network data:
                         List<Long> newNetworkIds = response.getContent().stream()
                                 .map(MessageDto::getId)
                                 .collect(Collectors.toList());
@@ -100,7 +108,7 @@ public class MessageRemoteMediator extends ListenableFutureRemoteMediator<Intege
 
         ListenableFuture<MediatorResult> ioCatchingNetworkResult =
                 Futures.catching(
-                        networkResult,
+                        mediatorResult,
                         IOException.class,
                         MediatorResult.Error::new,
                         executor
@@ -115,75 +123,33 @@ public class MessageRemoteMediator extends ListenableFutureRemoteMediator<Intege
     }
 
     private ListenableFuture<MediatorResult> appendFuture(@NotNull PagingState<Integer, MessageModel> state) {
-        PagingSource.LoadResult.Page<Integer, MessageModel> lastPage = Iterables.getLast(state.getPages(), null);
+        ListenableFuture<Integer> databaseLastPageResult = Futures.submit(() -> {
+            Integer lastPage = messageModelDao.getLastPage(chatId);
+            Log.i("MessageRemoteMediator/appendFuture", String.format("Gets %s page", lastPage + 1));
+            return lastPage;
+        }, executor);
+        ListenableFuture<PageDto<MessageDto>> networkResult = Futures.transformAsync(databaseLastPageResult,
+                lastPage -> endpoints.getChatMessages(chatId, lastPage + 1, pageSize, new Sort("createAt", Direction.DESC)),
+                executor);
+        ListenableFuture<MediatorResult> mediatorResult = Futures.transform(
+                networkResult,
+                response -> {
+                    database.runInTransaction(() -> {
+                        List<Long> newNetworkIds = response.getContent().stream()
+                                .map(MessageDto::getId)
+                                .collect(Collectors.toList());
+                        Map<Long, MessageModel> currentMessageModels = messageModelDao.getAllByNetworkIds(newNetworkIds).stream()
+                                .collect(Collectors.toMap(MessageModel::getNetworkId, Function.identity()));
+                        List<MessageModel> updatedPageableModels = updatePageableModels(currentMessageModels, response, chatId);
+                        messageModelDao.insertAll(updatedPageableModels);
+                    });
+                    return new MediatorResult.Success(!response.getHasNext());
+                }, executor);
 
-        int lastPageElements;
-        int lastPageNumber;
-        List<Long> unpageableItems = new ArrayList<>();
-
-        if (lastPage == null || lastPage.getData().isEmpty()) {
-            lastPageElements = 0;
-            lastPageNumber = 0;
-        } else {
-            MessageModel lastPageableItem = null;
-
-            for (MessageModel messageModel : lastPage.getData()) {
-                if (Objects.isNull(messageModel.getPageable())) {
-                    unpageableItems.add(messageModel.getId());
-                    continue;
-                }
-                lastPageableItem = messageModel;
-            }
-
-            lastPageElements = lastPage.getData().size();
-            if (lastPageableItem == null) {
-                lastPageNumber = 0;
-            } else {
-                lastPageNumber = lastPageableItem.getPageable().getPage();
-            }
-        }
-
-        ListenableFuture<MediatorResult> networkResult;
-        if (lastPageElements % pageSize != 0 || !unpageableItems.isEmpty()) {
-            // Update current page
-            Log.i("MessageRemoteMediator/appendFuture", String.format("Updating current page (pageSize not fully: %s, contain unpageableItems: %s)",
-                    lastPageElements % pageSize != 0, unpageableItems.size()));
-            networkResult = Futures.transform(
-                    endpoints.getChatMessages(chatId, lastPageNumber, pageSize, new Sort("createAt", Direction.DESC)),
-                    response -> {
-                        database.runInTransaction(() -> {
-                            messageModelDao.clearAll(unpageableItems);
-                            List<Long> newNetworkIds = response.getContent().stream()
-                                    .map(MessageDto::getId)
-                                    .collect(Collectors.toList());
-                            Map<Long, MessageModel> currentMessageModels = messageModelDao.getAllByNetworkIds(newNetworkIds).stream()
-                                    .collect(Collectors.toMap(MessageModel::getNetworkId, Function.identity()));
-                            List<MessageModel> updatedPageableModels = updatePageableModels(currentMessageModels, response, chatId);
-                            messageModelDao.insertAll(updatedPageableModels);
-                        });
-                        return new MediatorResult.Success(!response.getHasNext());
-                    }, executor);
-        } else {
-            // Get next page if current full
-            networkResult = Futures.transform(
-                    endpoints.getChatMessages(chatId, lastPageNumber + 1, pageSize, new Sort("createAt", Direction.DESC)),
-                    response -> {
-                        database.runInTransaction(() -> {
-                            List<Long> newNetworkIds = response.getContent().stream()
-                                    .map(MessageDto::getId)
-                                    .collect(Collectors.toList());
-                            Map<Long, MessageModel> currentMessageModels = messageModelDao.getAllByNetworkIds(newNetworkIds).stream()
-                                    .collect(Collectors.toMap(MessageModel::getNetworkId, Function.identity()));
-                            List<MessageModel> updatedPageableModels = updatePageableModels(currentMessageModels, response, chatId);
-                            messageModelDao.insertAll(updatedPageableModels);
-                        });
-                        return new MediatorResult.Success(!response.getHasNext());
-                    }, executor);
-        }
 
         ListenableFuture<MediatorResult> ioCatchingNetworkResult =
                 Futures.catching(
-                        networkResult,
+                        mediatorResult,
                         IOException.class,
                         MediatorResult.Error::new,
                         executor
@@ -204,7 +170,7 @@ public class MessageRemoteMediator extends ListenableFutureRemoteMediator<Intege
         return Optional.ofNullable(state.getAnchorPosition())
                 .flatMap(position -> Optional.ofNullable(state.closestItemToPosition(position)))
                 .map(model -> model.getPageable().getPage())
-                .orElse(null);
+                .orElse(pageStart);
     }
 
     @SuppressWarnings("ConstantConditions")

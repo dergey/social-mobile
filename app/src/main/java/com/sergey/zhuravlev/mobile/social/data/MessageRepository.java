@@ -64,7 +64,7 @@ public class MessageRepository {
         Pager<Integer, MessageModel> pager = new Pager<>(
                 getDefaultPageConfig(),
                 null,
-                new MessageRemoteMediator(messageEndpoints, database, chatId, DEFAULT_PAGE_SIZE, executor),
+                new MessageRemoteMediator(messageEndpoints, database, chatId, DEFAULT_PAGE_INDEX, DEFAULT_PAGE_SIZE, executor),
                 () -> {
                     PagingSource<Integer, MessageModel> pagingSource = messageModelDao.getAllMessageModel(chatId);
                     return pagingSource;

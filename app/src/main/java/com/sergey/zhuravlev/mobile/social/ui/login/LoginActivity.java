@@ -19,6 +19,7 @@ import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProvider;
 
+import com.sergey.zhuravlev.mobile.social.MainActivity;
 import com.sergey.zhuravlev.mobile.social.constrain.IntentConstrains;
 import com.sergey.zhuravlev.mobile.social.databinding.ActivityLoginBinding;
 import com.sergey.zhuravlev.mobile.social.ui.registration.RegistrationActivity;
@@ -88,10 +89,11 @@ public class LoginActivity extends AppCompatActivity {
                     return;
                 }
 
-                Intent intent = new Intent();
-                intent.putExtra(IntentConstrains.EXTRA_TOKEN, loginResult.getJwtToken());
-                setResult(Activity.RESULT_OK, intent);
-                finish();
+                Intent startingIntent;
+                startingIntent = new Intent(getApplicationContext(), MainActivity.class);
+                startingIntent.putExtra(IntentConstrains.EXTRA_TOKEN, loginResult.getJwtToken());
+                startingIntent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+                startActivity(startingIntent);
             }
         });
 
