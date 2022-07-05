@@ -138,7 +138,7 @@ public class ChatAdapter extends PagingDataAdapter<ChatAndLastMessageModel, Recy
 
         @Override
         public boolean areItemsTheSame(@NonNull @NotNull ChatAndLastMessageModel oldItem, @NonNull @NotNull ChatAndLastMessageModel newItem) {
-            return Objects.equals(oldItem.getChat(), newItem.getChat());
+            return Objects.equals(oldItem.getChat().getId(), newItem.getChat().getId());
         }
 
         @Override

@@ -94,14 +94,18 @@ public class ChatModel {
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
-        ChatModel model = (ChatModel) o;
-        return id == model.id && createAt.equals(model.createAt) && updateAt.equals(model.updateAt);
+        ChatModel chatModel = (ChatModel) o;
+        return id == chatModel.id &&
+                messageAllow == chatModel.messageAllow &&
+                lastMessageId == chatModel.lastMessageId &&
+                targetProfile.equals(chatModel.targetProfile) &&
+                createAt.equals(chatModel.createAt) &&
+                updateAt.equals(chatModel.updateAt);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(id, createAt, updateAt);
+        return Objects.hash(id, targetProfile, createAt, updateAt, messageAllow, lastMessageId);
     }
-
 }
 

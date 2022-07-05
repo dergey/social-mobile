@@ -84,7 +84,7 @@ public class ChatRemoteMediator extends ListenableFutureRemoteMediator<Integer, 
         Integer page = 0;
         Log.i("ChatRemoteMediator/refreshFuture", String.format("Refreshing %s page", page));
         ListenableFuture<MediatorResult> mediatorResult = Futures.transform(
-                endpoints.getCurrentUserChats(page, pageSize, new Sort("updateAt", Direction.DESC)),
+                endpoints.getCurrentUserChats(page, pageSize, new Sort("lastMessage.createAt", Direction.DESC)),
                 response -> {
                     database.runInTransaction(() -> {
                         // Reset all saved page instance after refreshing page:
@@ -110,7 +110,7 @@ public class ChatRemoteMediator extends ListenableFutureRemoteMediator<Integer, 
             return lastPage;
         }, executor);
         ListenableFuture<PageDto<ChatPreviewDto>> networkResult = Futures.transformAsync(databaseLastPageResult,
-                lastPage -> endpoints.getCurrentUserChats(lastPage + 1, pageSize, new Sort("updateAt", Direction.DESC)),
+                lastPage -> endpoints.getCurrentUserChats(lastPage + 1, pageSize, new Sort("lastMessage.createAt", Direction.DESC)),
                 executor);
         ListenableFuture<MediatorResult> mediatorResult = Futures.transform(
                 networkResult,

@@ -29,7 +29,7 @@ public interface ChatModelDao {
     List<ChatModel> getAllByIds(List<Long> newChatIds);
 
     @Transaction
-    @Query("SELECT * FROM chats INNER JOIN messages ON chats.last_message_id = messages.id")
+    @Query("SELECT * FROM chats INNER JOIN messages ON chats.last_message_id = messages.id ORDER BY messages.create_at DESC")
     PagingSource<Integer, ChatAndLastMessageModel> getAllChatAndLastMessageModel();
 
     @Query("SELECT max(chats.pageable_page) FROM chats")
