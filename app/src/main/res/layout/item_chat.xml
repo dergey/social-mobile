@@ -42,7 +42,8 @@
             android:visibility="gone"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/lastMessageDate"
-            tools:text="99" />
+            tools:text="99"
+            tools:visibility="visible"/>
 
         <TextView
             android:id="@+id/lastMessageDate"
@@ -77,6 +78,21 @@
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/chatTitle"
             tools:text="Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum." />
+
+        <ImageView
+            android:id="@+id/read_status_image_view"
+            android:layout_width="20dp"
+            android:layout_height="0dp"
+            android:layout_marginEnd="4dp"
+            android:visibility="gone"
+            app:layout_constraintBottom_toBottomOf="@+id/lastMessageDate"
+            app:layout_constraintEnd_toEndOf="@+id/lastMessageDate"
+            app:layout_constraintEnd_toStartOf="@+id/lastMessageDate"
+            app:layout_constraintTop_toTopOf="@+id/lastMessageDate"
+            app:layout_constraintVertical_bias="0.0"
+            app:srcCompat="@drawable/ic_round_done_24"
+            tools:visibility="visible"
+            app:tint="?attr/textColorPrimary" />
     </androidx.constraintlayout.widget.ConstraintLayout>
 
 </androidx.constraintlayout.widget.ConstraintLayout>

@@ -24,6 +24,7 @@ import com.sergey.zhuravlev.mobile.social.database.model.ChatAndLastMessageModel
 import com.sergey.zhuravlev.mobile.social.database.model.ChatModel;
 import com.sergey.zhuravlev.mobile.social.database.model.MessageEmbeddable;
 import com.sergey.zhuravlev.mobile.social.database.model.MessageModel;
+import com.sergey.zhuravlev.mobile.social.enums.MessageSenderType;
 import com.sergey.zhuravlev.mobile.social.ui.message.MessageActivity;
 
 import org.jetbrains.annotations.NotNull;
@@ -71,6 +72,7 @@ public class ChatAdapter extends PagingDataAdapter<ChatAndLastMessageModel, Recy
         private final TextView chatLastMessageText;
         private final TextView chatLastMessageDate;
         private final TextView unreadCountTextView;
+        private final ImageView readStatusImageView;
 
         public ChatViewHolder(@NonNull @NotNull View itemView) {
             super(itemView);
@@ -79,6 +81,7 @@ public class ChatAdapter extends PagingDataAdapter<ChatAndLastMessageModel, Recy
             chatLastMessageText = itemView.findViewById(R.id.lastMessageText);
             chatLastMessageDate = itemView.findViewById(R.id.lastMessageDate);
             unreadCountTextView = itemView.findViewById(R.id.unread_count_text_view);
+            readStatusImageView = itemView.findViewById(R.id.read_status_image_view);
         }
 
         public static ChatViewHolder getInstance(ViewGroup parent) {
@@ -115,6 +118,17 @@ public class ChatAdapter extends PagingDataAdapter<ChatAndLastMessageModel, Recy
                 } else {
                     unreadCountTextView.setVisibility(View.GONE);
                 }
+                if (lastMessage.getSender() == MessageSenderType.SOURCE) {
+                    if (lastMessage.isRead()) {
+                        readStatusImageView.setImageResource(R.drawable.ic_round_done_all_24);
+                    } else {
+                        readStatusImageView.setImageResource(R.drawable.ic_round_done_24);
+                    }
+                    readStatusImageView.setVisibility(View.VISIBLE);
+                } else {
+                    readStatusImageView.setVisibility(View.GONE);
+                }
+
             }
             String chatProfileAvatarUrl = String.format("%s/api/profile/%s/avatar", Client.getBaseUrl(), chat.getTargetProfile().getUsername());
             GlideUrl glideUrl = new GlideUrl(chatProfileAvatarUrl,
