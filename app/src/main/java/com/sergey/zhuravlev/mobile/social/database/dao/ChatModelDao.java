@@ -26,7 +26,7 @@ public interface ChatModelDao {
     ChatModel getOneById(Long chatId);
 
     @Query("SELECT * FROM chats WHERE id IN (:newChatIds)")
-    List<ChatModel> getAllByIds(List<Long> newChatIds);
+    List<ChatAndLastMessageModel> getAllChatAndLastMessageModelByIds(List<Long> newChatIds);
 
     @Transaction
     @Query("SELECT * FROM chats INNER JOIN messages ON chats.last_message_id = messages.id ORDER BY messages.create_at DESC")

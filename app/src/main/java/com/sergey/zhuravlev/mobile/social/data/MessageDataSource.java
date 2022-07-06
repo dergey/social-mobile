@@ -68,7 +68,7 @@ public class MessageDataSource {
         prepareModel.setType(MessageType.TEXT);
         prepareModel.setSender(MessageSenderType.SOURCE);
         prepareModel.setText(text);
-        prepareModel.setRead(true);
+        prepareModel.setRead(false);
         prepareModel.setPrepend(true);
         prepareModel.setCreateAt(LocalDateTime.now());
         prepareModel.setUpdateAt(LocalDateTime.now());
@@ -153,7 +153,7 @@ public class MessageDataSource {
         prepareModel.setChatId(chatId);
         prepareModel.setType(MessageType.IMAGE);
         prepareModel.setSender(MessageSenderType.SOURCE);
-        prepareModel.setRead(true);
+        prepareModel.setRead(false);
         prepareModel.setPrepend(true);
         prepareModel.setCreateAt(LocalDateTime.now());
         prepareModel.setUpdateAt(LocalDateTime.now());

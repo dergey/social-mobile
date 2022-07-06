@@ -30,6 +30,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.concurrent.Executor;
 import java.util.function.Function;
 import java.util.stream.Collectors;
@@ -136,15 +137,21 @@ public class ChatRemoteMediator extends ListenableFutureRemoteMediator<Integer, 
         List<Long> newChatIds = pageDto.getContent().stream()
                 .map(ChatPreviewDto::getId)
                 .collect(Collectors.toList());
-        Map<Long, ChatModel> currentChatModels = chatModelDao.getAllByIds(newChatIds).stream()
-                .collect(Collectors.toMap(ChatModel::getId, Function.identity()));
+        Map<Long, ChatAndLastMessageModel> currentChatModels = chatModelDao.getAllChatAndLastMessageModelByIds(newChatIds).stream()
+                .collect(Collectors.toMap(candlm -> candlm.getChat().getId(), Function.identity()));
         List<ChatModel> updatedChatModels = new ArrayList<>();
         for (ChatPreviewDto chatPreviewDto : pageDto.getContent()) {
             ChatModel model;
             if (currentChatModels.containsKey(chatPreviewDto.getId())) {
-                model = ChatModelMapper.updateModel(currentChatModels.get(chatPreviewDto.getId()),
+                MessageModel newLastMessageModel = updatedChatLastMessageMap.get(chatPreviewDto.getId());
+                MessageModel currentLastMessageModel = currentChatModels.get(chatPreviewDto.getId()).getLastMessage();
+                if (!Objects.equals(currentLastMessageModel, newLastMessageModel) && currentLastMessageModel.getCreateAt()
+                        .isAfter(newLastMessageModel.getCreateAt())) {
+                    newLastMessageModel = currentLastMessageModel;
+                }
+                model = ChatModelMapper.updateModel(currentChatModels.get(chatPreviewDto.getId()).getChat(),
                         chatPreviewDto,
-                        updatedChatLastMessageMap.get(chatPreviewDto.getId()));
+                        newLastMessageModel);
             } else {
                 model = ChatModelMapper.toModel(chatPreviewDto, updatedChatLastMessageMap.get(chatPreviewDto.getId()));
             }
