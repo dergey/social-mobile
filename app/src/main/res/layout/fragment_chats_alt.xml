@@ -67,16 +67,40 @@
         app:layout_constraintTop_toBottomOf="@id/status_layout"
         app:layout_constraintVertical_bias="1.0" />
 
-    <TextView
-        android:id="@+id/no_chat_text_view"
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/no_chat_layout"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="No chats found"
         android:visibility="invisible"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:layout_constraintTop_toTopOf="parent"
+        tools:visibility="visible">
+
+        <ImageView
+            android:id="@+id/no_chat_image_view"
+            android:layout_width="102dp"
+            android:layout_height="102dp"
+            android:src="@drawable/ic_forum_24dp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:tint="?attr/textColorSecond"/>
+
+        <TextView
+            android:id="@+id/no_chat_text_view"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="No chats found"
+            android:textAppearance="@style/PopupError.Body"
+            android:textColor="?attr/textColorSecond"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/no_chat_image_view"/>
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
 
 </androidx.constraintlayout.widget.ConstraintLayout>
 

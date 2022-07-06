@@ -43,10 +43,9 @@ public class ChatFragment extends Fragment {
 
     private ConstraintLayout constraintLayout;
     private RecyclerView recyclerView;
-    private ConstraintLayout statusLayout;
+    private ConstraintLayout noChatLayout;
     private TextView statusTextView;
     private ImageView statusImageView;
-    private TextView noChatTextView;
     private Button statusActionButton;
 
     private Boolean isShowing = false;
@@ -61,8 +60,7 @@ public class ChatFragment extends Fragment {
         View root = binding.getRoot();
 
         constraintLayout = binding.constraintLayout;
-        noChatTextView = binding.noChatTextView;
-        statusLayout = binding.statusLayout;
+        noChatLayout = binding.noChatLayout;
         statusTextView = binding.statusTextView;
         statusImageView = binding.statusImageView;
         statusActionButton = binding.statusActionButton;
@@ -74,14 +72,15 @@ public class ChatFragment extends Fragment {
         // Adapter initialize:
         adapter = new ChatAdapter(getActivity());
         adapter.addLoadStateListener(combinedLoadStates -> {
-//            noChatTextView.setVisibility(combinedLoadStates.getRefresh() instanceof LoadState.Loading
-//                    && adapter.getItemCount() == 0 ?
-//                    View.VISIBLE : View.GONE);
-
             if (combinedLoadStates.getRefresh() instanceof LoadState.Loading) {
                 statusTextView.setText(R.string.chat_status_loading);
                 statusImageView.setImageResource(R.drawable.ic_round_cloud_queue_24);
                 statusActionButton.setVisibility(View.INVISIBLE);
+                if (adapter.getItemCount() <= 0) {
+                    noChatLayout.setVisibility(View.VISIBLE);
+                } else {
+                    noChatLayout.setVisibility(View.INVISIBLE);
+                }
                 if (!isShowing) {
                     TransitionManager.beginDelayedTransition(constraintLayout);
                     constraintSetShowing.applyTo(constraintLayout);
@@ -91,6 +90,11 @@ public class ChatFragment extends Fragment {
                 statusImageView.setImageResource(R.drawable.ic_round_cloud_done_24);
                 statusTextView.setText(R.string.chat_status_not_loading);
                 statusActionButton.setVisibility(View.INVISIBLE);
+                if (adapter.getItemCount() <= 0) {
+                    noChatLayout.setVisibility(View.VISIBLE);
+                } else {
+                    noChatLayout.setVisibility(View.INVISIBLE);
+                }
                 if (isShowing) {
                     TransitionManager.beginDelayedTransition(constraintLayout);
                     constraintSetDefault.applyTo(constraintLayout);
@@ -100,6 +104,7 @@ public class ChatFragment extends Fragment {
                 statusImageView.setImageResource(R.drawable.ic_round_cloud_off_24);
                 statusTextView.setText(R.string.chat_status_error);
                 statusActionButton.setVisibility(View.VISIBLE);
+                noChatLayout.setVisibility(View.INVISIBLE);
                 if (!isShowing) {
                     TransitionManager.beginDelayedTransition(constraintLayout);
                     constraintSetShowing.applyTo(constraintLayout);
