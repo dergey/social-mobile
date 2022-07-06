@@ -21,6 +21,9 @@
         <item name="textColorSecond">@color/dark_gray</item>
         <item name="textColorBackground">@color/gray</item>
 
+        <!-- Background color. -->
+        <item name="backgroundColorForeground">@color/foreground_color_night</item>
+
         <!-- Customize your theme here. -->
         <item name="backgroundErrorLayoutColor">@color/error</item>
         <item name="linkTextViewColor">@color/link_color_night</item>

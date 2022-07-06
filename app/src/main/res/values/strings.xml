@@ -22,4 +22,7 @@
     <string name="title_profile">Profile</string>
     <string name="attachment_image">Image</string>
     <string name="attachment_sticker">Sticker</string>
+    <string name="chat_status_loading">Connecting...</string>
+    <string name="chat_status_not_loading">Connected</string>
+    <string name="chat_status_error">Connection failed</string>
 </resources>

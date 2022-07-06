@@ -21,6 +21,8 @@
         <item name="textColorPrimary">@color/black</item>
         <item name="textColorSecond">@color/dark_gray</item>
         <item name="textColorBackground">@color/gray</item>
+        <!-- Background color. -->
+        <item name="backgroundColorForeground">@color/foreground_color</item>
 
         <!-- Customize your theme here. -->
         <item name="backgroundErrorLayoutColor">@color/error</item>
@@ -73,6 +75,22 @@
     <style name="Messages.Body">
         <item name="android:textSize">14sp</item>
     </style>
+
+    <style name="PopupError" parent="@android:style/TextAppearance.Material">
+        <item name="android:textSize">16sp</item>
+        <item name="android:textColor">?attr/textColorPrimary</item>
+    </style>
+    <style name="PopupError.Body" parent="@android:style/TextAppearance.Material">
+        <item name="android:textStyle">bold</item>
+        <item name="android:textAllCaps">true</item>
+        <item name="android:textColor">?attr/textColorBackground</item>
+
+    </style>
+    <style name="PopupError.Button" parent="@android:style/TextAppearance.Material">
+        <item name="android:textStyle">bold</item>
+        <item name="android:textAllCaps">true</item>
+    </style>
+
 
     <style name="TextLabel" parent="Widget.MaterialComponents.TextInputLayout.FilledBox">
         <item name="android:textSize">18sp</item>

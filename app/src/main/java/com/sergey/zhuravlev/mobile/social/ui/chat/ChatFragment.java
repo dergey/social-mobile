@@ -2,16 +2,19 @@ package com.sergey.zhuravlev.mobile.social.ui.chat;
 
 import android.content.Context;
 import android.os.Bundle;
+import android.transition.TransitionManager;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.animation.TranslateAnimation;
 import android.widget.Button;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.constraintlayout.widget.ConstraintLayout;
+import androidx.constraintlayout.widget.ConstraintSet;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.paging.ExperimentalPagingApi;
@@ -20,6 +23,7 @@ import androidx.paging.RemoteMediator;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.sergey.zhuravlev.mobile.social.R;
 import com.sergey.zhuravlev.mobile.social.client.Client;
 import com.sergey.zhuravlev.mobile.social.constrain.ActivityCodes;
 import com.sergey.zhuravlev.mobile.social.databinding.FragmentChatsBinding;
@@ -37,10 +41,17 @@ public class ChatFragment extends Fragment {
     private ChatViewModel chatViewModel;
     private ChatAdapter adapter;
 
+    private ConstraintLayout constraintLayout;
     private RecyclerView recyclerView;
-    private ConstraintLayout errorLayout;
+    private ConstraintLayout statusLayout;
+    private TextView statusTextView;
+    private ImageView statusImageView;
     private TextView noChatTextView;
-    private Button tryAgainButton;
+    private Button statusActionButton;
+
+    private Boolean isShowing = false;
+    private final ConstraintSet constraintSetDefault = new ConstraintSet();
+    private final ConstraintSet constraintSetShowing = new ConstraintSet();
 
     public View onCreateView(@NonNull LayoutInflater inflater,
                              ViewGroup container, Bundle savedInstanceState) {
@@ -49,45 +60,65 @@ public class ChatFragment extends Fragment {
         binding = FragmentChatsBinding.inflate(inflater, container, false);
         View root = binding.getRoot();
 
+        constraintLayout = binding.constraintLayout;
         noChatTextView = binding.noChatTextView;
-        errorLayout = binding.errorLayout;
-        tryAgainButton = binding.tryAgainButton;
-        errorLayout.setVisibility(View.INVISIBLE);
+        statusLayout = binding.statusLayout;
+        statusTextView = binding.statusTextView;
+        statusImageView = binding.statusImageView;
+        statusActionButton = binding.statusActionButton;
 
+        // Animation declaration:
+        constraintSetDefault.clone(constraintLayout);
+        constraintSetShowing.clone(ChatFragment.this.getContext(), R.layout.fragment_chats_alt);
+
+        // Adapter initialize:
         adapter = new ChatAdapter(getActivity());
         adapter.addLoadStateListener(combinedLoadStates -> {
-            noChatTextView.setVisibility(combinedLoadStates.getRefresh() instanceof LoadState.Loading
-                    && adapter.getItemCount() == 0 ?
-                    View.VISIBLE : View.GONE);
+//            noChatTextView.setVisibility(combinedLoadStates.getRefresh() instanceof LoadState.Loading
+//                    && adapter.getItemCount() == 0 ?
+//                    View.VISIBLE : View.GONE);
+
+            if (combinedLoadStates.getRefresh() instanceof LoadState.Loading) {
+                statusTextView.setText(R.string.chat_status_loading);
+                statusImageView.setImageResource(R.drawable.ic_round_cloud_queue_24);
+                statusActionButton.setVisibility(View.INVISIBLE);
+                if (!isShowing) {
+                    TransitionManager.beginDelayedTransition(constraintLayout);
+                    constraintSetShowing.applyTo(constraintLayout);
+                    isShowing = true;
+                }
+            } else if (combinedLoadStates.getRefresh() instanceof LoadState.NotLoading) {
+                statusImageView.setImageResource(R.drawable.ic_round_cloud_done_24);
+                statusTextView.setText(R.string.chat_status_not_loading);
+                statusActionButton.setVisibility(View.INVISIBLE);
+                if (isShowing) {
+                    TransitionManager.beginDelayedTransition(constraintLayout);
+                    constraintSetDefault.applyTo(constraintLayout);
+                    isShowing = false;
+                }
+            } else if (combinedLoadStates.getRefresh() instanceof LoadState.Error) {
+                statusImageView.setImageResource(R.drawable.ic_round_cloud_off_24);
+                statusTextView.setText(R.string.chat_status_error);
+                statusActionButton.setVisibility(View.VISIBLE);
+                if (!isShowing) {
+                    TransitionManager.beginDelayedTransition(constraintLayout);
+                    constraintSetShowing.applyTo(constraintLayout);
+                    isShowing = true;
+                }
+            }
+
             if (combinedLoadStates.getRefresh() instanceof LoadState.Error) {
-                Log.w("ChatAdapter/onRefresh", "Throw error: ", ((LoadState.Error) combinedLoadStates.getRefresh()).getError());
-                ErrorCode errorCode = Client.exceptionHandling(((LoadState.Error) combinedLoadStates.getRefresh()).getError());
+                Throwable t = ((LoadState.Error) combinedLoadStates.getRefresh()).getError();
+                Log.w("ChatAdapter/onRefresh", "Throw error: ", t);
+                ErrorCode errorCode = Client.exceptionHandling(t);
                 if (Objects.equals(errorCode, ErrorCode.UNAUTHORIZED)) {
                     activityCallback.onFragmentEvent(ActivityCodes.TOKEN_EXPIRED_CODE);
-                } else {
-                    errorLayout.setVisibility(View.VISIBLE);
-                    TranslateAnimation animate = new TranslateAnimation(
-                            0,
-                            0,
-                            0,
-                            errorLayout.getHeight());
-                    animate.setDuration(200);
-                    animate.setFillAfter(true);
-                    errorLayout.startAnimation(animate);
                 }
             }
             return null;
         });
-        tryAgainButton.setOnClickListener(event -> {
-            TranslateAnimation animate = new TranslateAnimation(
-                    0,
-                    0,
-                    errorLayout.getHeight(),
-                    0);
-            animate.setDuration(200);
-            animate.setFillAfter(true);
-            errorLayout.startAnimation(animate);
-            errorLayout.setVisibility(View.GONE);
+
+        statusActionButton.setOnClickListener(v -> {
             adapter.retry();
         });
 

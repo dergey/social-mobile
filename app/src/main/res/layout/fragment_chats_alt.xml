@@ -4,30 +4,27 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/constraint_layout"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    tools:context=".ui.chat.ChatFragment">
+    android:layout_height="match_parent">
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:id="@+id/status_layout"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:background="?attr/backgroundColorForeground"
+        app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintBottom_toTopOf="parent"
-        tools:layout_constraintBottom_toTopOf="@id/none"
-        tools:layout_constraintTop_toTopOf="parent">
+        tools:background="?attr/backgroundColorForeground">
 
         <ImageView
             android:id="@+id/status_image_view"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginStart="32dp"
-            android:src="@drawable/ic_round_cloud_queue_24"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
-            app:tint="?attr/textColorBackground" />
+            tools:src="@drawable/ic_round_cloud_queue_24"
+            tools:tint="?attr/textColorBackground" />
 
         <TextView
             android:id="@+id/status_text_view"
@@ -35,26 +32,26 @@
             android:layout_height="wrap_content"
             android:layout_marginTop="6dp"
             android:layout_marginBottom="6dp"
-            android:textAppearance="@style/PopupError.Body"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
+            tools:textAppearance="@style/PopupError.Body"
             tools:text="Connecting..." />
 
         <Button
             android:id="@+id/status_action_button"
-            style="@style/Widget.AppCompat.Button.Borderless"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Try again"
-            android:textAppearance="@style/PopupError.Button"
             android:visibility="invisible"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintHorizontal_bias="0.6"
             app:layout_constraintStart_toEndOf="@+id/status_text_view"
             app:layout_constraintTop_toTopOf="parent"
+            tools:style="@style/Widget.AppCompat.Button.Borderless"
+            tools:text="Try again"
+            tools:textAppearance="@style/PopupError.Button"
             tools:visibility="visible"/>
 
     </androidx.constraintlayout.widget.ConstraintLayout>

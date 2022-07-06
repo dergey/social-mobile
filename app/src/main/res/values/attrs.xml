@@ -4,6 +4,10 @@
     <attr name="textColorPrimary" format="reference" />
     <attr name="textColorSecond" format="reference" />
     <attr name="textColorBackground" format="reference" />
+
+    <!-- Background color-->
+    <attr name="backgroundColorForeground" format="reference" />
+
     <!-- Other values-->
     <attr name="backgroundErrorLayoutColor" format="reference" />
     <attr name="textErrorLayoutColor" format="reference" />
