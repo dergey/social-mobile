@@ -12,6 +12,9 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.Social"
         android:usesCleartextTraffic="true">
+        <activity
+            android:name=".FriendActivity"
+            android:exported="false" />
         <activity android:name=".ui.registration.RegistrationActivity" />
         <activity android:name=".ui.registration.EmailConfirmActivity" />
         <activity android:name=".ui.profile.ProfileSettingActivity" />
