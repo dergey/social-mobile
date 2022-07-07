@@ -23,7 +23,8 @@
     <color name="disable_button_color">#7D7D7D</color>
     <color name="pressed_active_button_color">#0C59BD</color>
 
-    <color name="foreground_color">#C8C8C8</color>
+    <color name="background_color">#EFF2F6</color>
+    <color name="foreground_color">#FFFFFF</color>
 
     <color name="link_color_night">#3A4ECD</color>
     <color name="header_color_night">#DDDDDD</color>
@@ -35,6 +36,7 @@
     <color name="disable_button_color_night">#969696</color>
     <color name="pressed_active_button_color_night">#0C59BD</color>
 
+    <color name="background_color_night">#000</color>
     <color name="foreground_color_night">#1E1E1E</color>
 
 

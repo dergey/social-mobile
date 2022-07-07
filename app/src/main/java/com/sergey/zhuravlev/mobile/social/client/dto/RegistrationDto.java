@@ -16,18 +16,21 @@ public class RegistrationDto {
 
     private String secondName;
 
+    private String city;
+
     private LocalDate birthDate;
 
     public RegistrationDto() {
     }
 
-    public RegistrationDto(String email, String password, String username, String firstName, String middleName, String secondName, LocalDate birthDate) {
+    public RegistrationDto(String email, String password, String username, String firstName, String middleName, String secondName, String city, LocalDate birthDate) {
         this.email = email;
         this.password = password;
         this.username = username;
         this.firstName = firstName;
         this.middleName = middleName;
         this.secondName = secondName;
+        this.city = city;
         this.birthDate = birthDate;
     }
 
@@ -77,6 +80,14 @@ public class RegistrationDto {
 
     public void setSecondName(String secondName) {
         this.secondName = secondName;
+    }
+
+    public String getCity() {
+        return city;
+    }
+
+    public void setCity(String city) {
+        this.city = city;
     }
 
     public LocalDate getBirthDate() {

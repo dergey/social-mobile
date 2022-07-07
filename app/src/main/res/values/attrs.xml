@@ -6,6 +6,7 @@
     <attr name="textColorBackground" format="reference" />
 
     <!-- Background color-->
+    <attr name="backgroundColorBackground" format="reference" />
     <attr name="backgroundColorForeground" format="reference" />
 
     <!-- Other values-->

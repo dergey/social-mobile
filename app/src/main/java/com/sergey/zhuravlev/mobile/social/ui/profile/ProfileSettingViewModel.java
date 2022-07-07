@@ -44,9 +44,9 @@ public class ProfileSettingViewModel extends ViewModel {
     }
 
     public void register(String email, String password, String username, String firstName,
-                         String middleName, String secondName, LocalDate birthDate) {
+                         String middleName, String secondName, String city, LocalDate birthDate) {
         registrationRepository.register(email, password, username, firstName, middleName, secondName,
-                birthDate, new NetworkLiveDataFutureCallback<>(registerResult));
+                city, birthDate, new NetworkLiveDataFutureCallback<>(registerResult));
     }
 
     public void profileSettingDataChanged(String firstName, String lastName, String additionalName,

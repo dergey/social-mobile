@@ -32,10 +32,10 @@ public class RegistrationRepository {
     }
 
     public void register(String email, String password, String username, String firstName,
-                         String middleName, String secondName, LocalDate birthDate,
+                         String middleName, String secondName, String city, LocalDate birthDate,
                          FutureCallback<Result<UserDto, ErrorDto>> callback) {
         Futures.addCallback(dataSource.register(email, password, username, firstName, middleName,
-                secondName, birthDate), callback, executor);
+                secondName, city, birthDate), callback, executor);
     }
 
 }

@@ -233,8 +233,9 @@ public class ProfileSettingActivity extends AppCompatActivity {
         birthDateString = StringUtils.isBlank(birthDateString) ? null : birthDateString;
         switch (type) {
             case "REGISTRATION":
+                // todo added city field
                 profileSettingViewModel.register(registrationEmail, registrationPassword, username,
-                        firstName, middleName, secondName, LocalDate.parse(birthDateString, DATE_FORMATTER));
+                        firstName, middleName, secondName, "Minsk", LocalDate.parse(birthDateString, DATE_FORMATTER));
                 break;
             case "UPDATE":
                 break;

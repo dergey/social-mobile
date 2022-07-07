@@ -22,6 +22,7 @@
         <item name="textColorSecond">@color/dark_gray</item>
         <item name="textColorBackground">@color/gray</item>
         <!-- Background color. -->
+        <item name="backgroundColorBackground">@color/background_color</item>
         <item name="backgroundColorForeground">@color/foreground_color</item>
 
         <!-- Customize your theme here. -->
@@ -38,6 +39,7 @@
         <item name="backgroundPressedButtonColor">@color/pressed_active_button_color</item>
     </style>
 
+    <!-- Text styles: -->
     <style name="Chats" parent="@android:style/TextAppearance.Material">
         <item name="android:textSize">14sp</item>
         <item name="android:textStyle">normal</item>
@@ -54,7 +56,7 @@
         <item name="android:textSize">14sp</item>
     </style>
     <style name="Chats.Counter">
-        <item name="android:textColor">?attr/textColorSecond</item>
+        <item name="android:textColor">?attr/textColorBackground</item>
         <item name="android:textSize">14sp</item>
         <item name="android:textStyle">bold</item>
     </style>
@@ -66,7 +68,7 @@
     </style>
     <style name="Messages.Time">
         <item name="android:textSize">12sp</item>
-        <item name="android:textColor">?attr/textColorBackground</item>
+        <item name="android:textColor">?attr/textColorSecond</item>
     </style>
     <style name="Messages.Time.Contrast">
         <item name="android:textSize">12sp</item>
@@ -84,11 +86,42 @@
         <item name="android:textStyle">bold</item>
         <item name="android:textAllCaps">true</item>
         <item name="android:textColor">?attr/textColorBackground</item>
-
     </style>
     <style name="PopupError.Button" parent="@android:style/TextAppearance.Material">
         <item name="android:textStyle">bold</item>
         <item name="android:textAllCaps">true</item>
+    </style>
+
+    <style name="Profile" parent="@android:style/TextAppearance.Material">
+        <item name="android:textColor">?attr/textColorPrimary</item>
+        <item name="android:textSize">14sp</item>
+    </style>
+    <style name="Profile.Header" parent="Profile">
+        <item name="android:fontFamily">@font/inter_bold</item>
+        <item name="android:textSize">18sp</item>
+        <item name="android:textColor">?attr/textColorPrimary</item>
+    </style>
+    <style name="Profile.Header2" parent="Profile.Header">
+        <item name="android:textSize">16sp</item>
+    </style>
+    <style name="Profile.Header3" parent="Profile.Header">
+        <item name="android:textSize">14sp</item>
+    </style>
+    <style name="Profile.Status" parent="Profile">
+        <item name="android:textColor">?attr/textColorSecond</item>
+    </style>
+    <style name="Profile.Button" parent="Profile">
+        <item name="android:textSize">16sp</item>
+        <item name="android:textStyle">bold</item>
+        <item name="android:textAllCaps">true</item>
+    </style>
+    <style name="Profile.Counter">
+        <item name="android:textColor">?attr/textColorBackground</item>
+        <item name="android:textSize">14sp</item>
+        <item name="android:textStyle">bold</item>
+    </style>
+    <style name="Profile.Counter.OnError" parent="Profile.Counter">
+        <item name="android:textColor">?attr/textColorPrimary</item>
     </style>
 
 

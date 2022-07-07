@@ -15,11 +15,16 @@ public interface ProfileEndpoints {
     @GET("/api/profile")
     ListenableFuture<ProfileDetailDto> getCurrentUserProfile();
 
+    @GET("/api/profile/{username}")
+    ListenableFuture<ProfileDetailDto> getProfile(@Path("username") String username);
+
     @GET("/api/friend")
     ListenableFuture<PageDto<ProfileDto>> getCurrentUserFriends(@Query(value = "page") Integer page,
                                                                 @Query(value = "size") Integer size);
 
-
+    @GET("/api/friend/requests")
+    ListenableFuture<PageDto<ProfileDto>> getCurrentUserIncomingFriendRequests(@Query(value = "page") Integer page,
+                                                                               @Query(value = "size") Integer size);
 
     @GET("/api/profile/{username}/friend")
     ListenableFuture<PageDto<ProfileDto>> getProfileFriends(@Path("username") String username,

@@ -33,4 +33,16 @@ public class ProfileDataSource {
                 IOException.class, Result.Error::fromIOException, executor);
     }
 
+    public ListenableFuture<Result<ProfileDetailDto, ErrorDto>> getProfile(String username) {
+        ListenableFuture<Result<ProfileDetailDto, ErrorDto>> loginFuture =
+                Futures.transform(profileEndpoints.getProfile(username),
+                        Result.Success::new, executor);
+
+        ListenableFuture<Result<ProfileDetailDto, ErrorDto>> partialResultFuture =
+                Futures.catching(loginFuture, HttpException.class,
+                        Result.Error::fromHttpException, executor);
+
+        return Futures.catching(partialResultFuture,
+                IOException.class, Result.Error::fromIOException, executor);
+    }
 }

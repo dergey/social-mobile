@@ -25,4 +25,5 @@
     <string name="chat_status_loading">Connecting...</string>
     <string name="chat_status_not_loading">Connected</string>
     <string name="chat_status_error">Connection failed</string>
+    <string name="profile_joined_on">Joined on %s</string>
 </resources>

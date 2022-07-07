@@ -29,9 +29,9 @@ public class RegistrationDataSource {
     public ListenableFuture<Result<UserDto, ErrorDto>> register(String email, String password,
                                                                 String username, String firstName,
                                                                 String middleName, String secondName,
-                                                                LocalDate birthDate) {
+                                                                String city, LocalDate birthDate) {
         RegistrationDto request = new RegistrationDto(email, password, username, firstName,
-                middleName, secondName, birthDate);
+                middleName, secondName, city, birthDate);
 
         ListenableFuture<Result<UserDto, ErrorDto>> loginFuture =
                 Futures.transform(registrationEndpoints.register(request),

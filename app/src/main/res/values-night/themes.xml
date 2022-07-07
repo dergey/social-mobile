@@ -18,10 +18,11 @@
 
         <!-- Text color. -->
         <item name="textColorPrimary">@color/white</item>
-        <item name="textColorSecond">@color/dark_gray</item>
-        <item name="textColorBackground">@color/gray</item>
+        <item name="textColorSecond">@color/gray</item>
+        <item name="textColorBackground">@color/dark_gray</item>
 
         <!-- Background color. -->
+        <item name="backgroundColorBackground">@color/background_color_night</item>
         <item name="backgroundColorForeground">@color/foreground_color_night</item>
 
         <!-- Customize your theme here. -->

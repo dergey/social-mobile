@@ -1,6 +1,7 @@
 package com.sergey.zhuravlev.mobile.social.client.dto.profile;
 
 import com.sergey.zhuravlev.mobile.social.client.dto.image.ImageDto;
+import com.sergey.zhuravlev.mobile.social.enums.RelationshipStatus;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -14,24 +15,14 @@ public class ProfileDetailDto {
     private String firstName;
     private String middleName;
     private String secondName;
+    private String overview;
+    private RelationshipStatus relationshipStatus;
+    private String city;
+    private String workplace;
+    private String education;
     private LocalDate birthDate;
     private LocalDateTime createAt;
     private LocalDateTime updateAt;
-
-    public ProfileDetailDto() {
-    }
-
-    public ProfileDetailDto(String username, ImageDto avatar, Collection<String> images, String firstName, String middleName, String secondName, LocalDate birthDate, LocalDateTime createAt, LocalDateTime updateAt) {
-        this.username = username;
-        this.avatar = avatar;
-        this.images = images;
-        this.firstName = firstName;
-        this.middleName = middleName;
-        this.secondName = secondName;
-        this.birthDate = birthDate;
-        this.createAt = createAt;
-        this.updateAt = updateAt;
-    }
 
     public String getUsername() {
         return username;
@@ -79,6 +70,46 @@ public class ProfileDetailDto {
 
     public void setSecondName(String secondName) {
         this.secondName = secondName;
+    }
+
+    public String getOverview() {
+        return overview;
+    }
+
+    public void setOverview(String overview) {
+        this.overview = overview;
+    }
+
+    public RelationshipStatus getRelationshipStatus() {
+        return relationshipStatus;
+    }
+
+    public void setRelationshipStatus(RelationshipStatus relationshipStatus) {
+        this.relationshipStatus = relationshipStatus;
+    }
+
+    public String getCity() {
+        return city;
+    }
+
+    public void setCity(String city) {
+        this.city = city;
+    }
+
+    public String getWorkplace() {
+        return workplace;
+    }
+
+    public void setWorkplace(String workplace) {
+        this.workplace = workplace;
+    }
+
+    public String getEducation() {
+        return education;
+    }
+
+    public void setEducation(String education) {
+        this.education = education;
     }
 
     public LocalDate getBirthDate() {
