@@ -24,6 +24,7 @@
         <!-- Background color. -->
         <item name="backgroundColorBackground">@color/background_color</item>
         <item name="backgroundColorForeground">@color/foreground_color</item>
+        <item name="shimmerBackgroundColor">@color/shimmer_background_color</item>
 
         <!-- Customize your theme here. -->
         <item name="backgroundErrorLayoutColor">@color/error</item>

@@ -32,62 +32,64 @@
 
             <TextView
                 android:id="@+id/joined_text_view"
-                android:layout_width="wrap_content"
+                android:layout_width="160dp"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="16dp"
                 android:layout_marginTop="8dp"
                 android:layout_marginBottom="8dp"
+                android:background="@drawable/background_shimmer_text_view"
                 android:drawablePadding="4dp"
                 android:gravity="center_vertical"
                 android:textAppearance="@style/Profile.Status"
-                android:text="Joined on 01.01.1970"
-                app:drawableLeftCompat="@drawable/ic_round_calendar_today_16"
+                android:visibility="visible"
+                app:drawableTint="?attr/textColorSecond"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintStart_toEndOf="@+id/city_text_view"
-                app:layout_constraintTop_toBottomOf="@+id/all_count_text_view"
-                app:drawableTint="?attr/textColorSecond"
-                tools:text="Joined on 07.07.2022" />
+                app:layout_constraintTop_toBottomOf="@+id/all_count_text_view" />
 
             <TextView
                 android:id="@+id/fullname_text_view"
-                android:layout_width="wrap_content"
+                android:layout_width="200dp"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="66dp"
+                android:background="@drawable/background_shimmer_text_view"
+                android:gravity="center_horizontal"
                 android:textAppearance="@style/Profile.Header"
+                android:visibility="visible"
                 app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintHeight_default="wrap"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toTopOf="parent"
-                tools:text="John Doe" />
+                app:layout_constraintTop_toTopOf="parent" />
 
             <TextView
                 android:id="@+id/all_count_text_view"
-                android:layout_width="wrap_content"
+                android:layout_width="160dp"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="4dp"
+                android:background="@drawable/background_shimmer_text_view"
+                android:gravity="center_horizontal"
                 android:textAppearance="@style/Profile.Status"
-                android:text="0 Subscribers | 0 Friends"
+                android:visibility="visible"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@id/fullname_text_view"
-                tools:text="10 Subscribers | 4 Friends" />
+                app:layout_constraintTop_toBottomOf="@id/fullname_text_view" />
 
             <TextView
                 android:id="@+id/city_text_view"
-                android:layout_width="wrap_content"
+                android:layout_width="80dp"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="16dp"
                 android:layout_marginTop="8dp"
                 android:layout_marginBottom="8dp"
+                android:background="@drawable/background_shimmer_text_view"
                 android:drawablePadding="4dp"
                 android:gravity="center_vertical"
                 android:textAppearance="@style/Profile.Status"
-                android:text="Unknown"
-                app:drawableLeftCompat="@drawable/ic_round_location_on_24"
+                android:visibility="visible"
+                app:drawableTint="?attr/textColorSecond"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/all_count_text_view"
-                app:drawableTint="?attr/textColorSecond"
-                tools:text="Minsk" />
+                app:layout_constraintTop_toBottomOf="@+id/all_count_text_view" />
         </androidx.constraintlayout.widget.ConstraintLayout>
 
         <androidx.constraintlayout.widget.ConstraintLayout
@@ -352,7 +354,7 @@
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="@+id/constraint_layout_main"
             app:layout_constraintBottom_toTopOf="@+id/constraint_layout_main"
-            app:srcCompat="@drawable/ic_circle_24"
+            app:srcCompat="@drawable/ic_shimmer_circle_24"
             tools:src="@tools:sample/avatars" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>

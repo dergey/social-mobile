@@ -21,14 +21,10 @@ import com.bumptech.glide.load.model.LazyHeaders;
 import com.sergey.zhuravlev.mobile.social.R;
 import com.sergey.zhuravlev.mobile.social.client.Client;
 import com.sergey.zhuravlev.mobile.social.client.dto.profile.ProfileDetailDto;
-import com.sergey.zhuravlev.mobile.social.client.dto.profile.ProfileDto;
-import com.sergey.zhuravlev.mobile.social.constrain.ActivityCodes;
 import com.sergey.zhuravlev.mobile.social.constrain.IntentConstrains;
 import com.sergey.zhuravlev.mobile.social.databinding.ActivityProfileBinding;
-import com.sergey.zhuravlev.mobile.social.enums.ErrorCode;
 import com.sergey.zhuravlev.mobile.social.ui.common.ProfilesHorizontalListAdapter;
 import com.sergey.zhuravlev.mobile.social.util.GlideUtils;
-import com.sergey.zhuravlev.mobile.social.util.PrefetchedPagingData;
 import com.sergey.zhuravlev.mobile.social.util.StringUtils;
 
 import java.time.format.DateTimeFormatter;
@@ -63,6 +59,7 @@ public class ProfileActivity extends AppCompatActivity {
         }
 
         // Header initializing:
+        ConstraintLayout constraintLayoutMain = binding.constraintLayoutMain;
         TextView fullNameTextView = binding.fullnameTextView;
         TextView cityTextView = binding.cityTextView;
         TextView joinedTextView = binding.joinedTextView;
@@ -93,13 +90,33 @@ public class ProfileActivity extends AppCompatActivity {
             }
             ProfileDetailDto currentProfile = currentProfileResult.getData();
 
+            // Setting values for the top header:
+            ConstraintSet normalConstraintSet = new ConstraintSet();
+            normalConstraintSet.clone(constraintLayoutMain);
+            normalConstraintSet.constrainWidth(fullNameTextView.getId(), ConstraintSet.WRAP_CONTENT);
+            normalConstraintSet.constrainedWidth(fullNameTextView.getId(), true);
+            normalConstraintSet.constrainWidth(joinedTextView.getId(), ConstraintSet.WRAP_CONTENT);
+            normalConstraintSet.constrainedWidth(joinedTextView.getId(), true);
+            normalConstraintSet.constrainWidth(cityTextView.getId(), ConstraintSet.WRAP_CONTENT);
+            normalConstraintSet.constrainedWidth(cityTextView.getId(), true);
+
+            TransitionManager.beginDelayedTransition(constraintLayoutMain);
+
+            fullNameTextView.setBackground(null);
             fullNameTextView.setText(Stream.of(currentProfile.getFirstName(),
                             currentProfile.getMiddleName(), currentProfile.getSecondName())
                     .filter(Objects::nonNull)
                     .collect(Collectors.joining(" ")));
 
+            joinedTextView.setBackground(null);
+            joinedTextView.setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_round_calendar_today_16, 0, 0, 0);
             joinedTextView.setText(getString(R.string.profile_joined_on, currentProfile.getCreateAt().format(DATE_FORMATTER)));
+
+            cityTextView.setBackground(null);
+            cityTextView.setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_round_location_on_24, 0, 0, 0);
             cityTextView.setText(currentProfile.getCity());
+
+            normalConstraintSet.applyTo(constraintLayoutMain);
 
             if (currentProfile.getOverview() != null) {
                 overviewTextView.setText(currentProfile.getOverview());
@@ -154,7 +171,17 @@ public class ProfileActivity extends AppCompatActivity {
         friendRecyclerView.setAdapter(adapter);
         profileViewModel.getProfileFriendPage().observe(this, page -> {
             friendCountTextView.setText(String.valueOf(page.getTotalElements()));
+
+            // Setting values for the top header:
+            ConstraintSet normalConstraintSet = new ConstraintSet();
+            normalConstraintSet.clone(constraintLayoutMain);
+            normalConstraintSet.constrainWidth(allCountTextView.getId(), ConstraintSet.WRAP_CONTENT);
+            normalConstraintSet.constrainedWidth(allCountTextView.getId(), true);
+
+            TransitionManager.beginDelayedTransition(constraintLayoutMain);
+            allCountTextView.setBackground(null);
             allCountTextView.setText("0 Subscribers | " + page.getTotalElements() + " Friends");
+            normalConstraintSet.applyTo(constraintLayoutMain);
         });
 
         // Profile information animation initializing:

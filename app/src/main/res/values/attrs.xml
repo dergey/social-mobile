@@ -8,6 +8,7 @@
     <!-- Background color-->
     <attr name="backgroundColorBackground" format="reference" />
     <attr name="backgroundColorForeground" format="reference" />
+    <attr name="shimmerBackgroundColor" format="reference" />
 
     <!-- Other values-->
     <attr name="backgroundErrorLayoutColor" format="reference" />
