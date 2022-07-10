@@ -19,6 +19,17 @@
     <attr name="borderEditTextColor" format="reference" />
     <attr name="borderFocusedEditTextColor" format="reference" />
     <attr name="buttonTextColor" format="reference" />
+
+    <!-- Button -->
+    <!-- Button.Primary -->
+    <attr name="primaryButtonBackgroundColor" format="reference" />
+    <attr name="primaryPressedButtonBackgroundColor" format="reference" />
+    <attr name="primaryDisableButtonBackgroundColor" format="reference" />
+    <!-- Button.Danger -->
+    <attr name="dangerButtonBackgroundColor" format="reference" />
+    <attr name="dangerPressedButtonBackgroundColor" format="reference" />
+    <attr name="dangerDisableButtonBackgroundColor" format="reference" />
+    <!-- Button.Default -->
     <attr name="backgroundButtonColor" format="reference" />
     <attr name="backgroundPressedButtonColor" format="reference" />
     <attr name="backgroundDisableButtonColor" format="reference" />

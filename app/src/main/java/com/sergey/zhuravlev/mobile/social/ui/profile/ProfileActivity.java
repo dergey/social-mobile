@@ -23,7 +23,7 @@ import com.sergey.zhuravlev.mobile.social.client.Client;
 import com.sergey.zhuravlev.mobile.social.client.dto.profile.ProfileDetailDto;
 import com.sergey.zhuravlev.mobile.social.constrain.IntentConstrains;
 import com.sergey.zhuravlev.mobile.social.databinding.ActivityProfileBinding;
-import com.sergey.zhuravlev.mobile.social.ui.common.ProfilesHorizontalListAdapter;
+import com.sergey.zhuravlev.mobile.social.ui.common.FriendHorizontalAdapter;
 import com.sergey.zhuravlev.mobile.social.util.GlideUtils;
 import com.sergey.zhuravlev.mobile.social.util.StringUtils;
 
@@ -37,7 +37,7 @@ public class ProfileActivity extends AppCompatActivity {
 
     private ActivityProfileBinding binding;
     private ProfileViewModel profileViewModel;
-    private ProfilesHorizontalListAdapter adapter;
+    private FriendHorizontalAdapter adapter;
 
     private final static DateTimeFormatter DATE_FORMATTER = DateTimeFormatter.ofPattern("dd.MM.yyyy", Locale.ENGLISH);
     private final static DateTimeFormatter FULLY_DATE_FORMATTER = DateTimeFormatter.ofPattern("MMMM dd, yyyy", Locale.ENGLISH);
@@ -156,7 +156,7 @@ public class ProfileActivity extends AppCompatActivity {
         ConstraintLayout friendLayout = binding.constraintLayoutCardFriend;
         TextView friendCountTextView = binding.friendCountTextView;
 
-        adapter = new ProfilesHorizontalListAdapter(this);
+        adapter = new FriendHorizontalAdapter(this);
         adapter.addLoadStateListener(loadState -> {
             if (loadState.getRefresh() instanceof LoadState.Loading) {
                 friendLayout.setVisibility(View.GONE);

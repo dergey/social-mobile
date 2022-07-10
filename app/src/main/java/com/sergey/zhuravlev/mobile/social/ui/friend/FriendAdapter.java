@@ -1,10 +1,12 @@
-package com.sergey.zhuravlev.mobile.social.ui.common;
+package com.sergey.zhuravlev.mobile.social.ui.friend;
+
 
 import android.content.Context;
 import android.content.Intent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
 
@@ -20,19 +22,21 @@ import com.bumptech.glide.load.model.LazyHeaders;
 import com.bumptech.glide.request.RequestOptions;
 import com.sergey.zhuravlev.mobile.social.R;
 import com.sergey.zhuravlev.mobile.social.client.Client;
-import com.sergey.zhuravlev.mobile.social.constrain.IntentConstrains;
 import com.sergey.zhuravlev.mobile.social.client.dto.profile.ProfileDto;
+import com.sergey.zhuravlev.mobile.social.constrain.IntentConstrains;
 import com.sergey.zhuravlev.mobile.social.ui.profile.ProfileActivity;
 
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Objects;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
-public class ProfilesHorizontalListAdapter extends PagingDataAdapter<ProfileDto, RecyclerView.ViewHolder> {
+public class FriendAdapter extends PagingDataAdapter<ProfileDto, RecyclerView.ViewHolder> {
 
     private final Context context;
 
-    public ProfilesHorizontalListAdapter(Context context) {
+    public FriendAdapter(Context context) {
         super(new RepositoryComparator());
         this.context = context;
     }
@@ -46,43 +50,49 @@ public class ProfilesHorizontalListAdapter extends PagingDataAdapter<ProfileDto,
     @NotNull
     @Override
     public RecyclerView.ViewHolder onCreateViewHolder(@NonNull @NotNull ViewGroup parent, int viewType) {
-        return ProfilesHorizontalListAdapter.ProfileViewHolder.getInstance(parent);
+        return FriendViewHolder.getInstance(parent);
     }
 
     @Override
     public void onBindViewHolder(@NonNull @NotNull RecyclerView.ViewHolder holder, int position) {
         ProfileDto profileDto = getItem(position);
-        if (holder instanceof ProfilesHorizontalListAdapter.ProfileViewHolder && profileDto != null) {
-            ((ProfilesHorizontalListAdapter.ProfileViewHolder) holder).bind(profileDto, context);
+        if (profileDto != null) {
+            if (holder instanceof FriendViewHolder) {
+                ((FriendViewHolder) holder).bind(profileDto, context);
+            }
         }
     }
 
-    static class ProfileViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
+    static class FriendViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
 
-        private final ImageView avatarImage;
-        private final TextView fullNameText;
+        private final ImageView avatarImageView;
+        private final TextView fullNameTextView;
 
-        private Context context;
         private String username;
 
-        public ProfileViewHolder(@NonNull @NotNull View itemView) {
+        private Context context;
+
+        public FriendViewHolder(@NonNull @NotNull View itemView) {
             super(itemView);
-            avatarImage = itemView.findViewById(R.id.avatar);
-            fullNameText = itemView.findViewById(R.id.full_name_text_view);
+            avatarImageView = itemView.findViewById(R.id.avatar_image_view);
+            fullNameTextView = itemView.findViewById(R.id.full_name_text_view);
+
             itemView.setOnClickListener(this);
         }
 
-        public static ProfilesHorizontalListAdapter.ProfileViewHolder getInstance(ViewGroup parent) {
+        public static FriendViewHolder getInstance(ViewGroup parent) {
             LayoutInflater inflater = LayoutInflater.from(parent.getContext());
-            View view = inflater.inflate(R.layout.item_circle_profile, parent, false);
-            return new ProfilesHorizontalListAdapter.ProfileViewHolder(view);
+            View view = inflater.inflate(R.layout.item_friend, parent, false);
+            return new FriendViewHolder(view);
         }
 
-        public ProfilesHorizontalListAdapter.ProfileViewHolder bind(ProfileDto item, Context context) {
+        public FriendViewHolder bind(ProfileDto item, Context context) {
             this.context = context;
             this.username = item.getUsername();
 
-            fullNameText.setText(String.format("%s\n%s", item.getFirstName(), item.getSecondName()));
+            fullNameTextView.setText(Stream.of(item.getFirstName(), item.getMiddleName(), item.getSecondName())
+                    .filter(Objects::nonNull)
+                    .collect(Collectors.joining(" ")));
             String messageImageUrl = String.format("%s/api/profile/%s/avatar",
                     Client.getBaseUrl(),
                     item.getUsername());
@@ -92,7 +102,7 @@ public class ProfilesHorizontalListAdapter extends PagingDataAdapter<ProfileDto,
                             .build());
             Glide.with(context).load(glideUrl)
                     .diskCacheStrategy(DiskCacheStrategy.NONE).skipMemoryCache(true)
-                    .apply(RequestOptions.circleCropTransform()).into(avatarImage);
+                    .apply(RequestOptions.circleCropTransform()).into(avatarImageView);
             return this;
         }
 

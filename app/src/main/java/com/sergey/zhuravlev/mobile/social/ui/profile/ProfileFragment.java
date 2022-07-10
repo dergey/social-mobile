@@ -1,9 +1,9 @@
 package com.sergey.zhuravlev.mobile.social.ui.profile;
 
 import android.content.Context;
+import android.content.Intent;
 import android.os.Bundle;
 import android.transition.TransitionManager;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -12,16 +12,12 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
 import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.constraintlayout.widget.ConstraintSet;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProvider;
-import androidx.paging.AsyncPagingDataDiffer;
 import androidx.paging.LoadState;
-import androidx.recyclerview.widget.DiffUtil;
 import androidx.recyclerview.widget.LinearLayoutManager;
-import androidx.recyclerview.widget.ListUpdateCallback;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.bumptech.glide.Glide;
@@ -34,7 +30,8 @@ import com.sergey.zhuravlev.mobile.social.client.dto.profile.ProfileDto;
 import com.sergey.zhuravlev.mobile.social.constrain.ActivityCodes;
 import com.sergey.zhuravlev.mobile.social.databinding.FragmentProfileBinding;
 import com.sergey.zhuravlev.mobile.social.enums.ErrorCode;
-import com.sergey.zhuravlev.mobile.social.ui.common.ProfilesHorizontalListAdapter;
+import com.sergey.zhuravlev.mobile.social.ui.common.FriendHorizontalAdapter;
+import com.sergey.zhuravlev.mobile.social.ui.friend.FriendActivity;
 import com.sergey.zhuravlev.mobile.social.util.FragmentCallable;
 import com.sergey.zhuravlev.mobile.social.util.GlideUtils;
 import com.sergey.zhuravlev.mobile.social.util.PrefetchedPagingData;
@@ -52,7 +49,7 @@ public class ProfileFragment extends Fragment {
     private FragmentProfileBinding binding;
     private ProfileFragmentViewModel profileFragmentViewModel;
 
-    private ProfilesHorizontalListAdapter adapter;
+    private FriendHorizontalAdapter adapter;
 
     private final static DateTimeFormatter DATE_FORMATTER = DateTimeFormatter.ofPattern("dd.MM.yyyy", Locale.ENGLISH);
     private final static DateTimeFormatter FULLY_DATE_FORMATTER = DateTimeFormatter.ofPattern("MMMM dd, yyyy", Locale.ENGLISH);
@@ -146,7 +143,7 @@ public class ProfileFragment extends Fragment {
         TextView friendRequestCountTextView = binding.friendRequestCountTextView;
         ConstraintLayout friendOpenLayout = binding.friendOpenLayout;
 
-        adapter = new ProfilesHorizontalListAdapter(getActivity());
+        adapter = new FriendHorizontalAdapter(getActivity());
         adapter.addLoadStateListener(loadState -> {
             if (loadState.getRefresh() instanceof LoadState.Loading) {
                 friendLayout.setVisibility(View.GONE);
@@ -177,6 +174,10 @@ public class ProfileFragment extends Fragment {
                 friendRequestCountTextView.setVisibility(View.INVISIBLE);
                 friendOpenLayout.setBackground(null);
             }
+        });
+        friendOpenLayout.setOnClickListener(v -> {
+            Intent intent = new Intent(getActivity(), FriendActivity.class);
+            startActivity(intent);
         });
 
         // Profile information animation initializing:

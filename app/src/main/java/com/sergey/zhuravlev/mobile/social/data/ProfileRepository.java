@@ -123,6 +123,14 @@ public class ProfileRepository {
         Futures.addCallback(dataSource.getProfile(username), callback, executor);
     }
 
+    public void acceptFriendRequest(final String username, FutureCallback<Result<Void, ErrorDto>> callback) {
+        Futures.addCallback(dataSource.acceptFriendRequest(username), callback, executor);
+    }
+
+    public void declineFriendRequest(final String username, FutureCallback<Result<Void, ErrorDto>> callback) {
+        Futures.addCallback(dataSource.declineFriendRequest(username), callback, executor);
+    }
+
     public PagingConfig getDefaultPageConfig() {
         return new PagingConfig(DEFAULT_PAGE_SIZE, 0, true);
     }

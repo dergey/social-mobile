@@ -45,4 +45,30 @@ public class ProfileDataSource {
         return Futures.catching(partialResultFuture,
                 IOException.class, Result.Error::fromIOException, executor);
     }
+
+    public ListenableFuture<Result<Void, ErrorDto>> acceptFriendRequest(String username) {
+        ListenableFuture<Result<Void, ErrorDto>> loginFuture =
+                Futures.transform(profileEndpoints.acceptFriendRequest(username),
+                        r -> new Result.Success<>(null), executor);
+
+        ListenableFuture<Result<Void, ErrorDto>> partialResultFuture =
+                Futures.catching(loginFuture, HttpException.class,
+                        Result.Error::fromHttpException, executor);
+
+        return Futures.catching(partialResultFuture,
+                IOException.class, Result.Error::fromIOException, executor);
+    }
+
+    public ListenableFuture<Result<Void, ErrorDto>> declineFriendRequest(String username) {
+        ListenableFuture<Result<Void, ErrorDto>> loginFuture =
+                Futures.transform(profileEndpoints.declineFriendRequest(username),
+                        r -> new Result.Success<>(null), executor);
+
+        ListenableFuture<Result<Void, ErrorDto>> partialResultFuture =
+                Futures.catching(loginFuture, HttpException.class,
+                        Result.Error::fromHttpException, executor);
+
+        return Futures.catching(partialResultFuture,
+                IOException.class, Result.Error::fromIOException, executor);
+    }
 }

@@ -12,14 +12,12 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.Social"
         android:usesCleartextTraffic="true">
-        <activity
-            android:name=".FriendActivity"
-            android:exported="false" />
         <activity android:name=".ui.registration.RegistrationActivity" />
         <activity android:name=".ui.registration.EmailConfirmActivity" />
         <activity android:name=".ui.profile.ProfileSettingActivity" />
         <activity android:name=".ui.profile.ProfileActivity" />
         <activity android:name=".ui.message.MessageActivity" />
+        <activity android:name=".ui.friend.FriendActivity" />
         <activity
             android:name=".ui.login.LoginActivity"
             android:label="@string/title_activity_login" />

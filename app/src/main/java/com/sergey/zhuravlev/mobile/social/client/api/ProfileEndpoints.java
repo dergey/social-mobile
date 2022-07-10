@@ -6,6 +6,7 @@ import com.sergey.zhuravlev.mobile.social.client.dto.profile.ProfileDetailDto;
 import com.sergey.zhuravlev.mobile.social.client.dto.profile.ProfileDto;
 
 import retrofit2.http.GET;
+import retrofit2.http.POST;
 import retrofit2.http.Path;
 import retrofit2.http.Query;
 
@@ -30,5 +31,11 @@ public interface ProfileEndpoints {
     ListenableFuture<PageDto<ProfileDto>> getProfileFriends(@Path("username") String username,
                                                             @Query(value = "page") Integer page,
                                                             @Query(value = "size") Integer size);
+
+    @POST("/api/friend/request/{username}/accept")
+    ListenableFuture<Void> acceptFriendRequest(@Path("username") String username);
+
+    @POST("/api/friend/request/{username}/decline")
+    ListenableFuture<Void> declineFriendRequest(@Path("username") String username);
 
 }

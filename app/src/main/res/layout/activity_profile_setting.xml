@@ -163,14 +163,14 @@
             android:id="@+id/account_settings_text_view"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_marginStart="16dp"
             android:layout_marginTop="24dp"
             android:fontFamily="@font/inter_bold"
             android:text="Account Settings"
             android:textColor="?attr/headerTextViewColor"
             android:textSize="24sp"
             android:typeface="normal"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintStart_toEndOf="@+id/ab_back_image_view"
             app:layout_constraintTop_toTopOf="parent"
             tools:text="Account Settings" />
 
