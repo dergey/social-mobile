@@ -1,11 +1,13 @@
-package com.sergey.zhuravlev.mobile.social.data;
+package com.sergey.zhuravlev.mobile.social.data.repository;
+
+import android.content.Context;
 
 import androidx.lifecycle.LiveData;
-import androidx.paging.ExperimentalPagingApi;
 import androidx.paging.Pager;
 import androidx.paging.PagingConfig;
 import androidx.paging.PagingData;
 import androidx.paging.PagingLiveData;
+import androidx.room.Database;
 
 import com.google.common.collect.ImmutableMap;
 import com.google.common.util.concurrent.FutureCallback;
@@ -17,8 +19,14 @@ import com.sergey.zhuravlev.mobile.social.client.dto.ErrorDto;
 import com.sergey.zhuravlev.mobile.social.client.dto.PageDto;
 import com.sergey.zhuravlev.mobile.social.client.dto.profile.ProfileDetailDto;
 import com.sergey.zhuravlev.mobile.social.client.dto.profile.ProfileDto;
+import com.sergey.zhuravlev.mobile.social.data.Result;
+import com.sergey.zhuravlev.mobile.social.data.datasource.ProfileDataSource;
+import com.sergey.zhuravlev.mobile.social.data.paging.CommonPagingSource;
+import com.sergey.zhuravlev.mobile.social.database.AppDatabase;
+import com.sergey.zhuravlev.mobile.social.database.dao.ProfileDetailModelDao;
+import com.sergey.zhuravlev.mobile.social.database.dao.ProfileModelDao;
+import com.sergey.zhuravlev.mobile.social.database.model.ProfileAndDetailModel;
 import com.sergey.zhuravlev.mobile.social.ui.common.LiveDataFutureCallback;
-import com.sergey.zhuravlev.mobile.social.ui.common.NetworkLiveDataFutureCallback;
 
 import java.util.Collections;
 import java.util.concurrent.Executor;
@@ -34,17 +42,23 @@ public class ProfileRepository {
     private final ProfileEndpoints profileEndpoints;
 
     private final Executor executor;
+    private final AppDatabase database;
+    private final ProfileModelDao profileModelDao;
+    private final ProfileDetailModelDao profileDetailModelDao;
     private final ProfileDataSource dataSource;
 
-    private ProfileRepository() {
+    private ProfileRepository(Context context) {
         this.profileEndpoints = Client.getProfileEndpoints();
+        this.database = AppDatabase.getInstance(context);
+        this.profileModelDao = database.getProfileModelDao();
+        this.profileDetailModelDao = database.getProfileDetailModelDao();
         this.executor = Executors.newSingleThreadExecutor();
-        this.dataSource = new ProfileDataSource(profileEndpoints, executor);
+        this.dataSource = new ProfileDataSource(profileEndpoints, profileModelDao, profileDetailModelDao, executor);
     }
 
-    public static ProfileRepository getInstance() {
+    public static ProfileRepository getInstance(Context context) {
         if (instance == null) {
-            instance = new ProfileRepository();
+            instance = new ProfileRepository(context);
         }
         return instance;
     }
@@ -115,8 +129,10 @@ public class ProfileRepository {
         return PagingLiveData.getLiveData(pager);
     }
 
-    public void getCurrentProfile(FutureCallback<Result<ProfileDetailDto, ErrorDto>> callback) {
-        Futures.addCallback(dataSource.getCurrentProfile(), callback, executor);
+    public void getCurrentProfile(FutureCallback<Result<ProfileAndDetailModel, Void>> cacheCallback,
+                                  FutureCallback<Result<ProfileAndDetailModel, ErrorDto>> networkCallback) {
+        Futures.addCallback(dataSource.getCacheCurrentProfile(), cacheCallback, executor);
+        Futures.addCallback(dataSource.getNetworkCurrentProfile(), networkCallback, executor);
     }
 
     public void getProfile(final String username, FutureCallback<Result<ProfileDetailDto, ErrorDto>> callback) {

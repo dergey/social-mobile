@@ -2,33 +2,21 @@ package com.sergey.zhuravlev.mobile.social.ui.common;
 
 import androidx.annotation.Nullable;
 
-import com.sergey.zhuravlev.mobile.social.client.dto.ErrorDto;
-
 public class UiResult<T> {
 
     @Nullable
-    private T data;
+    T data;
     @Nullable
-    private ErrorDto errorDto;
-    @Nullable
-    private String errorMessage;
+    String errorMessage;
 
-    private boolean hasErrors;
+    boolean hasErrors;
 
-    private UiResult() {
+    UiResult() {
     }
 
     public static <T> UiResult<T> error(String errorMessage) {
         UiResult<T> result = new UiResult<>();
         result.errorMessage = errorMessage;
-        result.hasErrors = true;
-        return result;
-    }
-
-    public static <T> UiResult<T> error(ErrorDto dto) {
-        UiResult<T> result = new UiResult<>();
-        result.errorMessage = dto.getMessage();
-        result.errorDto = dto;
         result.hasErrors = true;
         return result;
     }
@@ -42,11 +30,6 @@ public class UiResult<T> {
     @Nullable
     public T getData() {
         return data;
-    }
-
-    @Nullable
-    public ErrorDto getErrorDto() {
-        return errorDto;
     }
 
     @Nullable

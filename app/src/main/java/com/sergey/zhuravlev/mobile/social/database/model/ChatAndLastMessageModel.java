@@ -1,6 +1,7 @@
 package com.sergey.zhuravlev.mobile.social.database.model;
 
 import androidx.room.Embedded;
+import androidx.room.Ignore;
 import androidx.room.Relation;
 
 public class ChatAndLastMessageModel {
@@ -17,6 +18,7 @@ public class ChatAndLastMessageModel {
     public ChatAndLastMessageModel() {
     }
 
+    @Ignore
     public ChatAndLastMessageModel(ChatModel chat, MessageModel lastMessage) {
         this.chat = chat;
         this.lastMessage = lastMessage;

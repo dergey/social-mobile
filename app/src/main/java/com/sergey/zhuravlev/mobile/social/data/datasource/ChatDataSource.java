@@ -1,4 +1,4 @@
-package com.sergey.zhuravlev.mobile.social.data;
+package com.sergey.zhuravlev.mobile.social.data.datasource;
 
 import android.content.Context;
 import android.util.Log;
@@ -8,6 +8,7 @@ import com.google.common.util.concurrent.ListenableFuture;
 import com.sergey.zhuravlev.mobile.social.client.api.ChatEndpoints;
 import com.sergey.zhuravlev.mobile.social.client.dto.ErrorDto;
 import com.sergey.zhuravlev.mobile.social.client.dto.message.MessageDto;
+import com.sergey.zhuravlev.mobile.social.data.Result;
 import com.sergey.zhuravlev.mobile.social.database.AppDatabase;
 import com.sergey.zhuravlev.mobile.social.database.dao.ChatModelDao;
 import com.sergey.zhuravlev.mobile.social.database.dao.MessageModelDao;

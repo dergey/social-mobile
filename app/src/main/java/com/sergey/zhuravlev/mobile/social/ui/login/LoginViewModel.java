@@ -8,7 +8,7 @@ import android.util.Log;
 import android.util.Patterns;
 
 import com.google.common.util.concurrent.FutureCallback;
-import com.sergey.zhuravlev.mobile.social.data.LoginRepository;
+import com.sergey.zhuravlev.mobile.social.data.repository.LoginRepository;
 import com.sergey.zhuravlev.mobile.social.data.Result;
 import com.sergey.zhuravlev.mobile.social.R;
 import com.sergey.zhuravlev.mobile.social.client.dto.ErrorDto;

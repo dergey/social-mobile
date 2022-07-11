@@ -1,4 +1,4 @@
-package com.sergey.zhuravlev.mobile.social.data;
+package com.sergey.zhuravlev.mobile.social.data.datasource;
 
 import com.google.common.util.concurrent.Futures;
 import com.google.common.util.concurrent.ListenableFuture;
@@ -9,6 +9,7 @@ import com.sergey.zhuravlev.mobile.social.client.dto.LoginDto;
 import com.sergey.zhuravlev.mobile.social.client.dto.LoginResponseDto;
 import com.sergey.zhuravlev.mobile.social.client.dto.RegistrationDto;
 import com.sergey.zhuravlev.mobile.social.client.dto.user.UserDto;
+import com.sergey.zhuravlev.mobile.social.data.Result;
 
 import java.io.IOException;
 import java.time.LocalDate;

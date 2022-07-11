@@ -9,7 +9,7 @@ import androidx.paging.ExperimentalPagingApi;
 import androidx.paging.PagingData;
 import androidx.paging.PagingLiveData;
 
-import com.sergey.zhuravlev.mobile.social.data.ChatRepository;
+import com.sergey.zhuravlev.mobile.social.data.repository.ChatRepository;
 import com.sergey.zhuravlev.mobile.social.database.model.ChatAndLastMessageModel;
 
 import kotlinx.coroutines.CoroutineScope;

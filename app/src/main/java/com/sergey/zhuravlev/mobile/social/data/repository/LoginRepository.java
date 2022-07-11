@@ -1,4 +1,4 @@
-package com.sergey.zhuravlev.mobile.social.data;
+package com.sergey.zhuravlev.mobile.social.data.repository;
 
 import com.google.common.util.concurrent.FutureCallback;
 import com.google.common.util.concurrent.Futures;
@@ -7,6 +7,8 @@ import com.sergey.zhuravlev.mobile.social.client.Client;
 import com.sergey.zhuravlev.mobile.social.client.api.LoginEndpoints;
 import com.sergey.zhuravlev.mobile.social.client.dto.ErrorDto;
 import com.sergey.zhuravlev.mobile.social.client.dto.LoginResponseDto;
+import com.sergey.zhuravlev.mobile.social.data.Result;
+import com.sergey.zhuravlev.mobile.social.data.datasource.LoginDataSource;
 
 import java.util.concurrent.Executor;
 import java.util.concurrent.Executors;

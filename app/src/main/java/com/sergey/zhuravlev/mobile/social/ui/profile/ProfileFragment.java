@@ -15,6 +15,7 @@ import androidx.annotation.NonNull;
 import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.constraintlayout.widget.ConstraintSet;
 import androidx.fragment.app.Fragment;
+import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.paging.LoadState;
 import androidx.recyclerview.widget.LinearLayoutManager;
@@ -28,9 +29,16 @@ import com.sergey.zhuravlev.mobile.social.client.Client;
 import com.sergey.zhuravlev.mobile.social.client.dto.profile.ProfileDetailDto;
 import com.sergey.zhuravlev.mobile.social.client.dto.profile.ProfileDto;
 import com.sergey.zhuravlev.mobile.social.constrain.ActivityCodes;
+import com.sergey.zhuravlev.mobile.social.database.model.ProfileAndDetailModel;
+import com.sergey.zhuravlev.mobile.social.database.model.ProfileDetailModel;
+import com.sergey.zhuravlev.mobile.social.database.model.ProfileModel;
 import com.sergey.zhuravlev.mobile.social.databinding.FragmentProfileBinding;
 import com.sergey.zhuravlev.mobile.social.enums.ErrorCode;
+import com.sergey.zhuravlev.mobile.social.ui.chat.ChatViewModel;
+import com.sergey.zhuravlev.mobile.social.ui.chat.ChatViewModelFactory;
 import com.sergey.zhuravlev.mobile.social.ui.common.FriendHorizontalAdapter;
+import com.sergey.zhuravlev.mobile.social.ui.common.UiNetworkResult;
+import com.sergey.zhuravlev.mobile.social.ui.common.UiResult;
 import com.sergey.zhuravlev.mobile.social.ui.friend.FriendActivity;
 import com.sergey.zhuravlev.mobile.social.util.FragmentCallable;
 import com.sergey.zhuravlev.mobile.social.util.GlideUtils;
@@ -56,7 +64,8 @@ public class ProfileFragment extends Fragment {
 
     public View onCreateView(@NonNull LayoutInflater inflater,
                              ViewGroup container, Bundle savedInstanceState) {
-        profileFragmentViewModel = new ViewModelProvider(this).get(ProfileFragmentViewModel.class);
+        profileFragmentViewModel = new ViewModelProvider(this, new ProfileFragmentViewModelFactory(this.getActivity()))
+                .get(ProfileFragmentViewModel.class);
         binding = FragmentProfileBinding.inflate(inflater, container, false);
         View root = binding.getRoot();
 
@@ -73,66 +82,73 @@ public class ProfileFragment extends Fragment {
         TextView statusValueTextView = binding.statusValueTextView;
         ConstraintLayout statusSubcardLayout = binding.statusSubcardLayout;
 
-        profileFragmentViewModel.getCurrentProfileResult().observe(getActivity(), currentProfileResult -> {
+
+        Observer<UiResult<ProfileAndDetailModel>> currentProfileObserver = currentProfileResult -> {
             if (currentProfileResult == null) {
                 return;
             }
 
             if (currentProfileResult.isHasErrors()) {
-                if (currentProfileResult.getErrorDto() != null && Objects.equals(
-                        currentProfileResult.getErrorDto().getCode(), ErrorCode.UNAUTHORIZED)) {
-                    activityCallback.onFragmentEvent(ActivityCodes.TOKEN_EXPIRED_CODE);
-                }
+                if (currentProfileResult instanceof UiNetworkResult &&
+                        ((UiNetworkResult<?>) currentProfileResult).getErrorDto() != null && Objects.equals(
+                                ((UiNetworkResult<?>) currentProfileResult).getErrorDto().getCode(), ErrorCode.UNAUTHORIZED)) {
+                        activityCallback.onFragmentEvent(ActivityCodes.TOKEN_EXPIRED_CODE);
+                    }
                 return;
             }
 
             if (currentProfileResult.getData() == null) {
                 return;
             }
-            ProfileDetailDto currentProfile = currentProfileResult.getData();
 
-            fullNameTextView.setText(Stream.of(currentProfile.getFirstName(),
-                            currentProfile.getMiddleName(), currentProfile.getSecondName())
+            ProfileModel profileModel = currentProfileResult.getData().getProfile();
+            ProfileDetailModel detailModel = currentProfileResult.getData().getDetail();
+
+            fullNameTextView.setText(Stream.of(profileModel.getFirstName(),
+                            profileModel.getMiddleName(), profileModel.getSecondName())
                     .filter(Objects::nonNull)
                     .collect(Collectors.joining(" ")));
 
-            joinedTextView.setText(getString(R.string.profile_joined_on, currentProfile.getCreateAt().format(DATE_FORMATTER)));
-            cityTextView.setText(currentProfile.getCity());
+            joinedTextView.setText(getString(R.string.profile_joined_on, detailModel.getCreateAt().format(DATE_FORMATTER)));
+            cityTextView.setText(detailModel.getCity());
 
-            if (currentProfile.getOverview() != null) {
-                overviewTextView.setText(currentProfile.getOverview());
+            if (detailModel.getOverview() != null) {
+                overviewTextView.setText(detailModel.getOverview());
                 overviewSubcardLayout.setVisibility(View.VISIBLE);
             } else {
                 overviewSubcardLayout.setVisibility(View.GONE);
             }
-            if (currentProfile.getBirthDate() != null) {
-                bornValueTextView.setText(currentProfile.getBirthDate().format(FULLY_DATE_FORMATTER));
+            if (detailModel.getBirthDate() != null) {
+                bornValueTextView.setText(detailModel.getBirthDate().format(FULLY_DATE_FORMATTER));
                 bornSubcardLayout.setVisibility(View.VISIBLE);
             } else {
                 bornSubcardLayout.setVisibility(View.GONE);
             }
-            if (currentProfile.getRelationshipStatus() != null) {
-                statusValueTextView.setText(currentProfile.getRelationshipStatus().toString().charAt(0) +
-                        currentProfile.getRelationshipStatus().toString().toLowerCase().substring(1));
+            if (detailModel.getRelationshipStatus() != null) {
+                statusValueTextView.setText(detailModel.getRelationshipStatus().toString().charAt(0) +
+                        detailModel.getRelationshipStatus().toString().toLowerCase().substring(1));
                 statusSubcardLayout.setVisibility(View.VISIBLE);
             } else {
                 statusSubcardLayout.setVisibility(View.GONE);
             }
 
             String profileAvatarUrl = String.format("%s/api/profile/%s/avatar", Client.getBaseUrl(),
-                    currentProfileResult.getData().getUsername());
+                    profileModel.getUsername());
             GlideUrl glideUrl = new GlideUrl(profileAvatarUrl,
                     new LazyHeaders.Builder()
                             .addHeader("Authorization", "Bearer " + Client.getBarrierToken())
                             .build());
             if (getContext() != null) {
                 Glide.with(getContext()).load(glideUrl)
-                        .signature(GlideUtils.getMediaStoreSignature(currentProfileResult.getData().getAvatar()))
+                        //todo .signature(GlideUtils.getMediaStoreSignature(detailModel.getAvatar()))
                         .circleCrop()
                         .into(avatarImageView);
             }
 
-        });
+        };
+        profileFragmentViewModel.getCacheCurrentProfileResult().observe(getActivity(), currentProfileObserver);
+        profileFragmentViewModel.getNetworkCurrentProfileResult().observe(getActivity(), currentProfileObserver);
+
 
         // Friends card initializing:
         TextView allCountTextView = binding.allCountTextView;

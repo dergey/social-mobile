@@ -8,21 +8,21 @@ import androidx.lifecycle.ViewModel;
 
 import com.sergey.zhuravlev.mobile.social.R;
 import com.sergey.zhuravlev.mobile.social.client.dto.user.UserDto;
-import com.sergey.zhuravlev.mobile.social.data.RegistrationRepository;
+import com.sergey.zhuravlev.mobile.social.data.repository.RegistrationRepository;
 import com.sergey.zhuravlev.mobile.social.ui.common.NetworkLiveDataFutureCallback;
-import com.sergey.zhuravlev.mobile.social.ui.common.UiResult;
+import com.sergey.zhuravlev.mobile.social.ui.common.UiNetworkResult;
 
 import java.time.LocalDate;
 import java.util.Objects;
 
 public class RegistrationViewModel extends ViewModel {
 
-    private final MutableLiveData<UiResult<UserDto>> registerResult = new MutableLiveData<>();
+    private final MutableLiveData<UiNetworkResult<UserDto>> registerResult = new MutableLiveData<>();
     private final MutableLiveData<RegistrationFormState> registrationFormState = new MutableLiveData<>();
 
     private final RegistrationRepository registrationRepository;
 
-    public LiveData<UiResult<UserDto>> getRegisterResult() {
+    public LiveData<UiNetworkResult<UserDto>> getRegisterResult() {
         return registerResult;
     }
 

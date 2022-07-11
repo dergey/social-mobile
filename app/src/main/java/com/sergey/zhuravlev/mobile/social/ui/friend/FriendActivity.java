@@ -14,6 +14,8 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.sergey.zhuravlev.mobile.social.databinding.ActivityFriendBinding;
+import com.sergey.zhuravlev.mobile.social.ui.chat.ChatViewModel;
+import com.sergey.zhuravlev.mobile.social.ui.chat.ChatViewModelFactory;
 
 import java.util.Optional;
 import java.util.Timer;
@@ -28,7 +30,8 @@ public class FriendActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        friendViewModel = new ViewModelProvider(this).get(FriendViewModel.class);
+        friendViewModel = new ViewModelProvider(this, new FriendViewModelFactory(this))
+                .get(FriendViewModel.class);
         binding = ActivityFriendBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
 

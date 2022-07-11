@@ -1,4 +1,4 @@
-package com.sergey.zhuravlev.mobile.social.data;
+package com.sergey.zhuravlev.mobile.social.data.mediator;
 
 import android.util.Log;
 

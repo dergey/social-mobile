@@ -1,4 +1,4 @@
-package com.sergey.zhuravlev.mobile.social.data;
+package com.sergey.zhuravlev.mobile.social.data.datasource;
 
 import android.content.Context;
 import android.graphics.Bitmap;
@@ -18,6 +18,7 @@ import com.sergey.zhuravlev.mobile.social.client.dto.message.CreateStickerMessag
 import com.sergey.zhuravlev.mobile.social.client.dto.message.CreateTextMessageDto;
 import com.sergey.zhuravlev.mobile.social.client.dto.message.MessageDto;
 import com.sergey.zhuravlev.mobile.social.client.mapper.MessageModelMapper;
+import com.sergey.zhuravlev.mobile.social.data.Result;
 import com.sergey.zhuravlev.mobile.social.database.AppDatabase;
 import com.sergey.zhuravlev.mobile.social.database.dao.ChatModelDao;
 import com.sergey.zhuravlev.mobile.social.database.dao.MessageModelDao;

@@ -1,13 +1,13 @@
-package com.sergey.zhuravlev.mobile.social.data;
+package com.sergey.zhuravlev.mobile.social.data.paging;
 
 import androidx.annotation.NonNull;
-import androidx.paging.ExperimentalPagingApi;
 import androidx.paging.ListenableFuturePagingSource;
 import androidx.paging.PagingState;
 
 import com.google.common.util.concurrent.Futures;
 import com.google.common.util.concurrent.ListenableFuture;
 import com.sergey.zhuravlev.mobile.social.client.dto.PageDto;
+import com.sergey.zhuravlev.mobile.social.data.repository.MessageRepository;
 
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;

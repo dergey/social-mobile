@@ -1,4 +1,4 @@
-package com.sergey.zhuravlev.mobile.social.data;
+package com.sergey.zhuravlev.mobile.social.data.repository;
 
 import android.content.Context;
 
@@ -14,12 +14,12 @@ import com.google.common.util.concurrent.Futures;
 import com.sergey.zhuravlev.mobile.social.client.Client;
 import com.sergey.zhuravlev.mobile.social.client.api.ChatEndpoints;
 import com.sergey.zhuravlev.mobile.social.client.dto.ErrorDto;
-import com.sergey.zhuravlev.mobile.social.client.dto.message.MessageDto;
+import com.sergey.zhuravlev.mobile.social.data.datasource.ChatDataSource;
+import com.sergey.zhuravlev.mobile.social.data.Result;
+import com.sergey.zhuravlev.mobile.social.data.mediator.ChatRemoteMediator;
 import com.sergey.zhuravlev.mobile.social.database.AppDatabase;
 import com.sergey.zhuravlev.mobile.social.database.dao.ChatModelDao;
 import com.sergey.zhuravlev.mobile.social.database.model.ChatAndLastMessageModel;
-import com.sergey.zhuravlev.mobile.social.database.model.ChatModel;
-import com.sergey.zhuravlev.mobile.social.database.model.MessageModel;
 
 import java.util.concurrent.Executor;
 import java.util.concurrent.Executors;

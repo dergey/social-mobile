@@ -1,10 +1,8 @@
-package com.sergey.zhuravlev.mobile.social.data;
+package com.sergey.zhuravlev.mobile.social.data.repository;
 
 import android.content.Context;
 import android.net.Uri;
-import android.util.Log;
 
-import androidx.annotation.Nullable;
 import androidx.lifecycle.LiveData;
 import androidx.paging.ExperimentalPagingApi;
 import androidx.paging.Pager;
@@ -19,14 +17,13 @@ import com.sergey.zhuravlev.mobile.social.client.Client;
 import com.sergey.zhuravlev.mobile.social.client.api.MessageEndpoints;
 import com.sergey.zhuravlev.mobile.social.client.dto.ErrorDto;
 import com.sergey.zhuravlev.mobile.social.client.dto.message.MessageDto;
+import com.sergey.zhuravlev.mobile.social.data.Result;
+import com.sergey.zhuravlev.mobile.social.data.datasource.MessageDataSource;
+import com.sergey.zhuravlev.mobile.social.data.mediator.MessageRemoteMediator;
 import com.sergey.zhuravlev.mobile.social.database.AppDatabase;
 import com.sergey.zhuravlev.mobile.social.database.dao.MessageModelDao;
 import com.sergey.zhuravlev.mobile.social.database.model.MessageModel;
-import com.sergey.zhuravlev.mobile.social.ui.common.LiveDataFutureCallback;
-import com.sergey.zhuravlev.mobile.social.ui.common.NetworkLiveDataFutureCallback;
 
-import java.util.LinkedHashMap;
-import java.util.Map;
 import java.util.concurrent.Executor;
 import java.util.concurrent.Executors;
 

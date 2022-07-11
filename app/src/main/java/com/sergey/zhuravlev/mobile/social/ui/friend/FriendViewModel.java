@@ -1,5 +1,7 @@
 package com.sergey.zhuravlev.mobile.social.ui.friend;
 
+import android.content.Context;
+
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.Transformations;
@@ -10,18 +12,13 @@ import androidx.paging.PagingDataTransforms;
 import androidx.paging.PagingLiveData;
 
 import com.sergey.zhuravlev.mobile.social.client.dto.PageDto;
-import com.sergey.zhuravlev.mobile.social.client.dto.profile.ProfileDetailDto;
 import com.sergey.zhuravlev.mobile.social.client.dto.profile.ProfileDto;
 import com.sergey.zhuravlev.mobile.social.client.mapper.FriendRequestItemMapper;
-import com.sergey.zhuravlev.mobile.social.data.ProfileRepository;
-import com.sergey.zhuravlev.mobile.social.database.model.MessageModel;
-import com.sergey.zhuravlev.mobile.social.ui.common.Item;
+import com.sergey.zhuravlev.mobile.social.data.repository.ProfileRepository;
 import com.sergey.zhuravlev.mobile.social.ui.common.LiveDataFutureCallback;
 import com.sergey.zhuravlev.mobile.social.ui.common.NetworkLiveDataFutureCallback;
-import com.sergey.zhuravlev.mobile.social.ui.common.UiResult;
+import com.sergey.zhuravlev.mobile.social.ui.common.UiNetworkResult;
 
-import java.time.LocalDate;
-import java.util.Objects;
 import java.util.concurrent.Executor;
 import java.util.concurrent.Executors;
 
@@ -34,11 +31,11 @@ public class FriendViewModel extends ViewModel {
 
     private final MutableLiveData<PageDto<Void>> currentFriendPage = new MutableLiveData<>();
     private final MutableLiveData<PageDto<Void>> currentFriendRequestPage = new MutableLiveData<>();
-    private final MutableLiveData<UiResult<Void>> acceptResult = new MutableLiveData<>();
-    private final MutableLiveData<UiResult<Void>> rejectResult = new MutableLiveData<>();
+    private final MutableLiveData<UiNetworkResult<Void>> acceptResult = new MutableLiveData<>();
+    private final MutableLiveData<UiNetworkResult<Void>> rejectResult = new MutableLiveData<>();
 
-    public FriendViewModel() {
-        this.profileRepository = ProfileRepository.getInstance();
+    public FriendViewModel(Context context) {
+        this.profileRepository = ProfileRepository.getInstance(context);
         this.executor = Executors.newSingleThreadExecutor();
     }
 
@@ -73,11 +70,11 @@ public class FriendViewModel extends ViewModel {
         return currentFriendRequestPage;
     }
 
-    public LiveData<UiResult<Void>> getAcceptResult() {
+    public LiveData<UiNetworkResult<Void>> getAcceptResult() {
         return acceptResult;
     }
 
-    public LiveData<UiResult<Void>> getRejectResult() {
+    public LiveData<UiNetworkResult<Void>> getRejectResult() {
         return rejectResult;
     }
 }

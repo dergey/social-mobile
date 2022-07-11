@@ -9,9 +9,9 @@ import com.sergey.zhuravlev.mobile.social.data.Result;
 
 public class NetworkLiveDataFutureCallback<T> implements FutureCallback<Result<T, ErrorDto>> {
 
-    private final MutableLiveData<UiResult<T>> provideLiveData;
+    private final MutableLiveData<UiNetworkResult<T>> provideLiveData;
 
-    public NetworkLiveDataFutureCallback(MutableLiveData<UiResult<T>> provideLiveData) {
+    public NetworkLiveDataFutureCallback(MutableLiveData<UiNetworkResult<T>> provideLiveData) {
         this.provideLiveData = provideLiveData;
     }
 
@@ -22,14 +22,14 @@ public class NetworkLiveDataFutureCallback<T> implements FutureCallback<Result<T
         }
         if (result.isSuccess()) {
             T data = ((Result.Success<T, ErrorDto>) result).getData();
-            provideLiveData.postValue(UiResult.success(data));
+            provideLiveData.postValue(UiNetworkResult.success(data));
         } else {
             String errorMessage = ((Result.Error<T, ErrorDto>) result).getMessage();
             ErrorDto errorData = ((Result.Error<T, ErrorDto>) result).getErrorObject(ErrorDto.class);
             if (errorData != null) {
-                provideLiveData.postValue(UiResult.error(errorData));
+                provideLiveData.postValue(UiNetworkResult.error(errorData));
             } else {
-                provideLiveData.postValue(UiResult.error(errorMessage));
+                provideLiveData.postValue(UiNetworkResult.error(errorMessage));
             }
         }
     }

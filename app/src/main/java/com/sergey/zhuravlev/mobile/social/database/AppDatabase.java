@@ -11,10 +11,23 @@ import com.sergey.zhuravlev.mobile.social.database.converter.EnumStringConverter
 import com.sergey.zhuravlev.mobile.social.database.converter.LocalDateTimeConverter;
 import com.sergey.zhuravlev.mobile.social.database.dao.ChatModelDao;
 import com.sergey.zhuravlev.mobile.social.database.dao.MessageModelDao;
+import com.sergey.zhuravlev.mobile.social.database.dao.ProfileDetailModelDao;
+import com.sergey.zhuravlev.mobile.social.database.dao.ProfileModelDao;
 import com.sergey.zhuravlev.mobile.social.database.model.ChatModel;
+import com.sergey.zhuravlev.mobile.social.database.model.FriendModel;
 import com.sergey.zhuravlev.mobile.social.database.model.MessageModel;
+import com.sergey.zhuravlev.mobile.social.database.model.ProfileDetailModel;
+import com.sergey.zhuravlev.mobile.social.database.model.ProfileModel;
 
-@Database(version = 5, entities = {ChatModel.class, MessageModel.class}, exportSchema = false)
+@Database(version = 6,
+        entities = {
+                ChatModel.class,
+                MessageModel.class,
+                ProfileModel.class,
+                ProfileDetailModel.class,
+                FriendModel.class
+        },
+        exportSchema = false)
 @TypeConverters({LocalDateTimeConverter.class, EnumStringConverter.class})
 public abstract class AppDatabase extends RoomDatabase {
 
@@ -24,6 +37,10 @@ public abstract class AppDatabase extends RoomDatabase {
     public abstract ChatModelDao getChatModelDao();
 
     public abstract MessageModelDao getMessageModelDao();
+
+    public abstract ProfileModelDao getProfileModelDao();
+
+    public abstract ProfileDetailModelDao getProfileDetailModelDao();
 
     public static AppDatabase getInstance(Context context) {
         if (instance == null) {

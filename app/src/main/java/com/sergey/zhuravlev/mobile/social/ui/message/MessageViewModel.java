@@ -14,12 +14,12 @@ import androidx.paging.PagingDataTransforms;
 import androidx.paging.PagingLiveData;
 
 import com.sergey.zhuravlev.mobile.social.client.dto.message.MessageDto;
-import com.sergey.zhuravlev.mobile.social.data.ChatRepository;
-import com.sergey.zhuravlev.mobile.social.data.MessageRepository;
+import com.sergey.zhuravlev.mobile.social.data.repository.ChatRepository;
+import com.sergey.zhuravlev.mobile.social.data.repository.MessageRepository;
 import com.sergey.zhuravlev.mobile.social.database.model.MessageModel;
 import com.sergey.zhuravlev.mobile.social.ui.common.LiveDataFutureCallback;
 import com.sergey.zhuravlev.mobile.social.ui.common.NetworkLiveDataFutureCallback;
-import com.sergey.zhuravlev.mobile.social.ui.common.UiResult;
+import com.sergey.zhuravlev.mobile.social.ui.common.UiNetworkResult;
 import com.sergey.zhuravlev.mobile.social.ui.common.Item;
 
 import java.time.LocalDate;
@@ -32,10 +32,10 @@ import kotlinx.coroutines.CoroutineScope;
 @ExperimentalPagingApi
 public class MessageViewModel extends ViewModel {
 
-    private final MutableLiveData<UiResult<MessageDto>> createMessageResult = new MutableLiveData<>();
+    private final MutableLiveData<UiNetworkResult<MessageDto>> createMessageResult = new MutableLiveData<>();
     private final MutableLiveData<MessageModel> databaseCreateMessage = new MutableLiveData<>();
-    private final MutableLiveData<UiResult<Void>> deleteMessageResult = new MutableLiveData<>();
-    private final MutableLiveData<UiResult<Void>> updateReadStatusResult = new MutableLiveData<>();
+    private final MutableLiveData<UiNetworkResult<Void>> deleteMessageResult = new MutableLiveData<>();
+    private final MutableLiveData<UiNetworkResult<Void>> updateReadStatusResult = new MutableLiveData<>();
 
     private final MessageRepository messageRepository;
     private final ChatRepository chatRepository;
@@ -47,7 +47,7 @@ public class MessageViewModel extends ViewModel {
         this.executor = Executors.newSingleThreadExecutor();
     }
 
-    public LiveData<UiResult<MessageDto>> getCreateMessageResult() {
+    public LiveData<UiNetworkResult<MessageDto>> getCreateMessageResult() {
         return createMessageResult;
     }
 
@@ -55,11 +55,11 @@ public class MessageViewModel extends ViewModel {
         return databaseCreateMessage;
     }
 
-    public LiveData<UiResult<Void>> getDeleteMessageResult() {
+    public LiveData<UiNetworkResult<Void>> getDeleteMessageResult() {
         return deleteMessageResult;
     }
 
-    public LiveData<UiResult<Void>> getUpdateReadStatusResult() {
+    public LiveData<UiNetworkResult<Void>> getUpdateReadStatusResult() {
         return updateReadStatusResult;
     }
 

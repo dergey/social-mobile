@@ -7,38 +7,37 @@ import androidx.lifecycle.ViewModel;
 import com.sergey.zhuravlev.mobile.social.client.dto.ErrorDto;
 import com.sergey.zhuravlev.mobile.social.client.dto.LoginResponseDto;
 import com.sergey.zhuravlev.mobile.social.client.dto.user.UserDto;
-import com.sergey.zhuravlev.mobile.social.data.LoginRepository;
-import com.sergey.zhuravlev.mobile.social.data.ProfileRepository;
-import com.sergey.zhuravlev.mobile.social.data.RegistrationRepository;
+import com.sergey.zhuravlev.mobile.social.data.repository.LoginRepository;
+import com.sergey.zhuravlev.mobile.social.data.repository.RegistrationRepository;
 import com.sergey.zhuravlev.mobile.social.ui.common.NetworkLiveDataFutureCallback;
-import com.sergey.zhuravlev.mobile.social.ui.common.UiResult;
+import com.sergey.zhuravlev.mobile.social.ui.common.UiNetworkResult;
 
 import java.time.LocalDate;
 
 public class ProfileSettingViewModel extends ViewModel {
 
     private final MutableLiveData<ProfileSettingFormState> profileSettingFormState = new MutableLiveData<>();
-    private final MutableLiveData<UiResult<UserDto>> registerResult = new MutableLiveData<>();
-    private final MutableLiveData<UiResult<LoginResponseDto>> loginResult = new MutableLiveData<>();
+    private final MutableLiveData<UiNetworkResult<UserDto>> registerResult = new MutableLiveData<>();
+    private final MutableLiveData<UiNetworkResult<LoginResponseDto>> loginResult = new MutableLiveData<>();
 
     private final LoginRepository loginRepository;
-    private final ProfileRepository profileRepository;
+    //private final ProfileRepository profileRepository;
     private final RegistrationRepository registrationRepository;
 
     public LiveData<ProfileSettingFormState> getProfileSettingFormState() {
         return profileSettingFormState;
     }
 
-    public LiveData<UiResult<UserDto>> getRegisterResult() {
+    public LiveData<UiNetworkResult<UserDto>> getRegisterResult() {
         return registerResult;
     }
 
-    public LiveData<UiResult<LoginResponseDto>> getLoginResult() {
+    public LiveData<UiNetworkResult<LoginResponseDto>> getLoginResult() {
         return loginResult;
     }
 
     public ProfileSettingViewModel() {
-        this.profileRepository = ProfileRepository.getInstance();
+        //this.profileRepository = ProfileRepository.getInstance(context);
         this.registrationRepository = RegistrationRepository.getInstance();
         this.loginRepository = LoginRepository.getInstance();
     }
