@@ -128,6 +128,12 @@
         <item name="android:textColor">?attr/textColorPrimary</item>
     </style>
 
+    <style name="Friend.Request.Status" parent="Profile">
+        <item name="android:textColor">?attr/textColorBackground</item>
+        <item name="android:textSize">14sp</item>
+    </style>
+
+
 
     <style name="TextLabel" parent="Widget.MaterialComponents.TextInputLayout.FilledBox">
         <item name="android:textSize">18sp</item>

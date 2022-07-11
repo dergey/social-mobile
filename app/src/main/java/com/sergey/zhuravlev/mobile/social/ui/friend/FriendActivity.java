@@ -15,10 +15,15 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.sergey.zhuravlev.mobile.social.databinding.ActivityFriendBinding;
 
+import java.util.Optional;
+import java.util.Timer;
+import java.util.TimerTask;
+
 public class FriendActivity extends AppCompatActivity {
 
     private ActivityFriendBinding binding;
     private FriendViewModel friendViewModel;
+    private final Timer friendRequestRefreshTimer = new Timer();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -32,23 +37,45 @@ public class FriendActivity extends AppCompatActivity {
         TextView requestCountTextView = binding.requestCountTextView;
         ConstraintLayout requestLayout = binding.requestLayout;
         FriendRequestAdapter friendRequestAdapter = new FriendRequestAdapter(this);
-        friendRequestAdapter.setOnAcceptClickListener((v, item) -> {
+        friendRequestAdapter.setOnAcceptClickListener((v, position, item) -> {
             friendViewModel.acceptFriendRequest(item.getUsername());
+            Optional.ofNullable(friendRequestAdapter.snapshot().get(position))
+                    .ifPresent(i -> i.setAccepted(true));
+            friendRequestAdapter.notifyItemChanged(position);
             return true;
         });
         friendViewModel.getAcceptResult().observe(this, result -> {
             if (result.isHasErrors()) {
                 Log.e("FriendActivity/acceptFriendRequest", "Unable to accept this friend request!\n" + result.getErrorMessage());
+                return;
             }
+            friendRequestRefreshTimer.cancel();
+            friendRequestRefreshTimer.schedule(new TimerTask() {
+                @Override
+                public void run() {
+                    friendRequestAdapter.refresh();
+                }
+            }, 5000);
         });
-        friendRequestAdapter.setOnRejectClickListener((v, item) -> {
+        friendRequestAdapter.setOnRejectClickListener((v, position, item) -> {
             friendViewModel.declineFriendRequest(item.getUsername());
+            Optional.ofNullable(friendRequestAdapter.snapshot().get(position))
+                    .ifPresent(i -> i.setRejected(true));
+            friendRequestAdapter.notifyItemChanged(position);
             return true;
         });
         friendViewModel.getRejectResult().observe(this, result -> {
             if (result.isHasErrors()) {
                 Log.e("FriendActivity/declineFriendRequest", "Unable to reject this friend request!\n" + result.getErrorMessage());
+                return;
             }
+            friendRequestRefreshTimer.cancel();
+            friendRequestRefreshTimer.schedule(new TimerTask() {
+                @Override
+                public void run() {
+                    friendRequestAdapter.refresh();
+                }
+            }, 5000);
         });
         friendRequestAdapter.addLoadStateListener(loadState -> {
             if (loadState.getRefresh() instanceof LoadState.NotLoading) {

@@ -38,39 +38,65 @@
             app:layout_constraintTop_toTopOf="parent"
             tools:text="Sergey Zhuravlev" />
 
-        <Button
-            android:id="@+id/accept_button"
-            android:layout_width="0dp"
-            android:layout_height="40dp"
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:id="@+id/actions_layout"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
             android:layout_marginTop="8dp"
-            android:layout_marginEnd="4dp"
-            android:background="@drawable/background_button_primary"
-            android:text="Accept"
-            android:textAllCaps="false"
-            android:textAppearance="@style/Profile.Button"
-            android:textFontWeight="600"
-            android:textStyle="normal"
-            app:layout_constraintEnd_toStartOf="@+id/reject_button"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/full_name_text_view" />
-
-        <Button
-            android:id="@+id/reject_button"
-            android:layout_width="0dp"
-            android:layout_height="40dp"
-            android:layout_marginStart="4dp"
-            android:layout_marginTop="8dp"
-            android:background="@drawable/background_button_danger"
-            android:paddingStart="8dp"
-            android:paddingEnd="8dp"
-            android:text="Reject"
-            android:textAllCaps="false"
-            android:textAppearance="@style/Profile.Button"
-            android:textFontWeight="600"
-            android:textStyle="normal"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toEndOf="@id/accept_button"
-            app:layout_constraintTop_toBottomOf="@id/full_name_text_view" />
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/full_name_text_view">
+
+            <Button
+                android:id="@+id/accept_button"
+                android:layout_width="0dp"
+                android:layout_height="40dp"
+                android:layout_marginEnd="4dp"
+                android:background="@drawable/background_button_primary"
+                android:text="Accept"
+                android:textAllCaps="false"
+                android:textAppearance="@style/Profile.Button"
+                android:textFontWeight="600"
+                android:textStyle="normal"
+                app:layout_constraintEnd_toStartOf="@+id/reject_button"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
+
+            <Button
+                android:id="@+id/reject_button"
+                android:layout_width="0dp"
+                android:layout_height="40dp"
+                android:layout_marginStart="4dp"
+                android:background="@drawable/background_button_danger"
+                android:paddingStart="8dp"
+                android:paddingEnd="8dp"
+                android:text="Reject"
+                android:textAllCaps="false"
+                android:textAppearance="@style/Profile.Button"
+                android:textFontWeight="600"
+                android:textStyle="normal"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toEndOf="@id/accept_button"
+                app:layout_constraintTop_toTopOf="parent" />
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
+
+        <TextView
+            android:id="@+id/status_text_view"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:drawablePadding="8dp"
+            android:gravity="center"
+            android:visibility="invisible"
+            android:textAppearance="@style/Friend.Request.Status"
+            app:layout_constraintBottom_toBottomOf="@+id/actions_layout"
+            app:layout_constraintEnd_toEndOf="@+id/actions_layout"
+            app:layout_constraintStart_toStartOf="@+id/actions_layout"
+            app:layout_constraintTop_toTopOf="@+id/actions_layout"
+            app:drawableTint="?attr/textColorBackground"
+            app:drawableLeftCompat="@drawable/ic_round_done_24"
+            tools:text="Accepted"
+            tools:visibility="visible"/>
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 

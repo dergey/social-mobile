@@ -10,6 +10,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
+import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.paging.PagingDataAdapter;
 import androidx.recyclerview.widget.DiffUtil;
 import androidx.recyclerview.widget.RecyclerView;
@@ -22,6 +23,7 @@ import com.bumptech.glide.request.RequestOptions;
 import com.sergey.zhuravlev.mobile.social.R;
 import com.sergey.zhuravlev.mobile.social.client.Client;
 import com.sergey.zhuravlev.mobile.social.client.dto.profile.ProfileDto;
+import com.sergey.zhuravlev.mobile.social.client.mapper.FriendRequestItemMapper;
 import com.sergey.zhuravlev.mobile.social.constrain.IntentConstrains;
 import com.sergey.zhuravlev.mobile.social.ui.profile.ProfileActivity;
 
@@ -31,10 +33,10 @@ import java.util.Objects;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-public class FriendRequestAdapter extends PagingDataAdapter<ProfileDto, RecyclerView.ViewHolder> {
+public class FriendRequestAdapter extends PagingDataAdapter<FriendRequestItem, RecyclerView.ViewHolder> {
 
     interface OnItemButtonClickListener {
-        boolean onItemButtonClick(View v, ProfileDto item);
+        boolean onItemButtonClick(View v, Integer position, FriendRequestItem item);
     }
 
     private final Context context;
@@ -68,10 +70,10 @@ public class FriendRequestAdapter extends PagingDataAdapter<ProfileDto, Recycler
 
     @Override
     public void onBindViewHolder(@NonNull @NotNull RecyclerView.ViewHolder holder, int position) {
-        ProfileDto profileDto = getItem(position);
-        if (profileDto != null) {
+        FriendRequestItem friendRequestItem = getItem(position);
+        if (friendRequestItem != null) {
             if (holder instanceof FriendRequestViewHolder) {
-                ((FriendRequestViewHolder) holder).bind(profileDto, context, onAcceptClickListener, onRejectClickListener);
+                ((FriendRequestViewHolder) holder).bind(position, friendRequestItem, context, onAcceptClickListener, onRejectClickListener);
             }
         }
     }
@@ -80,6 +82,8 @@ public class FriendRequestAdapter extends PagingDataAdapter<ProfileDto, Recycler
 
         private final ImageView avatarImageView;
         private final TextView fullNameTextView;
+        private final TextView statusTextView;
+        private final ConstraintLayout actionsLayout;
         private final Button acceptButton;
         private final Button rejectButton;
 
@@ -91,6 +95,8 @@ public class FriendRequestAdapter extends PagingDataAdapter<ProfileDto, Recycler
             super(itemView);
             avatarImageView = itemView.findViewById(R.id.avatar_image_view);
             fullNameTextView = itemView.findViewById(R.id.full_name_text_view);
+            statusTextView = itemView.findViewById(R.id.status_text_view);
+            actionsLayout = itemView.findViewById(R.id.actions_layout);
             acceptButton = itemView.findViewById(R.id.accept_button);
             rejectButton = itemView.findViewById(R.id.reject_button);
             itemView.setOnClickListener(this);
@@ -102,27 +108,47 @@ public class FriendRequestAdapter extends PagingDataAdapter<ProfileDto, Recycler
             return new FriendRequestViewHolder(view);
         }
 
-        public FriendRequestViewHolder bind(ProfileDto item, Context context,
+        public FriendRequestViewHolder bind(Integer position, FriendRequestItem item, Context context,
                                             OnItemButtonClickListener onAcceptClickListener,
                                             OnItemButtonClickListener onRejectClickListener) {
-            this.context = context;
-            this.username = item.getUsername();
+            if (this.username == null || !Objects.equals(this.username, item.getUsername())) {
+                this.context = context;
+                this.username = item.getUsername();
 
-            fullNameTextView.setText(Stream.of(item.getFirstName(), item.getMiddleName(), item.getSecondName())
-                    .filter(Objects::nonNull)
-                    .collect(Collectors.joining(" ")));
-            String messageImageUrl = String.format("%s/api/profile/%s/avatar",
-                    Client.getBaseUrl(),
-                    item.getUsername());
-            GlideUrl glideUrl = new GlideUrl(messageImageUrl,
-                    new LazyHeaders.Builder()
-                            .addHeader("Authorization", "Bearer " + Client.getBarrierToken())
-                            .build());
-            Glide.with(context).load(glideUrl)
-                    .diskCacheStrategy(DiskCacheStrategy.NONE).skipMemoryCache(true)
-                    .apply(RequestOptions.circleCropTransform()).into(avatarImageView);
-            acceptButton.setOnClickListener(v -> onAcceptClickListener.onItemButtonClick(v, item));
-            rejectButton.setOnClickListener(v -> onRejectClickListener.onItemButtonClick(v, item));
+                fullNameTextView.setText(Stream.of(item.getFirstName(), item.getMiddleName(), item.getSecondName())
+                        .filter(Objects::nonNull)
+                        .collect(Collectors.joining(" ")));
+                String messageImageUrl = String.format("%s/api/profile/%s/avatar",
+                        Client.getBaseUrl(),
+                        item.getUsername());
+                GlideUrl glideUrl = new GlideUrl(messageImageUrl,
+                        new LazyHeaders.Builder()
+                                .addHeader("Authorization", "Bearer " + Client.getBarrierToken())
+                                .build());
+                Glide.with(context).load(glideUrl)
+                        .diskCacheStrategy(DiskCacheStrategy.NONE).skipMemoryCache(true)
+                        .apply(RequestOptions.circleCropTransform()).into(avatarImageView);
+            }
+            if (!item.isAccepted() && !item.isRejected()) {
+                actionsLayout.setVisibility(View.VISIBLE);
+                statusTextView.setVisibility(View.INVISIBLE);
+                acceptButton.setOnClickListener(v -> {
+                    onAcceptClickListener.onItemButtonClick(v, position, item);
+                });
+                rejectButton.setOnClickListener(v -> {
+                    onRejectClickListener.onItemButtonClick(v, position, item);
+                });
+            } else {
+                actionsLayout.setVisibility(View.INVISIBLE);
+                statusTextView.setVisibility(View.VISIBLE);
+                if (item.isAccepted()) {
+                    statusTextView.setText("Accepted");
+                    statusTextView.setCompoundDrawablesRelativeWithIntrinsicBounds(R.drawable.ic_round_done_24, 0, 0, 0);
+                } else { // (item.isRejected()) {
+                    statusTextView.setText("Rejected");
+                    statusTextView.setCompoundDrawablesRelativeWithIntrinsicBounds(R.drawable.ic_round_clear_24, 0, 0, 0);
+                }
+            }
             return this;
         }
 
@@ -134,17 +160,18 @@ public class FriendRequestAdapter extends PagingDataAdapter<ProfileDto, Recycler
         }
     }
 
-    static class RepositoryComparator extends DiffUtil.ItemCallback<ProfileDto> {
+    static class RepositoryComparator extends DiffUtil.ItemCallback<FriendRequestItem> {
 
         @Override
-        public boolean areItemsTheSame(@NonNull @NotNull ProfileDto oldItem, @NonNull @NotNull ProfileDto newItem) {
-            return Objects.equals(oldItem, newItem);
+        public boolean areItemsTheSame(@NonNull @NotNull FriendRequestItem oldItem, @NonNull @NotNull FriendRequestItem newItem) {
+            return Objects.equals(oldItem.getUsername(), newItem.getUsername());
         }
 
         @Override
-        public boolean areContentsTheSame(@NonNull @NotNull ProfileDto oldItem, @NonNull @NotNull ProfileDto newItem) {
+        public boolean areContentsTheSame(@NonNull @NotNull FriendRequestItem oldItem, @NonNull @NotNull FriendRequestItem newItem) {
             return Objects.equals(oldItem, newItem);
         }
+
     }
 
 }
