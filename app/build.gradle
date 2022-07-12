@@ -7,7 +7,7 @@ android {
 
     defaultConfig {
         applicationId "com.sergey.zhuravlev.mobile.social"
-        minSdkVersion 28
+        minSdkVersion 29
         compileSdkVersion 30
         versionCode 1
         versionName "1.0"
