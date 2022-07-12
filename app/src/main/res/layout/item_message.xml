@@ -85,7 +85,8 @@
                     app:layout_constraintStart_toEndOf="@+id/message_date_text_view"
                     app:layout_constraintTop_toTopOf="@+id/message_date_text_view"
                     app:srcCompat="@drawable/ic_round_done_24"
-                    app:tint="?attr/textColorBackground" />
+                    app:tint="?attr/textColorSecond"
+                    tools:visibility="visible"/>
 
             </androidx.constraintlayout.widget.ConstraintLayout>
 
