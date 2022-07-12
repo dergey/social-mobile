@@ -196,24 +196,6 @@ public class ProfileFragment extends Fragment {
             startActivity(intent);
         });
 
-        // Profile information animation initializing:
-
-        Button showUpButton = binding.showUpButton;
-        ConstraintLayout constraintLayoutCardInfo = binding.constraintLayoutCardInfo;
-
-        ConstraintSet showedConstraintSet = new ConstraintSet();
-        ConstraintSet collapsedConstraintSet = new ConstraintSet();
-        showedConstraintSet.clone(constraintLayoutCardInfo);
-        collapsedConstraintSet.clone(constraintLayoutCardInfo);
-        collapsedConstraintSet.setVisibility(R.id.show_up_button, ConstraintSet.VISIBLE);
-        collapsedConstraintSet.setVisibility(R.id.collapsing_profile_info_shadow, ConstraintSet.VISIBLE);
-        collapsedConstraintSet.constrainMaxHeight(R.id.collapsing_profile_info_layout, 200);
-        collapsedConstraintSet.applyTo(constraintLayoutCardInfo);
-        showUpButton.setOnClickListener(v -> {
-            TransitionManager.beginDelayedTransition(constraintLayoutCardInfo);
-            showedConstraintSet.applyTo(constraintLayoutCardInfo);
-        });
-
         // Fetch data:
         profileFragmentViewModel.getCurrentProfile();
         profileFragmentViewModel.fetchCurrentUserFriendLiveData().observe(getActivity(), pagingData ->
