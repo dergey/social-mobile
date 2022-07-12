@@ -9,6 +9,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
+import androidx.paging.ExperimentalPagingApi;
 import androidx.paging.PagingDataAdapter;
 import androidx.recyclerview.widget.DiffUtil;
 import androidx.recyclerview.widget.RecyclerView;
@@ -22,7 +23,6 @@ import com.sergey.zhuravlev.mobile.social.client.Client;
 import com.sergey.zhuravlev.mobile.social.constrain.IntentConstrains;
 import com.sergey.zhuravlev.mobile.social.database.model.ChatAndLastMessageModel;
 import com.sergey.zhuravlev.mobile.social.database.model.ChatModel;
-import com.sergey.zhuravlev.mobile.social.database.model.MessageEmbeddable;
 import com.sergey.zhuravlev.mobile.social.database.model.MessageModel;
 import com.sergey.zhuravlev.mobile.social.enums.MessageSenderType;
 import com.sergey.zhuravlev.mobile.social.ui.message.MessageActivity;
@@ -33,6 +33,7 @@ import java.time.format.DateTimeFormatter;
 import java.util.Locale;
 import java.util.Objects;
 
+@ExperimentalPagingApi
 public class ChatAdapter extends PagingDataAdapter<ChatAndLastMessageModel, RecyclerView.ViewHolder> {
 
     private final Context context;

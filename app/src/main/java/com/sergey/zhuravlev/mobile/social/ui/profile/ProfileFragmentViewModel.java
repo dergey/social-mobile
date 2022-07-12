@@ -1,5 +1,6 @@
 package com.sergey.zhuravlev.mobile.social.ui.profile;
 
+import android.annotation.SuppressLint;
 import android.content.Context;
 
 import androidx.lifecycle.LiveData;
@@ -21,6 +22,7 @@ import com.sergey.zhuravlev.mobile.social.ui.common.UiNetworkResult;
 
 import kotlinx.coroutines.CoroutineScope;
 
+@SuppressLint("UnsafeOptInUsageError")
 public class ProfileFragmentViewModel extends ViewModel {
 
     private final ProfileRepository profileRepository;

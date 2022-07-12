@@ -8,7 +8,7 @@ import androidx.paging.PagingData;
 import androidx.recyclerview.widget.DiffUtil;
 import androidx.recyclerview.widget.ListUpdateCallback;
 
-@SuppressWarnings("ALL")
+@SuppressWarnings("rawtypes")
 public class PrefetchedPagingData<V> {
 
     private final AsyncPagingDataDiffer<V> differ;

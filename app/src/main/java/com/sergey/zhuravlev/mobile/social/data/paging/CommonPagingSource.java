@@ -1,6 +1,7 @@
 package com.sergey.zhuravlev.mobile.social.data.paging;
 
 import androidx.annotation.NonNull;
+import androidx.paging.ExperimentalPagingApi;
 import androidx.paging.ListenableFuturePagingSource;
 import androidx.paging.PagingState;
 
@@ -19,7 +20,7 @@ import java.util.function.Function;
 
 import retrofit2.HttpException;
 
-@SuppressWarnings("UnstableApiUsage")
+@ExperimentalPagingApi
 public class CommonPagingSource<V> extends ListenableFuturePagingSource<Integer, V> {
 
     public static class PageableLoad {

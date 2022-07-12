@@ -1,11 +1,13 @@
 package com.sergey.zhuravlev.mobile.social.ui.profile;
 
+import android.annotation.SuppressLint;
 import android.content.Context;
 
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.ViewModel;
 import androidx.lifecycle.ViewModelKt;
+import androidx.paging.ExperimentalPagingApi;
 import androidx.paging.PagingData;
 import androidx.paging.PagingLiveData;
 
@@ -19,6 +21,7 @@ import com.sergey.zhuravlev.mobile.social.ui.common.UiNetworkResult;
 
 import kotlinx.coroutines.CoroutineScope;
 
+@SuppressLint("UnsafeOptInUsageError")
 public class ProfileViewModel extends ViewModel {
 
     private final ProfileRepository profileRepository;

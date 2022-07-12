@@ -1,5 +1,6 @@
 package com.sergey.zhuravlev.mobile.social.ui.friend;
 
+import android.annotation.SuppressLint;
 import android.content.Context;
 
 import androidx.lifecycle.LiveData;
@@ -24,6 +25,7 @@ import java.util.concurrent.Executors;
 
 import kotlinx.coroutines.CoroutineScope;
 
+@SuppressLint("UnsafeOptInUsageError")
 public class FriendViewModel extends ViewModel {
 
     private final ProfileRepository profileRepository;

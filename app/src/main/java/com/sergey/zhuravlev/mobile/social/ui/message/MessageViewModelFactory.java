@@ -7,8 +7,6 @@ import androidx.lifecycle.ViewModel;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.paging.ExperimentalPagingApi;
 
-import com.sergey.zhuravlev.mobile.social.ui.chat.ChatViewModel;
-
 @ExperimentalPagingApi
 public class MessageViewModelFactory implements ViewModelProvider.Factory {
 

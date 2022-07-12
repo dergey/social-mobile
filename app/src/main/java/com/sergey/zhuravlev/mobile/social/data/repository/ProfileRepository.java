@@ -3,6 +3,7 @@ package com.sergey.zhuravlev.mobile.social.data.repository;
 import android.content.Context;
 
 import androidx.lifecycle.LiveData;
+import androidx.paging.ExperimentalPagingApi;
 import androidx.paging.Pager;
 import androidx.paging.PagingConfig;
 import androidx.paging.PagingData;
@@ -33,6 +34,7 @@ import java.util.concurrent.Executor;
 import java.util.concurrent.Executors;
 import java.util.function.Function;
 
+@ExperimentalPagingApi
 public class ProfileRepository {
 
     private static volatile ProfileRepository instance;
