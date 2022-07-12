@@ -7,20 +7,40 @@ on:
     branches: [ "release" ]
 
 jobs:
-  build:
-
-    runs-on: ubuntu-latest
-
+  build_apk_aab:
+    name: build release artifacts
+    runs-on: ubuntu-20.04
     steps:
-    - uses: actions/checkout@v3
-    - name: set up JDK 11
-      uses: actions/setup-java@v3
-      with:
-        java-version: '11'
-        distribution: 'temurin'
-        cache: gradle
-
-    - name: Grant execute permission for gradlew
-      run: chmod +x gradlew
-    - name: Build with Gradle
-      run: ./gradlew build
+      - uses: actions/checkout@v2
+      - uses: actions/setup-java@v1
+        with: {java-version: 1.8}
+      - name: Build release APK and AAB after test
+        run: |
+          ./gradlew test
+          ./gradlew assembleRelease
+          ./gradlew bundleRelease
+      - name: Upload APK
+        uses: actions/upload-artifact@v2
+        with:
+          name: app-release.apk
+          path: app/build/outputs/apk/release/app-release-unsigned.apk
+      - name: Upload AAB Bundle
+        uses: actions/upload-artifact@v2
+        with:
+          name: app-release.aab
+          path: app/build/outputs/bundle/release/app-release.aab
+  push_to_telegram:
+    name: Download artifact
+    runs-on: ubuntu-20.04
+    steps:
+      - uses: actions/download-artifact@v2
+        with:
+          name: app-release.apk
+      - uses: actions/checkout@master
+      - name: Send release message
+        uses: appleboy/telegram-action@master
+        with:
+          to: ${{ secrets.TELEGRAM_CHAT_ID }}
+          token: ${{ secrets.TELEGRAM_TOKEN }}
+          message: New version avaliable!
+          message_file: app-release.apk
