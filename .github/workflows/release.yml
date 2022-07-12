@@ -44,6 +44,7 @@ jobs:
         uses: actions/download-artifact@v2
         with:
           name: app-release.apk
+          path: $HOME/
 
       - uses: actions/checkout@v3
       - name: Send release message
@@ -52,4 +53,4 @@ jobs:
           to: ${{ secrets.TELEGRAM_CHAT_ID }}
           token: ${{ secrets.TELEGRAM_TOKEN }}
           message: New version avaliable!
-          message_file: ./app-release.apk
+          message_file: $HOME/app-release.apk
