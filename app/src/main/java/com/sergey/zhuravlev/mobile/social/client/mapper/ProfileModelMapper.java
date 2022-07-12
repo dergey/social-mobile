@@ -24,6 +24,7 @@ public class ProfileModelMapper {
 
         ProfileDetailModel detailModel = new ProfileDetailModel();
         detailModel.setUsername(dto.getUsername());
+        detailModel.setLastSeen(dto.getLastSeen());
         detailModel.setOverview(dto.getOverview());
         detailModel.setRelationshipStatus(dto.getRelationshipStatus());
         detailModel.setCity(dto.getCity());

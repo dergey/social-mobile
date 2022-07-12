@@ -45,7 +45,7 @@
                 app:drawableTint="?attr/textColorSecond"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintStart_toEndOf="@+id/city_text_view"
-                app:layout_constraintTop_toBottomOf="@+id/all_count_text_view" />
+                app:layout_constraintTop_toBottomOf="@+id/status_text_view" />
 
             <TextView
                 android:id="@+id/fullname_text_view"
@@ -62,7 +62,7 @@
                 app:layout_constraintTop_toTopOf="parent" />
 
             <TextView
-                android:id="@+id/all_count_text_view"
+                android:id="@+id/status_text_view"
                 android:layout_width="160dp"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="4dp"
@@ -89,7 +89,8 @@
                 app:drawableTint="?attr/textColorSecond"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/all_count_text_view" />
+                app:layout_constraintTop_toBottomOf="@+id/status_text_view" />
+
         </androidx.constraintlayout.widget.ConstraintLayout>
 
         <androidx.constraintlayout.widget.ConstraintLayout
@@ -321,6 +322,39 @@
             app:layout_constraintBottom_toTopOf="@+id/constraint_layout_main"
             app:srcCompat="@drawable/ic_shimmer_circle_24"
             tools:src="@tools:sample/avatars" />
+
+        <ImageView
+            android:id="@+id/friend_status_image_view"
+            android:layout_width="24dp"
+            android:layout_height="24dp"
+            app:layout_constraintStart_toStartOf="@id/avatar_image_view"
+            app:layout_constraintBottom_toBottomOf="@id/avatar_image_view"
+            app:srcCompat="@drawable/ic_round_people_alt_24"
+            app:tint="?attr/friendColor"/>
+
+        <ImageView
+            android:id="@+id/back_image_view"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="8dp"
+            android:layout_marginTop="8dp"
+            android:padding="8dp"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:srcCompat="@drawable/ic_round_arrow_back_24"
+            app:tint="?attr/textColorPrimary"/>
+
+        <ImageView
+            android:id="@+id/menu_image_view"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:layout_marginEnd="8dp"
+            android:padding="8dp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:srcCompat="@drawable/ic_round_more_vert_24"
+            app:tint="?attr/textColorPrimary" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 

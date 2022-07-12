@@ -3,6 +3,7 @@
     <color name="black">#FF000000</color>
     <color name="dark_gray">#3C3C3C</color>
     <color name="gray">#A0A0A0</color>
+    <color name="green">#43A047</color>
     <color name="white">#FFFFFFFF</color>
     <color name="error">#D32F2F</color>
     <color name="warning">#FFD166</color>

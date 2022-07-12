@@ -32,6 +32,7 @@
         <item name="backgroundButtonColor">@color/active_button_color</item>
         <item name="backgroundDisableButtonColor">@color/disable_button_color</item>
         <item name="backgroundPressedButtonColor">@color/pressed_active_button_color</item>
+        <item name="friendColor">@color/green</item>
 
         <!-- Button colors -->
         <item name="primaryButtonBackgroundColor">@color/active_button_color</item>

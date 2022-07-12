@@ -3,6 +3,7 @@ package com.sergey.zhuravlev.mobile.social.database.model;
 import androidx.annotation.NonNull;
 import androidx.room.ColumnInfo;
 import androidx.room.Entity;
+import androidx.room.Ignore;
 import androidx.room.PrimaryKey;
 
 import com.sergey.zhuravlev.mobile.social.enums.RelationshipStatus;
@@ -16,6 +17,9 @@ public class ProfileDetailModel {
     @PrimaryKey
     @NonNull
     private String username;
+
+    @Ignore
+    private LocalDateTime lastSeen;
 
     private String overview;
 
@@ -44,6 +48,14 @@ public class ProfileDetailModel {
 
     public void setUsername(@NonNull String username) {
         this.username = username;
+    }
+
+    public LocalDateTime getLastSeen() {
+        return lastSeen;
+    }
+
+    public void setLastSeen(LocalDateTime lastSeen) {
+        this.lastSeen = lastSeen;
     }
 
     public String getOverview() {

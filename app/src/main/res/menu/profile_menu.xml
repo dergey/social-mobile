@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <item
+        android:id="@+id/friend_menu_item"
+        android:title="Add to friends" />
+    <item
+        android:id="@+id/unfriend_menu_item"
+        android:visible="false"
+        android:title="Remove from friends" />
+    <item
+        android:id="@+id/block_menu_item"
+        android:title="Block" />
+    <item
+        android:id="@+id/unblock_menu_item"
+        android:visible="false"
+        android:title="Unblock" />
+    <item
+        android:id="@+id/to_chat_menu_item"
+        android:title="Go to chat" />
+
+</menu>

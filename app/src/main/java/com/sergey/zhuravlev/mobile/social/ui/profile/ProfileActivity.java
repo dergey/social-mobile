@@ -1,10 +1,11 @@
 package com.sergey.zhuravlev.mobile.social.ui.profile;
 
 import android.os.Bundle;
-import android.transition.TransitionManager;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
-import android.widget.Button;
 import android.widget.ImageView;
+import android.widget.PopupMenu;
 import android.widget.TextView;
 
 import androidx.appcompat.app.AppCompatActivity;
@@ -24,6 +25,7 @@ import com.sergey.zhuravlev.mobile.social.client.dto.profile.ProfileDetailDto;
 import com.sergey.zhuravlev.mobile.social.constrain.IntentConstrains;
 import com.sergey.zhuravlev.mobile.social.databinding.ActivityProfileBinding;
 import com.sergey.zhuravlev.mobile.social.ui.common.FriendHorizontalAdapter;
+import com.sergey.zhuravlev.mobile.social.ui.message.MessageActivity;
 import com.sergey.zhuravlev.mobile.social.util.GlideUtils;
 import com.sergey.zhuravlev.mobile.social.util.StringUtils;
 
@@ -40,6 +42,7 @@ public class ProfileActivity extends AppCompatActivity {
     private FriendHorizontalAdapter adapter;
 
     private final static DateTimeFormatter DATE_FORMATTER = DateTimeFormatter.ofPattern("dd.MM.yyyy", Locale.ENGLISH);
+    private final static DateTimeFormatter DATETIME_FORMATTER = DateTimeFormatter.ofPattern("dd MMMM yyyy hh:mm:ss", Locale.ENGLISH);
     private final static DateTimeFormatter FULLY_DATE_FORMATTER = DateTimeFormatter.ofPattern("MMMM dd, yyyy", Locale.ENGLISH);
 
     @Override
@@ -60,8 +63,12 @@ public class ProfileActivity extends AppCompatActivity {
         }
 
         // Header initializing:
+        ImageView backImageView = binding.backImageView;
+        ImageView menuImageView = binding.menuImageView;
+
         ConstraintLayout constraintLayoutMain = binding.constraintLayoutMain;
         TextView fullNameTextView = binding.fullnameTextView;
+        TextView statusTextView = binding.statusTextView;
         TextView cityTextView = binding.cityTextView;
         TextView joinedTextView = binding.joinedTextView;
         ImageView avatarImageView = binding.avatarImageView;
@@ -72,6 +79,20 @@ public class ProfileActivity extends AppCompatActivity {
         ConstraintLayout bornSubcardLayout = binding.bornSubcardLayout;
         TextView statusValueTextView = binding.statusValueTextView;
         ConstraintLayout statusSubcardLayout = binding.statusSubcardLayout;
+
+        backImageView.setOnClickListener(v -> ProfileActivity.super.onBackPressed());
+
+        PopupMenu.OnMenuItemClickListener onMenuItemClickListener = item -> {
+
+            return false;
+        };
+        menuImageView.setOnClickListener(v -> {
+            PopupMenu popup = new PopupMenu(ProfileActivity.this, v);
+            popup.setOnMenuItemClickListener(onMenuItemClickListener);
+            MenuInflater inflater = popup.getMenuInflater();
+            inflater.inflate(R.menu.profile_menu, popup.getMenu());
+            popup.show();
+        });
 
         profileViewModel.getProfileResult().observe(this, currentProfileResult -> {
             if (currentProfileResult == null) {
@@ -96,28 +117,31 @@ public class ProfileActivity extends AppCompatActivity {
             normalConstraintSet.clone(constraintLayoutMain);
             normalConstraintSet.constrainWidth(fullNameTextView.getId(), ConstraintSet.WRAP_CONTENT);
             normalConstraintSet.constrainedWidth(fullNameTextView.getId(), true);
+            normalConstraintSet.constrainWidth(statusTextView.getId(), ConstraintSet.WRAP_CONTENT);
+            normalConstraintSet.constrainedWidth(statusTextView.getId(), true);
             normalConstraintSet.constrainWidth(joinedTextView.getId(), ConstraintSet.WRAP_CONTENT);
             normalConstraintSet.constrainedWidth(joinedTextView.getId(), true);
             normalConstraintSet.constrainWidth(cityTextView.getId(), ConstraintSet.WRAP_CONTENT);
             normalConstraintSet.constrainedWidth(cityTextView.getId(), true);
-
-            TransitionManager.beginDelayedTransition(constraintLayoutMain);
-
             fullNameTextView.setBackground(null);
+            statusTextView.setBackground(null);
+            joinedTextView.setBackground(null);
+            cityTextView.setBackground(null);
+
+            normalConstraintSet.applyTo(constraintLayoutMain);
+
             fullNameTextView.setText(Stream.of(currentProfile.getFirstName(),
                             currentProfile.getMiddleName(), currentProfile.getSecondName())
                     .filter(Objects::nonNull)
                     .collect(Collectors.joining(" ")));
 
-            joinedTextView.setBackground(null);
+            statusTextView.setText(String.format("Last seen %s", currentProfile.getLastSeen().format(DATETIME_FORMATTER)));
+
             joinedTextView.setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_round_calendar_today_16, 0, 0, 0);
             joinedTextView.setText(getString(R.string.profile_joined_on, currentProfile.getCreateAt().format(DATE_FORMATTER)));
 
-            cityTextView.setBackground(null);
             cityTextView.setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_round_location_on_24, 0, 0, 0);
             cityTextView.setText(currentProfile.getCity());
-
-            normalConstraintSet.applyTo(constraintLayoutMain);
 
             if (currentProfile.getOverview() != null) {
                 overviewTextView.setText(currentProfile.getOverview());
@@ -152,7 +176,6 @@ public class ProfileActivity extends AppCompatActivity {
         });
 
         // Friends card initializing:
-        TextView allCountTextView = binding.allCountTextView;
 
         ConstraintLayout friendLayout = binding.constraintLayoutCardFriend;
         TextView friendCountTextView = binding.friendCountTextView;
@@ -172,17 +195,6 @@ public class ProfileActivity extends AppCompatActivity {
         friendRecyclerView.setAdapter(adapter);
         profileViewModel.getProfileFriendPage().observe(this, page -> {
             friendCountTextView.setText(String.valueOf(page.getTotalElements()));
-
-            // Setting values for the top header:
-            ConstraintSet normalConstraintSet = new ConstraintSet();
-            normalConstraintSet.clone(constraintLayoutMain);
-            normalConstraintSet.constrainWidth(allCountTextView.getId(), ConstraintSet.WRAP_CONTENT);
-            normalConstraintSet.constrainedWidth(allCountTextView.getId(), true);
-
-            TransitionManager.beginDelayedTransition(constraintLayoutMain);
-            allCountTextView.setBackground(null);
-            allCountTextView.setText("0 Subscribers | " + page.getTotalElements() + " Friends");
-            normalConstraintSet.applyTo(constraintLayoutMain);
         });
 
         // Fetch data:
