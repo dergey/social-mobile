@@ -11,10 +11,16 @@ jobs:
     name: build release artifacts
     runs-on: ubuntu-20.04
     steps:
-      - uses: actions/checkout@v2
-      - uses: actions/setup-java@v1
-        with: {java-version: 1.8}
-      - name: Build release APK and AAB after test
+      - uses: actions/checkout@v3
+      - name: Set up JDK 11
+        uses: actions/setup-java@v3
+        with:
+          java-version: '11'
+          distribution: 'temurin'
+          cache: gradle
+      - name: Grant execute permission for gradlew
+        run: chmod +x gradlew
+      - name: Build release APK and AAB
         run: |
           ./gradlew test
           ./gradlew assembleRelease
@@ -30,13 +36,15 @@ jobs:
           name: app-release.aab
           path: app/build/outputs/bundle/release/app-release.aab
   push_to_telegram:
-    name: Download artifact
+    name: Message to Telegram
+    needs: build_apk_aab
     runs-on: ubuntu-20.04
     steps:
-      - uses: actions/download-artifact@v2
+      - name: Download artifact
+        uses: actions/download-artifact@v2
         with:
           name: app-release.apk
-      - uses: actions/checkout@master
+      - uses: actions/checkout@v3
       - name: Send release message
         uses: appleboy/telegram-action@master
         with:
