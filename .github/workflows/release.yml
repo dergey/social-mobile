@@ -53,4 +53,4 @@ jobs:
           to: ${{ secrets.TELEGRAM_CHAT_ID }}
           token: ${{ secrets.TELEGRAM_TOKEN }}
           message: New version avaliable!
-          message_file: /home/runner/work/social-mobile/social-mobile/app-release.apk
+          message_file: /home/runner/work/social-mobile/social-mobile/app-release-unsigned.apk
