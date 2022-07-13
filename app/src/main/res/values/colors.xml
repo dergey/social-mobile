@@ -9,8 +9,10 @@
     <color name="warning_corner">#AC8D46</color>
 
     <!-- Primary color -->
-    <color name="primary_color">#ff0f6fec</color>
-    <color name="primary_color_night">#ff0f6fec</color>
+    <color name="primary_color">#FF0F6FEC</color>
+    <color name="shadow_primary_color">#FF0F50AA</color>
+    <color name="primary_color_night">#FF0F6FEC</color>
+    <color name="shadow_primary_color_night">#FF0F50AA</color>
     <!-- Background color -->
     <color name="background_color">#EFF2F6</color>
     <color name="background_color_night">#000000</color>
