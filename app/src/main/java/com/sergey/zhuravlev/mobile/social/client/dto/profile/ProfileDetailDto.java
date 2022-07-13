@@ -15,6 +15,7 @@ public class ProfileDetailDto {
     private String firstName;
     private String middleName;
     private String secondName;
+    private LocalDateTime lastSeen;
     private String overview;
     private RelationshipStatus relationshipStatus;
     private String city;
@@ -70,6 +71,14 @@ public class ProfileDetailDto {
 
     public void setSecondName(String secondName) {
         this.secondName = secondName;
+    }
+
+    public LocalDateTime getLastSeen() {
+        return lastSeen;
+    }
+
+    public void setLastSeen(LocalDateTime lastSeen) {
+        this.lastSeen = lastSeen;
     }
 
     public String getOverview() {
