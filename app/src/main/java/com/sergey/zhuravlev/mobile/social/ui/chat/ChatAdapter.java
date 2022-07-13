@@ -145,7 +145,7 @@ public class ChatAdapter extends PagingDataAdapter<ChatAndLastMessageModel, Recy
         @Override
         public void onClick(final View view) {
             Intent intent = new Intent(view.getContext(), MessageActivity.class);
-            intent.putExtra(IntentConstrains.EXTRA_CHAT_ID, chat.getId());
+            intent.putExtra(IntentConstrains.EXTRA_CHAT, chat);
             view.getContext().startActivity(intent);
         }
     }

@@ -19,7 +19,7 @@ import com.sergey.zhuravlev.mobile.social.database.model.MessageModel;
 import com.sergey.zhuravlev.mobile.social.database.model.ProfileDetailModel;
 import com.sergey.zhuravlev.mobile.social.database.model.ProfileModel;
 
-@Database(version = 6,
+@Database(version = 7,
         entities = {
                 ChatModel.class,
                 MessageModel.class,

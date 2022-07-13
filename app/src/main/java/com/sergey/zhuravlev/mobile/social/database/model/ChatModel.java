@@ -1,19 +1,24 @@
 package com.sergey.zhuravlev.mobile.social.database.model;
 
+import android.os.Parcel;
+import android.os.Parcelable;
+
 import androidx.room.ColumnInfo;
 import androidx.room.Embedded;
 import androidx.room.Entity;
+import androidx.room.Ignore;
 import androidx.room.PrimaryKey;
 
+import com.sergey.zhuravlev.mobile.social.database.converter.LocalDateTimeConverter;
 import com.sergey.zhuravlev.mobile.social.database.paggeble.Pageable;
 
 import java.time.LocalDateTime;
 import java.util.Objects;
 
 @Entity(tableName = "chats")
-public class ChatModel {
+public class ChatModel implements Parcelable {
 
-    @PrimaryKey(autoGenerate = false)
+    @PrimaryKey
     private long id;
 
     @Embedded(prefix = "profile_")
@@ -32,10 +37,32 @@ public class ChatModel {
     private Long unreadMessages;
 
     @ColumnInfo(name = "last_message_id")
-    private long lastMessageId;
+    private Long lastMessageId;
 
     @Embedded(prefix = "pageable_")
     private Pageable pageable;
+
+    public ChatModel() {
+    }
+
+    @Ignore
+    public ChatModel(long id,
+                     ProfilePreviewEmbeddable targetProfile,
+                     LocalDateTime createAt,
+                     LocalDateTime updateAt,
+                     boolean messageAllow,
+                     Long unreadMessages,
+                     Long lastMessageId,
+                     Pageable pageable) {
+        this.id = id;
+        this.targetProfile = targetProfile;
+        this.createAt = createAt;
+        this.updateAt = updateAt;
+        this.messageAllow = messageAllow;
+        this.unreadMessages = unreadMessages;
+        this.lastMessageId = lastMessageId;
+        this.pageable = pageable;
+    }
 
     public long getId() {
         return id;
@@ -85,11 +112,11 @@ public class ChatModel {
         this.unreadMessages = unreadMessages;
     }
 
-    public long getLastMessageId() {
+    public Long getLastMessageId() {
         return lastMessageId;
     }
 
-    public void setLastMessageId(long lastMessageId) {
+    public void setLastMessageId(Long lastMessageId) {
         this.lastMessageId = lastMessageId;
     }
 
@@ -108,7 +135,7 @@ public class ChatModel {
         ChatModel chatModel = (ChatModel) o;
         return id == chatModel.id &&
                 messageAllow == chatModel.messageAllow &&
-                lastMessageId == chatModel.lastMessageId &&
+                lastMessageId.equals(chatModel.lastMessageId) &&
                 targetProfile.equals(chatModel.targetProfile) &&
                 createAt.equals(chatModel.createAt) &&
                 updateAt.equals(chatModel.updateAt) &&
@@ -119,5 +146,45 @@ public class ChatModel {
     public int hashCode() {
         return Objects.hash(id, targetProfile, createAt, updateAt, unreadMessages, messageAllow, lastMessageId);
     }
+
+    @Ignore
+    @Override
+    public int describeContents() {
+        return 0;
+    }
+
+    @Ignore
+    @Override
+    public void writeToParcel(Parcel dest, int flags) {
+        dest.writeLong(id);
+        dest.writeTypedObject(targetProfile, 0);
+        dest.writeLong(LocalDateTimeConverter.toEpochMilli(createAt));
+        dest.writeLong(LocalDateTimeConverter.toEpochMilli(updateAt));
+        dest.writeBoolean(messageAllow);
+        dest.writeLong(unreadMessages);
+        dest.writeLong(lastMessageId);
+        dest.writeTypedObject(pageable, 0);
+    }
+
+    public static final Parcelable.Creator<ChatModel> CREATOR = new Parcelable.Creator<>() {
+
+        public ChatModel createFromParcel(Parcel in) {
+            long id = in.readLong();
+            ProfilePreviewEmbeddable profile = in.readTypedObject(ProfilePreviewEmbeddable.CREATOR);
+            LocalDateTime createAt = LocalDateTimeConverter.fromEpochMilli(in.readLong());
+            LocalDateTime updateAt = LocalDateTimeConverter.fromEpochMilli(in.readLong());
+            boolean messageAllow = in.readBoolean();
+            long unreadMessages = in.readLong();
+            Long lastMessageId = in.readLong();
+            Pageable pageable = in.readTypedObject(Pageable.CREATOR);
+            return new ChatModel(id, profile, createAt, updateAt, messageAllow, unreadMessages, lastMessageId, pageable);
+        }
+
+        public ChatModel[] newArray(int size) {
+            return new ChatModel[size];
+        }
+
+    };
+
 }
 
