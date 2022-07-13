@@ -34,7 +34,13 @@ import java.util.stream.Stream;
 
 public class FriendAdapter extends PagingDataAdapter<ProfileDto, RecyclerView.ViewHolder> {
 
+    interface OnItemButtonClickListener {
+        boolean onItemButtonClick(View v, Integer position, ProfileDto item);
+    }
+
     private final Context context;
+    private OnItemButtonClickListener onMessageClickListener;
+    private OnItemButtonClickListener onMoreClickListener;
 
     public FriendAdapter(Context context) {
         super(new RepositoryComparator());
@@ -45,6 +51,13 @@ public class FriendAdapter extends PagingDataAdapter<ProfileDto, RecyclerView.Vi
         return context;
     }
 
+    public void setOnMessageClickListener(OnItemButtonClickListener onMessageClickListener) {
+        this.onMessageClickListener = onMessageClickListener;
+    }
+
+    public void setOnMoreClickListener(OnItemButtonClickListener onMoreClickListener) {
+        this.onMoreClickListener = onMoreClickListener;
+    }
 
     @NonNull
     @NotNull
@@ -58,7 +71,7 @@ public class FriendAdapter extends PagingDataAdapter<ProfileDto, RecyclerView.Vi
         ProfileDto profileDto = getItem(position);
         if (profileDto != null) {
             if (holder instanceof FriendViewHolder) {
-                ((FriendViewHolder) holder).bind(profileDto, context);
+                ((FriendViewHolder) holder).bind(position, profileDto, context, onMessageClickListener, onMoreClickListener);
             }
         }
     }
@@ -67,6 +80,8 @@ public class FriendAdapter extends PagingDataAdapter<ProfileDto, RecyclerView.Vi
 
         private final ImageView avatarImageView;
         private final TextView fullNameTextView;
+        private final ImageView sendMessageImageView;
+        private final ImageView moreImageView;
 
         private String username;
 
@@ -76,8 +91,12 @@ public class FriendAdapter extends PagingDataAdapter<ProfileDto, RecyclerView.Vi
             super(itemView);
             avatarImageView = itemView.findViewById(R.id.avatar_image_view);
             fullNameTextView = itemView.findViewById(R.id.full_name_text_view);
+            sendMessageImageView = itemView.findViewById(R.id.send_message_image_view);
+            moreImageView = itemView.findViewById(R.id.more_image_view);
 
             itemView.setOnClickListener(this);
+            sendMessageImageView.setOnClickListener(v -> {});
+            moreImageView.setOnClickListener(v -> {});
         }
 
         public static FriendViewHolder getInstance(ViewGroup parent) {
@@ -86,7 +105,9 @@ public class FriendAdapter extends PagingDataAdapter<ProfileDto, RecyclerView.Vi
             return new FriendViewHolder(view);
         }
 
-        public FriendViewHolder bind(ProfileDto item, Context context) {
+        public FriendViewHolder bind(Integer position, ProfileDto item, Context context,
+                                     OnItemButtonClickListener onMessageClickListener,
+                                     OnItemButtonClickListener onMoreClickListener) {
             this.context = context;
             this.username = item.getUsername();
 
@@ -96,6 +117,13 @@ public class FriendAdapter extends PagingDataAdapter<ProfileDto, RecyclerView.Vi
             String messageImageUrl = String.format("%s/api/profile/%s/avatar",
                     Client.getBaseUrl(),
                     item.getUsername());
+
+            sendMessageImageView.setOnClickListener(v -> {
+                onMessageClickListener.onItemButtonClick(v, position, item);
+            });
+            moreImageView.setOnClickListener(v -> {
+                onMoreClickListener.onItemButtonClick(v, position, item);
+            });
             GlideUrl glideUrl = new GlideUrl(messageImageUrl,
                     new LazyHeaders.Builder()
                             .addHeader("Authorization", "Bearer " + Client.getBarrierToken())

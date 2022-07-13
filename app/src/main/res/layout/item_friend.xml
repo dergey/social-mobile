@@ -33,10 +33,39 @@
             android:id="@+id/full_name_text_view"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
+            android:ellipsize="end"
+            android:lines="1"
             android:textAppearance="@style/Chats.Header"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toStartOf="@+id/send_message_image_view"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
             tools:text="Sergey Zhuravlev" />
+
+        <ImageView
+            android:id="@+id/send_message_image_view"
+            android:layout_width="40dp"
+            android:layout_height="40dp"
+            android:padding="8dp"
+            android:layout_marginEnd="8dp"
+            android:background="@drawable/background_clickable_transparent_second"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toStartOf="@+id/more_image_view"
+            app:layout_constraintTop_toTopOf="parent"
+            app:srcCompat="@drawable/ic_round_chat_bubble_outline_24"
+            app:tint="?attr/textColorPrimary" />
+
+        <ImageView
+            android:id="@+id/more_image_view"
+            android:layout_width="40dp"
+            android:layout_height="40dp"
+            android:padding="8dp"
+            android:background="@drawable/background_clickable_transparent_second"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:srcCompat="@drawable/ic_baseline_more_vert_24"
+            app:tint="?attr/textColorPrimary" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 

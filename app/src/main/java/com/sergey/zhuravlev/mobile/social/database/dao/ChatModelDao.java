@@ -27,6 +27,13 @@ public interface ChatModelDao {
     @Query("SELECT * FROM chats WHERE id = :chatId")
     ChatModel getOneById(Long chatId);
 
+    @Query("SELECT * FROM chats WHERE profile_username = :username")
+    ChatModel getOneByUsername(String username);
+
+    @Transaction
+    @Query("SELECT * FROM chats WHERE id = :newChatId")
+    ChatAndLastMessageModel getOneChatAndLastMessageModelById(Long newChatId);
+
     @Transaction
     @Query("SELECT * FROM chats WHERE id IN (:newChatIds)")
     List<ChatAndLastMessageModel> getAllChatAndLastMessageModelByIds(List<Long> newChatIds);

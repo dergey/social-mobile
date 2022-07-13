@@ -1,5 +1,7 @@
 package com.sergey.zhuravlev.mobile.social.ui.friend;
 
+import android.annotation.SuppressLint;
+import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
@@ -8,19 +10,28 @@ import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.constraintlayout.widget.ConstraintLayout;
+import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.paging.LoadState;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.sergey.zhuravlev.mobile.social.MainActivity;
+import com.sergey.zhuravlev.mobile.social.constrain.IntentConstrains;
+import com.sergey.zhuravlev.mobile.social.database.model.ChatModel;
 import com.sergey.zhuravlev.mobile.social.databinding.ActivityFriendBinding;
 import com.sergey.zhuravlev.mobile.social.ui.chat.ChatViewModel;
 import com.sergey.zhuravlev.mobile.social.ui.chat.ChatViewModelFactory;
+import com.sergey.zhuravlev.mobile.social.ui.common.UiNetworkResult;
+import com.sergey.zhuravlev.mobile.social.ui.common.UiResult;
+import com.sergey.zhuravlev.mobile.social.ui.login.LoginActivity;
+import com.sergey.zhuravlev.mobile.social.ui.message.MessageActivity;
 
 import java.util.Optional;
 import java.util.Timer;
 import java.util.TimerTask;
 
+@SuppressLint("UnsafeOptInUsageError")
 public class FriendActivity extends AppCompatActivity {
 
     private ActivityFriendBinding binding;
@@ -94,11 +105,33 @@ public class FriendActivity extends AppCompatActivity {
         friendRequestRecyclerView.setLayoutManager(new LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false));
         friendRequestRecyclerView.setAdapter(friendRequestAdapter);
 
+        // Friend initialize:
         RecyclerView friendRecyclerView = binding.friendRecyclerView;
         FriendAdapter friendAdapter = new FriendAdapter(this);
         friendRecyclerView.setLayoutManager(new LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false));
         friendRecyclerView.setAdapter(friendAdapter);
+        friendAdapter.setOnMessageClickListener((v, position, item) -> {
+            friendViewModel.getOrCreateChat(item.getUsername());
+            return false;
+        });
+        Observer<UiResult<ChatModel>> getOrCreateChatResultObserver = result -> {
+            if (result.isHasErrors() && !(result instanceof UiNetworkResult)) {
+                // If this chat was not found in the cache, expect to create or get it from server
+                return;
+            }
 
+            if (result.isHasErrors()) {
+                // Error creating chat, log it
+                Log.w("FriendActivity/getOrCreateChat", "Error creating or retrieving chats from the cache and from the server: "
+                        + result.getErrorMessage());
+            }
+
+            Intent intent = new Intent(this, MessageActivity.class);
+            intent.putExtra(IntentConstrains.EXTRA_CHAT, result.getData());
+            startActivity(intent);
+        };
+        friendViewModel.getCacheGetChatResult().observe(this, getOrCreateChatResultObserver);
+        friendViewModel.getNetworkGetOrCreateChatResult().observe(this, getOrCreateChatResultObserver);
 
         // Fetch data:
         friendViewModel.fetchCurrentUserFriendRequestLiveData().observe(this, pagingData ->

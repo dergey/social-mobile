@@ -16,9 +16,13 @@ import com.sergey.zhuravlev.mobile.social.client.dto.PageDto;
 import com.sergey.zhuravlev.mobile.social.client.dto.profile.ProfileDto;
 import com.sergey.zhuravlev.mobile.social.client.mapper.FriendRequestItemMapper;
 import com.sergey.zhuravlev.mobile.social.data.repository.ProfileRepository;
+import com.sergey.zhuravlev.mobile.social.database.model.ChatModel;
+import com.sergey.zhuravlev.mobile.social.database.model.ProfileAndDetailModel;
+import com.sergey.zhuravlev.mobile.social.ui.common.CacheLiveDataFutureCallback;
 import com.sergey.zhuravlev.mobile.social.ui.common.LiveDataFutureCallback;
 import com.sergey.zhuravlev.mobile.social.ui.common.NetworkLiveDataFutureCallback;
 import com.sergey.zhuravlev.mobile.social.ui.common.UiNetworkResult;
+import com.sergey.zhuravlev.mobile.social.ui.common.UiResult;
 
 import java.util.concurrent.Executor;
 import java.util.concurrent.Executors;
@@ -35,6 +39,8 @@ public class FriendViewModel extends ViewModel {
     private final MutableLiveData<PageDto<Void>> currentFriendRequestPage = new MutableLiveData<>();
     private final MutableLiveData<UiNetworkResult<Void>> acceptResult = new MutableLiveData<>();
     private final MutableLiveData<UiNetworkResult<Void>> rejectResult = new MutableLiveData<>();
+    private final MutableLiveData<UiResult<ChatModel>> cacheGetChatResult = new MutableLiveData<>();
+    private final MutableLiveData<UiNetworkResult<ChatModel>> networkGetOrCreateChatResult = new MutableLiveData<>();
 
     public FriendViewModel(Context context) {
         this.profileRepository = ProfileRepository.getInstance(context);
@@ -64,6 +70,10 @@ public class FriendViewModel extends ViewModel {
         profileRepository.declineFriendRequest(username, new NetworkLiveDataFutureCallback<>(rejectResult));
     }
 
+    public void getOrCreateChat(final String username) {
+        profileRepository.getOrCreateChat(username, new CacheLiveDataFutureCallback<>(cacheGetChatResult), new NetworkLiveDataFutureCallback<>(networkGetOrCreateChatResult));
+    }
+
     public LiveData<PageDto<Void>> getCurrentFriendPage() {
         return currentFriendPage;
     }
@@ -78,5 +88,13 @@ public class FriendViewModel extends ViewModel {
 
     public LiveData<UiNetworkResult<Void>> getRejectResult() {
         return rejectResult;
+    }
+
+    public LiveData<UiResult<ChatModel>> getCacheGetChatResult() {
+        return cacheGetChatResult;
+    }
+
+    public LiveData<UiNetworkResult<ChatModel>> getNetworkGetOrCreateChatResult() {
+        return networkGetOrCreateChatResult;
     }
 }

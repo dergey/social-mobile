@@ -8,6 +8,7 @@ import com.sergey.zhuravlev.mobile.social.client.dto.ErrorDto;
 import com.sergey.zhuravlev.mobile.social.client.dto.profile.ProfileDetailDto;
 import com.sergey.zhuravlev.mobile.social.client.mapper.ProfileModelMapper;
 import com.sergey.zhuravlev.mobile.social.data.Result;
+import com.sergey.zhuravlev.mobile.social.database.AppDatabase;
 import com.sergey.zhuravlev.mobile.social.database.dao.ProfileDetailModelDao;
 import com.sergey.zhuravlev.mobile.social.database.dao.ProfileModelDao;
 import com.sergey.zhuravlev.mobile.social.database.model.ProfileAndDetailModel;
@@ -29,11 +30,10 @@ public class ProfileDataSource {
     private final ProfileDetailModelDao profileDetailModelDao;
     private final Executor executor;
 
-    public ProfileDataSource(ProfileEndpoints profileEndpoints, ProfileModelDao profileModelDao,
-                             ProfileDetailModelDao profileDetailModelDao, Executor executor) {
+    public ProfileDataSource(ProfileEndpoints profileEndpoints, AppDatabase database, Executor executor) {
         this.profileEndpoints = profileEndpoints;
-        this.profileModelDao = profileModelDao;
-        this.profileDetailModelDao = profileDetailModelDao;
+        this.profileModelDao = database.getProfileModelDao();
+        this.profileDetailModelDao = database.getProfileDetailModelDao();
         this.executor = executor;
     }
 

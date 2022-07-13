@@ -33,6 +33,9 @@ public interface MessageModelDao {
     @Query("UPDATE messages SET pageable_page = NULL WHERE chat_id = :chatId AND pageable_page >= :page")
     void resetPageableAfterPageMessageModel(long chatId, int page);
 
+    @Query("SELECT * FROM messages WHERE network_id = :networkId")
+    List<MessageModel> getAllByNetworkId(Long networkId);
+
     @Query("SELECT * FROM messages WHERE network_id in (:networkIds)")
     List<MessageModel> getAllByNetworkIds(List<Long> networkIds);
 
