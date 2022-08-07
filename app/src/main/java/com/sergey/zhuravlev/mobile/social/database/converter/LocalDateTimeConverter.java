@@ -12,8 +12,7 @@ public class LocalDateTimeConverter {
 
     private static final ZoneId DEFAULT_ZONE_ID = ZoneId.of("GMT");
 
-    @TypeConverter
-    public Long toEpochMilli(LocalDateTime localDateTime) {
+    public static Long toEpochMilli(LocalDateTime localDateTime) {
         if (localDateTime == null) {
             return null;
         } else {
@@ -21,8 +20,7 @@ public class LocalDateTimeConverter {
         }
     }
 
-    @TypeConverter
-    public LocalDateTime fromEpochMilli(Long epochMilli) {
+    public static LocalDateTime fromEpochMilli(Long epochMilli) {
         if (epochMilli == null) {
             return null;
         } else {
@@ -30,8 +28,7 @@ public class LocalDateTimeConverter {
         }
     }
 
-    @TypeConverter
-    public Long toEpochDay(LocalDate localDate) {
+    public static Long toEpochDay(LocalDate localDate) {
         if (localDate == null) {
             return null;
         } else {
@@ -39,13 +36,32 @@ public class LocalDateTimeConverter {
         }
     }
 
-    @TypeConverter
-    public LocalDate fromEpochDay(Long epochDay) {
+    public static LocalDate fromEpochDay(Long epochDay) {
         if (epochDay == null) {
             return null;
         } else {
             return LocalDate.ofEpochDay(epochDay);
         }
+    }
+
+    @TypeConverter
+    public Long toEpochMilliConvert(LocalDateTime localDateTime) {
+        return toEpochMilli(localDateTime);
+    }
+
+    @TypeConverter
+    public LocalDateTime fromEpochMilliConvert(Long epochMilli) {
+        return fromEpochMilli(epochMilli);
+    }
+
+    @TypeConverter
+    public Long toEpochDayConvert(LocalDate localDate) {
+        return toEpochDay(localDate);
+    }
+
+    @TypeConverter
+    public LocalDate fromEpochDayConvert(Long epochDay) {
+        return fromEpochDay(epochDay);
     }
 
 }

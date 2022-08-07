@@ -1,8 +1,12 @@
 package com.sergey.zhuravlev.mobile.social.database.model;
 
-import androidx.room.ColumnInfo;
+import android.os.Parcel;
+import android.os.Parcelable;
 
-public class ProfilePreviewEmbeddable {
+import androidx.room.ColumnInfo;
+import androidx.room.Ignore;
+
+public class ProfilePreviewEmbeddable implements Parcelable {
 
     private String username;
 
@@ -14,6 +18,17 @@ public class ProfilePreviewEmbeddable {
 
     @ColumnInfo(name = "second_name")
     private String secondName;
+
+    public ProfilePreviewEmbeddable() {
+    }
+
+    @Ignore
+    public ProfilePreviewEmbeddable(String username, String firstName, String middleName, String secondName) {
+        this.username = username;
+        this.firstName = firstName;
+        this.middleName = middleName;
+        this.secondName = secondName;
+    }
 
     public String getUsername() {
         return username;
@@ -46,4 +61,36 @@ public class ProfilePreviewEmbeddable {
     public void setSecondName(String secondName) {
         this.secondName = secondName;
     }
+
+    @Ignore
+    @Override
+    public int describeContents() {
+        return 0;
+    }
+
+    @Ignore
+    @Override
+    public void writeToParcel(Parcel dest, int flags) {
+        dest.writeString(username);
+        dest.writeString(firstName);
+        dest.writeString(middleName);
+        dest.writeString(secondName);
+    }
+
+    public static final Parcelable.Creator<ProfilePreviewEmbeddable> CREATOR = new Parcelable.Creator<>() {
+
+        public ProfilePreviewEmbeddable createFromParcel(Parcel in) {
+            String username = in.readString();
+            String firstName = in.readString();
+            String middleName = in.readString();
+            String secondName = in.readString();
+            return new ProfilePreviewEmbeddable(username, firstName, middleName, secondName);
+        }
+
+        public ProfilePreviewEmbeddable[] newArray(int size) {
+            return new ProfilePreviewEmbeddable[size];
+        }
+
+    };
+
 }
