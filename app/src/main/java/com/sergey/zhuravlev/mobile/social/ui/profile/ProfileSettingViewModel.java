@@ -17,19 +17,18 @@ import java.time.LocalDate;
 public class ProfileSettingViewModel extends ViewModel {
 
     private final MutableLiveData<ProfileSettingFormState> profileSettingFormState = new MutableLiveData<>();
-    private final MutableLiveData<UiNetworkResult<UserDto>> registerResult = new MutableLiveData<>();
+    private final MutableLiveData<UiNetworkResult<UserDto>> completeRegistrationResult = new MutableLiveData<>();
     private final MutableLiveData<UiNetworkResult<LoginResponseDto>> loginResult = new MutableLiveData<>();
 
     private final LoginRepository loginRepository;
-    //private final ProfileRepository profileRepository;
     private final RegistrationRepository registrationRepository;
 
     public LiveData<ProfileSettingFormState> getProfileSettingFormState() {
         return profileSettingFormState;
     }
 
-    public LiveData<UiNetworkResult<UserDto>> getRegisterResult() {
-        return registerResult;
+    public LiveData<UiNetworkResult<UserDto>> getCompleteRegistrationResult() {
+        return completeRegistrationResult;
     }
 
     public LiveData<UiNetworkResult<LoginResponseDto>> getLoginResult() {
@@ -42,10 +41,11 @@ public class ProfileSettingViewModel extends ViewModel {
         this.loginRepository = LoginRepository.getInstance();
     }
 
-    public void register(String email, String password, String username, String firstName,
-                         String middleName, String secondName, String city, LocalDate birthDate) {
-        registrationRepository.register(email, password, username, firstName, middleName, secondName,
-                city, birthDate, new NetworkLiveDataFutureCallback<>(registerResult));
+    public void completeRegistration(String continuationCode, String password, String username,
+                                     String firstName, String middleName, String secondName,
+                                     String city, LocalDate birthDate) {
+        registrationRepository.completeRegistration(continuationCode, password, username, firstName,
+                middleName, secondName, city, birthDate, new NetworkLiveDataFutureCallback<>(completeRegistrationResult));
     }
 
     public void profileSettingDataChanged(String firstName, String lastName, String additionalName,
@@ -67,26 +67,23 @@ public class ProfileSettingViewModel extends ViewModel {
         ProfileSettingFormState formState = new ProfileSettingFormState(false);
         for (ErrorDto.FieldError field : errorDto.getFields()) {
             switch (field.getField()) {
-                case "email":
-                    formState.setEmailErrorString(field.getMessage());
-                    break;
                 case "password":
-                    formState.setPasswordErrorString(field.getMessage());
+                    formState.setPasswordErrorString(field.getCode());
                     break;
                 case "username":
-                    formState.setUsernameErrorString(field.getMessage());
+                    formState.setUsernameErrorString(field.getCode());
                     break;
                 case "firstName":
-                    formState.setFirstNameErrorString(field.getMessage());
+                    formState.setFirstNameErrorString(field.getCode());
                     break;
                 case "middleName":
-                    formState.setAdditionalNameErrorString(field.getMessage());
+                    formState.setAdditionalNameErrorString(field.getCode());
                     break;
                 case "secondName":
-                    formState.setLastNameErrorString(field.getMessage());
+                    formState.setLastNameErrorString(field.getCode());
                     break;
                 case "birthDate":
-                    formState.setBirthDateErrorString(field.getMessage());
+                    formState.setBirthDateErrorString(field.getCode());
                     break;
             }
             profileSettingFormState.postValue(formState);

@@ -82,9 +82,9 @@ public class LoginViewModel extends ViewModel {
         String passwordError = null;
         for (ErrorDto.FieldError field : errorDto.getFields()) {
             if (field.getField().equals("email")) {
-                emailError = field.getMessage();
+                emailError = field.getCode();
             } else if (field.getField().equals("password")) {
-                passwordError = field.getMessage();
+                passwordError = field.getCode();
             }
         }
 

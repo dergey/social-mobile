@@ -10,18 +10,19 @@ import android.view.inputmethod.EditorInfo;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
-import android.widget.Toast;
 
-import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProvider;
 
 import com.sergey.zhuravlev.mobile.social.R;
 import com.sergey.zhuravlev.mobile.social.constrain.IntentConstrains;
 import com.sergey.zhuravlev.mobile.social.databinding.ActivityRegistrationBinding;
-import com.sergey.zhuravlev.mobile.social.ui.profile.ProfileSettingActivity;
+import com.sergey.zhuravlev.mobile.social.enums.ValidatedField;
+import com.sergey.zhuravlev.mobile.social.ui.profile.ProfileFragmentViewModel;
+import com.sergey.zhuravlev.mobile.social.ui.profile.ProfileFragmentViewModelFactory;
 import com.sergey.zhuravlev.mobile.social.util.StringUtils;
+
+import java.util.Map;
 
 public class RegistrationActivity extends AppCompatActivity {
 
@@ -35,39 +36,38 @@ public class RegistrationActivity extends AppCompatActivity {
         binding = ActivityRegistrationBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
 
-        registrationViewModel = new ViewModelProvider(this).get(RegistrationViewModel.class);
+        registrationViewModel = new ViewModelProvider(this, new RegistrationViewModelFactory(this))
+                .get(RegistrationViewModel.class);
 
         Button nextButton = binding.nextButton;
         EditText emailEditText = binding.emailEditText;
         EditText passwordEditText = binding.passwordEditText;
         EditText confirmPasswordEditText = binding.confirmPasswordEditText;
 
-        registrationViewModel.getRegistrationFormState().observe(this, new Observer<RegistrationFormState>() {
-            @Override
-            public void onChanged(@Nullable RegistrationFormState registrationFormState) {
-                if (registrationFormState == null) {
-                    return;
-                }
-                nextButton.setEnabled(registrationFormState.isDataValid());
-                if (registrationFormState.getEmailError() != null) {
-                    emailEditText.setError(getString(registrationFormState.getEmailError()));
-                }
-                if (registrationFormState.getEmailErrorString() != null) {
-                    emailEditText.setError(registrationFormState.getEmailErrorString());
-                }
-                if (registrationFormState.getPasswordError() != null) {
-                    passwordEditText.setError(getString(registrationFormState.getPasswordError()));
-                }
-                if (registrationFormState.getPasswordErrorString() != null) {
-                    passwordEditText.setError(registrationFormState.getPasswordErrorString());
-                }
-                if (registrationFormState.getConfirmPasswordError() != null) {
-                    confirmPasswordEditText.setError(getString(registrationFormState.getConfirmPasswordError()));
-                }
-                if (registrationFormState.getConfirmPasswordErrorString() != null) {
-                    confirmPasswordEditText.setError(registrationFormState.getConfirmPasswordErrorString());
-                }
+        registrationViewModel.getFormState().observe(this, formState -> {
+            if (formState == null) {
+                return;
             }
+            nextButton.setEnabled(formState.isDataValid());
+            if (formState.isFieldContainError(ValidatedField.EMAIL)) {
+                emailEditText.setError(formState.getFieldErrorString(ValidatedField.EMAIL));
+            }
+            if (formState.isFieldContainError(ValidatedField.PASSWORD)) {
+                passwordEditText.setError(formState.getFieldErrorString(ValidatedField.PASSWORD));
+            }
+            if (formState.isFieldContainError(ValidatedField.PASSWORD_CONFIRMATION)) {
+                confirmPasswordEditText.setError(formState.getFieldErrorString(ValidatedField.PASSWORD_CONFIRMATION));
+            }
+        });
+
+        registrationViewModel.getStartRegistrationResult().observe(this, networkResult -> {
+            if (networkResult.isHasErrors() && networkResult.getErrorDto() != null) {
+                registrationViewModel.processServerDataFieldError(networkResult.getErrorDto());
+                return;
+            }
+
+            startNextStepActivity(networkResult.getData().getContinuationCode().toString(),
+                    passwordEditText.getText().toString());
         });
 
         TextWatcher afterTextChangedListener = new TextWatcher() {
@@ -83,32 +83,25 @@ public class RegistrationActivity extends AppCompatActivity {
 
             @Override
             public void afterTextChanged(Editable s) {
-                registrationViewModel.registrationDataChanged(emailEditText.getText().toString(),
-                        passwordEditText.getText().toString(),
-                        confirmPasswordEditText.getText().toString());
+                registrationViewModel.processFormDataChanged(Map.of(
+                        ValidatedField.EMAIL, emailEditText.getText().toString(),
+                        ValidatedField.PASSWORD, passwordEditText.getText().toString(),
+                        ValidatedField.PASSWORD_CONFIRMATION, confirmPasswordEditText.getText().toString())
+                );
             }
         };
         emailEditText.addTextChangedListener(afterTextChangedListener);
         passwordEditText.addTextChangedListener(afterTextChangedListener);
         confirmPasswordEditText.addTextChangedListener(afterTextChangedListener);
-        confirmPasswordEditText.setOnEditorActionListener(new TextView.OnEditorActionListener() {
-
-            @Override
-            public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
-                if (actionId == EditorInfo.IME_ACTION_DONE) {
-                    startNextStepActivity(emailEditText.getText().toString(),
-                            passwordEditText.getText().toString());
-                }
-                return false;
+        confirmPasswordEditText.setOnEditorActionListener((v, actionId, event) -> {
+            if (actionId == EditorInfo.IME_ACTION_DONE) {
+                registrationViewModel.startRegistration(emailEditText.getText().toString());
             }
+            return false;
         });
 
-        nextButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                startNextStepActivity(emailEditText.getText().toString(),
-                        passwordEditText.getText().toString());
-            }
+        nextButton.setOnClickListener(v -> {
+                registrationViewModel.startRegistration(emailEditText.getText().toString());
         });
     }
 
@@ -116,20 +109,18 @@ public class RegistrationActivity extends AppCompatActivity {
     public void onTopResumedActivityChanged(boolean isTopResumedActivity) {
         if (isTopResumedActivity) {
             Intent intent = getIntent();
-            String emailError = intent.getStringExtra(IntentConstrains.EXTRA_REGISTRATION_EMAIL_ERROR);
             String passwordError = intent.getStringExtra(IntentConstrains.EXTRA_REGISTRATION_PASSWORD_ERROR);
-            if (!StringUtils.isBlank(emailError) || !StringUtils.isBlank(passwordError)) {
-                registrationViewModel.processServerFieldError(emailError, passwordError);
+            if (!StringUtils.isBlank(passwordError)) {
+                registrationViewModel.setFieldErrors(Map.of(ValidatedField.PASSWORD, passwordError));
             }
         }
         super.onTopResumedActivityChanged(isTopResumedActivity);
     }
 
-    private void startNextStepActivity(String email, String password) {
-        Intent intent = new Intent(RegistrationActivity.this, ProfileSettingActivity.class);
+    private void startNextStepActivity(String continuationCode, String password) {
+        Intent intent = new Intent(RegistrationActivity.this, EmailConfirmActivity.class);
         if (!startNextMatchingActivity(intent)) {
-            intent.putExtra(IntentConstrains.EXTRA_PROFILE_SETTING_TYPE, "REGISTRATION");
-            intent.putExtra(IntentConstrains.EXTRA_REGISTRATION_EMAIL, email);
+            intent.putExtra(IntentConstrains.EXTRA_REGISTRATION_CONTINUATION_CODE, continuationCode);
             intent.putExtra(IntentConstrains.EXTRA_REGISTRATION_PASSWORD, password);
             startActivity(intent);
             overridePendingTransition(R.anim.slide_in_from_right, R.anim.slide_out_to_left);

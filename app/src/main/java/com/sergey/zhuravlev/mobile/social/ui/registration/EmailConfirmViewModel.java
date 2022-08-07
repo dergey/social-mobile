@@ -13,23 +13,23 @@ import com.sergey.zhuravlev.mobile.social.ui.common.ValidationViewModel;
 
 import java.util.Set;
 
-public class RegistrationViewModel extends ValidationViewModel {
+public class EmailConfirmViewModel extends ValidationViewModel {
 
-    private final MutableLiveData<UiNetworkResult<RegistrationStatusDto>> startRegistrationResult = new MutableLiveData<>();
+    private final MutableLiveData<UiNetworkResult<RegistrationStatusDto>> confirmByCodeResult = new MutableLiveData<>();
 
     private final RegistrationRepository registrationRepository;
 
-    public MutableLiveData<UiNetworkResult<RegistrationStatusDto>> getStartRegistrationResult() {
-        return startRegistrationResult;
+    public MutableLiveData<UiNetworkResult<RegistrationStatusDto>> getConfirmByCodeResult() {
+        return confirmByCodeResult;
     }
 
-    public RegistrationViewModel(Context context) {
-        super(context, Set.of(ValidatedField.EMAIL, ValidatedField.PASSWORD, ValidatedField.PASSWORD_CONFIRMATION));
+    public EmailConfirmViewModel(Context context) {
+        super(context, Set.of(ValidatedField.CONFIRMATION_CODE));
         this.registrationRepository = RegistrationRepository.getInstance();
     }
 
-    public void startRegistration(String email) {
-        registrationRepository.startRegistration(email, new NetworkLiveDataFutureCallback<>(startRegistrationResult));
+    public void confirmByCode(String continuationCode, String code) {
+        registrationRepository.confirmByCode(continuationCode, code, new NetworkLiveDataFutureCallback<>(confirmByCodeResult));
     }
 
 }

@@ -17,6 +17,7 @@
     <string name="invalid_email">Not a valid email</string>
     <string name="invalid_password">Password must be >5 characters</string>
     <string name="invalid_confirm_password">Password confirmation does not match the password</string>
+    <string name="invalid_confirmation_code">Confirmation code must be full</string>
     <string name="login_failed">"Login failed"</string>
     <string name="title_chats">Chats</string>
     <string name="title_profile">Profile</string>
@@ -26,4 +27,16 @@
     <string name="chat_status_not_loading">Connected</string>
     <string name="chat_status_error">Connection failed</string>
     <string name="profile_joined_on">Joined on %s</string>
+
+
+    <!-- Server messages localization -->
+    <string name="ALREADY_EXIST">%s already exists</string>
+    <string name="NOT_VALID">Not valid</string>
+    <string name="NOT_BLANK">Not empty</string>
+    <string name="NOT_NULL">Not empty</string>
+    <string name="WRONG_LENGTH">Not valid length</string>
+    <string name="PAST_REQUIRED">Must be in past</string>
+    <string name="INVALID_EMAIL_FORMAT">Not a valid email</string>
+    <string name="INVALID_EMAIL_OR_PHONE_FORMAT">Not a valid email or phone</string>
+
 </resources>

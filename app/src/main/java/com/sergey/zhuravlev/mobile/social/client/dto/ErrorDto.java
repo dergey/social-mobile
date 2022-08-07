@@ -8,14 +8,14 @@ public class ErrorDto {
 
     public static class FieldError {
         private String field;
-        private String message;
+        private String code;
 
         public FieldError() {
         }
 
         public FieldError(String field, String message) {
             this.field = field;
-            this.message = message;
+            this.code = message;
         }
 
         public String getField() {
@@ -26,12 +26,12 @@ public class ErrorDto {
             this.field = field;
         }
 
-        public String getMessage() {
-            return message;
+        public String getCode() {
+            return code;
         }
 
-        public void setMessage(String message) {
-            this.message = message;
+        public void setCode(String code) {
+            this.code = code;
         }
     }
 

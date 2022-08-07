@@ -45,7 +45,7 @@ public class ProfileSettingActivity extends AppCompatActivity {
     private ActivityProfileSettingBinding binding;
 
     private String type;
-    private String registrationEmail;
+    private String continuationCode;
     private String registrationPassword;
 
     @Override
@@ -71,9 +71,9 @@ public class ProfileSettingActivity extends AppCompatActivity {
 
         switch (type) {
             case "REGISTRATION":
-                registrationEmail = intent.getStringExtra(IntentConstrains.EXTRA_REGISTRATION_EMAIL);
+                continuationCode = intent.getStringExtra(IntentConstrains.EXTRA_REGISTRATION_CONTINUATION_CODE);
                 registrationPassword = intent.getStringExtra(IntentConstrains.EXTRA_REGISTRATION_PASSWORD);
-                profileSettingViewModel.getRegisterResult().observe(this, (result) -> {
+                profileSettingViewModel.getCompleteRegistrationResult().observe(this, (result) -> {
                     if (!result.isHasErrors() && result.getData() != null) {
                         profileSettingViewModel.login(result.getData().getEmail(), registrationPassword);
                     } else {
@@ -103,7 +103,6 @@ public class ProfileSettingActivity extends AppCompatActivity {
                 });
                 break;
             case "UPDATE":
-                registrationEmail = null;
                 registrationPassword = null;
                 break;
         }
@@ -234,7 +233,7 @@ public class ProfileSettingActivity extends AppCompatActivity {
         switch (type) {
             case "REGISTRATION":
                 // todo added city field
-                profileSettingViewModel.register(registrationEmail, registrationPassword, username,
+                profileSettingViewModel.completeRegistration(continuationCode, registrationPassword, username,
                         firstName, middleName, secondName, "Minsk", LocalDate.parse(birthDateString, DATE_FORMATTER));
                 break;
             case "UPDATE":

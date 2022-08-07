@@ -1,10 +1,11 @@
-package com.sergey.zhuravlev.mobile.social.client.dto;
+package com.sergey.zhuravlev.mobile.social.client.dto.registration;
 
 import java.time.LocalDate;
+import java.util.UUID;
 
-public class RegistrationDto {
+public class CompleteRegistrationDto {
 
-    private String email;
+    private String continuationCode;
 
     private String password;
 
@@ -20,26 +21,12 @@ public class RegistrationDto {
 
     private LocalDate birthDate;
 
-    public RegistrationDto() {
+    public String getContinuationCode() {
+        return continuationCode;
     }
 
-    public RegistrationDto(String email, String password, String username, String firstName, String middleName, String secondName, String city, LocalDate birthDate) {
-        this.email = email;
-        this.password = password;
-        this.username = username;
-        this.firstName = firstName;
-        this.middleName = middleName;
-        this.secondName = secondName;
-        this.city = city;
-        this.birthDate = birthDate;
-    }
-
-    public String getEmail() {
-        return email;
-    }
-
-    public void setEmail(String email) {
-        this.email = email;
+    public void setContinuationCode(String continuationCode) {
+        this.continuationCode = continuationCode;
     }
 
     public String getPassword() {
