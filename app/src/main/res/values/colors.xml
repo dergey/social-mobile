@@ -51,6 +51,9 @@
     <color name="foreground_color_night">#1E1E1E</color>
     <color name="shimmer_background_color_night">#2D2D2D</color>
 
+    <color name="clickable_transparent_second_color">#25000000</color>
+    <color name="clickable_transparent_second_color_night">#4DFFFFFF</color>
+
 
 
 </resources>

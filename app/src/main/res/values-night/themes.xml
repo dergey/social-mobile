@@ -41,6 +41,9 @@
         <item name="dangerButtonBackgroundColor">@color/danger_button_background_color_night</item>
         <item name="dangerDisableButtonBackgroundColor">@color/danger_disable_button_background_color_night</item>
         <item name="dangerPressedButtonBackgroundColor">@color/danger_pressed_button_background_color_night</item>
+
+        <!-- Clickable colors -->
+        <item name="clickableTransparentSecondColor">@color/clickable_transparent_second_color_night</item>
     </style>
 
     <style name="Theme.Social.NoActionBar" parent="Theme.Social">

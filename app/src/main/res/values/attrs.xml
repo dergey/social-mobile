@@ -34,4 +34,9 @@
     <attr name="backgroundButtonColor" format="reference" />
     <attr name="backgroundPressedButtonColor" format="reference" />
     <attr name="backgroundDisableButtonColor" format="reference" />
+
+    <!-- Clickable -->
+    <attr name="clickableTransparentPrimaryColor" format="reference" />
+    <attr name="clickableTransparentSecondColor" format="reference" />
+
 </resources>
