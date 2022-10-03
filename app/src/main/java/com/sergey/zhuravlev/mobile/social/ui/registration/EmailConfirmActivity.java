@@ -19,6 +19,7 @@ import com.sergey.zhuravlev.mobile.social.enums.ValidatedField;
 import com.sergey.zhuravlev.mobile.social.ui.profile.ProfileSettingActivity;
 
 import java.util.Map;
+import java.util.Objects;
 
 public class EmailConfirmActivity extends AppCompatActivity {
 
@@ -49,7 +50,6 @@ public class EmailConfirmActivity extends AppCompatActivity {
         EditText codeEditText3 = binding.codeEditText3;
         EditText codeEditText4 = binding.codeEditText4;
         EditText codeEditText5 = binding.codeEditText5;
-        EditText codeEditText6 = binding.codeEditText6;
 
         emailConfirmViewModel.getFormState().observe(this, formState -> {
             if (formState == null) {
@@ -61,16 +61,17 @@ public class EmailConfirmActivity extends AppCompatActivity {
                 codeEditText2.setError("", null);
                 codeEditText3.setError("", null);
                 codeEditText4.setError("", null);
-                codeEditText5.setError("", null);
-                codeEditText6.setError(formState.getFieldErrorString(ValidatedField.CONFIRMATION_CODE));
+                codeEditText5.setError(formState.getFieldErrorString(ValidatedField.CONFIRMATION_CODE));
             }
         });
 
         emailConfirmViewModel.getConfirmByCodeResult().observe(this, networkResult -> {
-            if (networkResult.isHasErrors()) {
-                if (networkResult.getErrorDto() != null) {
-                    emailConfirmViewModel.processServerDataFieldError(networkResult.getErrorDto());
-                }
+            if (networkResult.getErrorDto() != null) {
+                emailConfirmViewModel.processServerDataFieldError(networkResult.getErrorDto());
+                return;
+            }
+
+            if (networkResult.isHasErrors() || Objects.isNull(networkResult.getData())) {
                 return;
             }
 
@@ -93,7 +94,7 @@ public class EmailConfirmActivity extends AppCompatActivity {
                 emailConfirmViewModel.processFormDataChanged(Map.of(
                         ValidatedField.CONFIRMATION_CODE, codeEditText1.getText().toString() + codeEditText2.getText().toString()
                                 + codeEditText3.getText().toString() + codeEditText4.getText().toString()
-                                + codeEditText5.getText().toString() + codeEditText6.getText().toString())
+                                + codeEditText5.getText().toString())
                 );
             }
         };
@@ -102,13 +103,22 @@ public class EmailConfirmActivity extends AppCompatActivity {
         codeEditText3.addTextChangedListener(afterTextChangedListener);
         codeEditText4.addTextChangedListener(afterTextChangedListener);
         codeEditText5.addTextChangedListener(afterTextChangedListener);
-        codeEditText6.addTextChangedListener(afterTextChangedListener);
 
+        confirmButton.setOnClickListener(v -> {
+            emailConfirmViewModel.confirmByCode(continuationCode, new StringBuilder()
+                    .append(codeEditText1.getText())
+                    .append(codeEditText2.getText())
+                    .append(codeEditText3.getText())
+                    .append(codeEditText4.getText())
+                    .append(codeEditText5.getText())
+                    .toString());
+        });
     }
 
     private void startNextStepActivity(String continuationCode) {
         Intent intent = new Intent(EmailConfirmActivity.this, ProfileSettingActivity.class);
         if (!startNextMatchingActivity(intent)) {
+            intent.putExtra(IntentConstrains.EXTRA_PROFILE_SETTING_TYPE, "REGISTRATION");
             intent.putExtra(IntentConstrains.EXTRA_REGISTRATION_CONTINUATION_CODE, continuationCode);
             intent.putExtra(IntentConstrains.EXTRA_REGISTRATION_PASSWORD, registrationPassword);
             startActivity(intent);

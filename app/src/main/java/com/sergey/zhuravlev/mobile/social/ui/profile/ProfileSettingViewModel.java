@@ -9,6 +9,7 @@ import com.sergey.zhuravlev.mobile.social.client.dto.LoginResponseDto;
 import com.sergey.zhuravlev.mobile.social.client.dto.user.UserDto;
 import com.sergey.zhuravlev.mobile.social.data.repository.LoginRepository;
 import com.sergey.zhuravlev.mobile.social.data.repository.RegistrationRepository;
+import com.sergey.zhuravlev.mobile.social.enums.Gender;
 import com.sergey.zhuravlev.mobile.social.ui.common.NetworkLiveDataFutureCallback;
 import com.sergey.zhuravlev.mobile.social.ui.common.UiNetworkResult;
 
@@ -43,9 +44,9 @@ public class ProfileSettingViewModel extends ViewModel {
 
     public void completeRegistration(String continuationCode, String password, String username,
                                      String firstName, String middleName, String secondName,
-                                     String city, LocalDate birthDate) {
+                                     Gender gender, LocalDate birthDate) {
         registrationRepository.completeRegistration(continuationCode, password, username, firstName,
-                middleName, secondName, city, birthDate, new NetworkLiveDataFutureCallback<>(completeRegistrationResult));
+                middleName, secondName, gender, birthDate, new NetworkLiveDataFutureCallback<>(completeRegistrationResult));
     }
 
     public void profileSettingDataChanged(String firstName, String lastName, String additionalName,

@@ -9,6 +9,7 @@ import com.sergey.zhuravlev.mobile.social.client.dto.registration.RegistrationSt
 import com.sergey.zhuravlev.mobile.social.client.dto.user.UserDto;
 import com.sergey.zhuravlev.mobile.social.data.Result;
 import com.sergey.zhuravlev.mobile.social.data.datasource.RegistrationDataSource;
+import com.sergey.zhuravlev.mobile.social.enums.Gender;
 
 import java.time.LocalDate;
 import java.util.concurrent.Executor;
@@ -48,10 +49,10 @@ public class RegistrationRepository {
 
     public void completeRegistration(String continuationCode, String password, String username,
                                      String firstName, String middleName, String secondName,
-                                     String city, LocalDate birthDate,
+                                     Gender gender, LocalDate birthDate,
                                      FutureCallback<Result<UserDto, ErrorDto>> callback) {
         Futures.addCallback(dataSource.completeRegistration(continuationCode, password, username,
-                firstName, middleName, secondName, city, birthDate), callback, executor);
+                firstName, middleName, secondName, gender, birthDate), callback, executor);
     }
 
 

@@ -1,5 +1,7 @@
 package com.sergey.zhuravlev.mobile.social.client.dto.registration;
 
+import com.sergey.zhuravlev.mobile.social.enums.Gender;
+
 import java.time.LocalDate;
 import java.util.UUID;
 
@@ -17,7 +19,7 @@ public class CompleteRegistrationDto {
 
     private String secondName;
 
-    private String city;
+    private Gender gender;
 
     private LocalDate birthDate;
 
@@ -69,12 +71,12 @@ public class CompleteRegistrationDto {
         this.secondName = secondName;
     }
 
-    public String getCity() {
-        return city;
+    public Gender getGender() {
+        return gender;
     }
 
-    public void setCity(String city) {
-        this.city = city;
+    public void setGender(Gender gender) {
+        this.gender = gender;
     }
 
     public LocalDate getBirthDate() {

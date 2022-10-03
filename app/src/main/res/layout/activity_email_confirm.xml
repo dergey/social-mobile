@@ -115,24 +115,6 @@
         app:layout_constraintTop_toBottomOf="@+id/hint_text_view2">
 
         <EditText
-            android:id="@+id/code_edit_text_6"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="16dp"
-            android:background="@drawable/background_text_edit"
-            android:inputType="textNoSuggestions"
-            android:maxLength="1"
-            android:ems="2"
-            android:paddingStart="16dp"
-            android:paddingTop="14dp"
-            android:paddingEnd="16dp"
-            android:paddingBottom="14dp"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintStart_toEndOf="@+id/code_edit_text_5"
-            app:layout_constraintTop_toTopOf="parent"
-            tools:text="9" />
-
-        <EditText
             android:id="@+id/code_edit_text_5"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"

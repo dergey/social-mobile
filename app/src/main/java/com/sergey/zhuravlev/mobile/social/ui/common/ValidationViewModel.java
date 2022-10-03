@@ -2,6 +2,7 @@ package com.sergey.zhuravlev.mobile.social.ui.common;
 
 import android.content.Context;
 import android.util.Patterns;
+import android.widget.Toast;
 
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
@@ -74,6 +75,10 @@ public abstract class ValidationViewModel extends ViewModel {
         }
     }
 
+    public void processConnectionError(String error) {
+        Toast.makeText(context, "Error connection to server. " + error, Toast.LENGTH_SHORT).show();
+    }
+
     public void setFieldErrors(Map<ValidatedField, String> fieldErrors) {
         formState.setValue(new FormState(fieldErrors));
     }
@@ -91,7 +96,7 @@ public abstract class ValidationViewModel extends ViewModel {
     }
 
     protected boolean isConfirmationCodeValid(String confirmationCode) {
-        return !StringUtils.isBlank(confirmationCode) && confirmationCode.trim().length() > 5;
+        return !StringUtils.isBlank(confirmationCode) && confirmationCode.trim().length() == 5;
     }
 
 }

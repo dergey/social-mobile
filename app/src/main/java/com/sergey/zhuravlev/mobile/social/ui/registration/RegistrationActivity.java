@@ -65,6 +65,10 @@ public class RegistrationActivity extends AppCompatActivity {
                 registrationViewModel.processServerDataFieldError(networkResult.getErrorDto());
                 return;
             }
+            if (networkResult.isHasErrors()) {
+                registrationViewModel.processConnectionError(networkResult.getErrorMessage());
+                return;
+            }
 
             startNextStepActivity(networkResult.getData().getContinuationCode().toString(),
                     passwordEditText.getText().toString());

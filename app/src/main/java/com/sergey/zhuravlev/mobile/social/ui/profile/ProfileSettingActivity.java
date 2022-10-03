@@ -13,6 +13,7 @@ import android.view.inputmethod.EditorInfo;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
+import android.widget.RadioButton;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -28,6 +29,7 @@ import com.sergey.zhuravlev.mobile.social.R;
 import com.sergey.zhuravlev.mobile.social.client.dto.ErrorDto;
 import com.sergey.zhuravlev.mobile.social.constrain.IntentConstrains;
 import com.sergey.zhuravlev.mobile.social.databinding.ActivityProfileSettingBinding;
+import com.sergey.zhuravlev.mobile.social.enums.Gender;
 import com.sergey.zhuravlev.mobile.social.ui.login.LoginActivity;
 import com.sergey.zhuravlev.mobile.social.ui.registration.RegistrationActivity;
 import com.sergey.zhuravlev.mobile.social.util.StringUtils;
@@ -113,6 +115,8 @@ public class ProfileSettingActivity extends AppCompatActivity {
         EditText additionalNameEditText = binding.additionalNameEditText;
         EditText usernameEditText = binding.usernameEditText;
         EditText birthdayEditText = binding.birthdayEditText;
+        RadioButton maleGenderRadioButton = binding.maleGenderRadioButton;
+        RadioButton femaleGenderRadioButton = binding.femaleGenderRadioButton;
 
         profileSettingViewModel.getProfileSettingFormState().observe(this, new Observer<ProfileSettingFormState>() {
             @Override
@@ -205,6 +209,7 @@ public class ProfileSettingActivity extends AppCompatActivity {
                             firstNameEditText.getText().toString(),
                             additionalNameEditText.getText().toString(),
                             lastNameEditText.getText().toString(),
+                            maleGenderRadioButton.isChecked() ? Gender.MALE : Gender.FEMALE,
                             birthdayEditText.getText().toString());
                 }
                 return false;
@@ -218,13 +223,14 @@ public class ProfileSettingActivity extends AppCompatActivity {
                         firstNameEditText.getText().toString(),
                         additionalNameEditText.getText().toString(),
                         lastNameEditText.getText().toString(),
+                        maleGenderRadioButton.isChecked() ? Gender.MALE : Gender.FEMALE,
                         birthdayEditText.getText().toString());
             }
         });
     }
 
     private void onDataComplete(String username, String firstName, String middleName, String secondName,
-                                String birthDateString) {
+                                Gender gender, String birthDateString) {
         username = StringUtils.isBlank(username) ? null : username;
         firstName = StringUtils.isBlank(firstName) ? null : firstName;
         middleName = StringUtils.isBlank(middleName) ? null : middleName;
@@ -232,9 +238,8 @@ public class ProfileSettingActivity extends AppCompatActivity {
         birthDateString = StringUtils.isBlank(birthDateString) ? null : birthDateString;
         switch (type) {
             case "REGISTRATION":
-                // todo added city field
                 profileSettingViewModel.completeRegistration(continuationCode, registrationPassword, username,
-                        firstName, middleName, secondName, "Minsk", LocalDate.parse(birthDateString, DATE_FORMATTER));
+                        firstName, middleName, secondName, gender, LocalDate.parse(birthDateString, DATE_FORMATTER));
                 break;
             case "UPDATE":
                 break;

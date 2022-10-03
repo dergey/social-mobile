@@ -11,6 +11,7 @@ import com.sergey.zhuravlev.mobile.social.client.dto.registration.RegistrationSt
 import com.sergey.zhuravlev.mobile.social.client.dto.registration.StartRegistrationDto;
 import com.sergey.zhuravlev.mobile.social.client.dto.user.UserDto;
 import com.sergey.zhuravlev.mobile.social.data.Result;
+import com.sergey.zhuravlev.mobile.social.enums.Gender;
 
 import java.io.IOException;
 import java.time.LocalDate;
@@ -80,7 +81,7 @@ public class RegistrationDataSource {
     public ListenableFuture<Result<UserDto, ErrorDto>> completeRegistration(String continuationCode, String password,
                                                                             String username, String firstName,
                                                                             String middleName, String secondName,
-                                                                            String city, LocalDate birthDate) {
+                                                                            Gender gender, LocalDate birthDate) {
         CompleteRegistrationDto request = new CompleteRegistrationDto();
         request.setContinuationCode(continuationCode);
         request.setPassword(password);
@@ -88,7 +89,7 @@ public class RegistrationDataSource {
         request.setFirstName(firstName);
         request.setMiddleName(middleName);
         request.setSecondName(secondName);
-        request.setCity(city);
+        request.setGender(gender);
         request.setBirthDate(birthDate);
 
         ListenableFuture<Result<UserDto, ErrorDto>> loginFuture =
